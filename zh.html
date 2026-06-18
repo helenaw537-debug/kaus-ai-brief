@@ -157,21 +157,29 @@
     .calc-panel h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
     .calc-panel .panel-sub { font-size: 0.78rem; color: var(--light); margin-bottom: 16px; }
 
-    .qty-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: center; }
+    .qty-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 16px; }
     .qty-btn {
-      padding: 7px 14px; border-radius: 8px;
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; border-radius: 8px;
       border: 1.5px solid var(--border);
       background: var(--white);
-      font-size: 0.82rem; font-weight: 600;
+      font-size: 0.85rem; font-weight: 600;
       color: var(--mid); cursor: pointer;
       transition: all 0.12s;
+      text-align: left;
     }
-    .qty-btn:hover { border-color: var(--red-light); color: var(--red); }
+    .qty-btn .qty-num { font-weight: 700; color: var(--dark); min-width: 52px; }
+    .qty-btn .qty-unit { color: var(--light); font-size: 0.78rem; font-weight: 500; }
+    .qty-btn .qty-total { font-weight: 700; color: var(--dark); }
+    .qty-btn:hover { border-color: var(--red); }
     .qty-btn.selected {
       background: var(--red-pale);
       border-color: var(--red);
-      color: var(--red);
     }
+    .qty-btn.selected .qty-num,
+    .qty-btn.selected .qty-total { color: var(--red); }
+    .qty-btn.selected .qty-unit { color: var(--red); opacity: 0.75; }
 
     .tier-badge {
       display: inline-block;
@@ -372,14 +380,14 @@
         <h4>📝 帖子（每周）</h4>
         <p class="panel-sub">在相关版块发布原创帖子</p>
         <div class="qty-grid" id="posts-btns">
-          <button class="qty-btn" onclick="selectPosts(5)">5</button>
-          <button class="qty-btn" onclick="selectPosts(10)">10</button>
-          <button class="qty-btn" onclick="selectPosts(15)">15</button>
-          <button class="qty-btn" onclick="selectPosts(20)">20</button>
-          <button class="qty-btn" onclick="selectPosts(25)">25</button>
-          <button class="qty-btn" onclick="selectPosts(30)">30</button>
-          <button class="qty-btn" onclick="selectPosts(40)">40</button>
-          <button class="qty-btn" onclick="selectPosts(50)">50</button>
+          <button class="qty-btn" onclick="selectPosts(5)"><span class="qty-num">5 篇</span><span class="qty-unit">¥80/篇</span><span class="qty-total">¥400</span></button>
+          <button class="qty-btn" onclick="selectPosts(10)"><span class="qty-num">10 篇</span><span class="qty-unit">¥80/篇</span><span class="qty-total">¥800</span></button>
+          <button class="qty-btn" onclick="selectPosts(15)"><span class="qty-num">15 篇</span><span class="qty-unit">¥70/篇</span><span class="qty-total">¥1,050</span></button>
+          <button class="qty-btn" onclick="selectPosts(20)"><span class="qty-num">20 篇</span><span class="qty-unit">¥70/篇</span><span class="qty-total">¥1,400</span></button>
+          <button class="qty-btn" onclick="selectPosts(25)"><span class="qty-num">25 篇</span><span class="qty-unit">¥60/篇</span><span class="qty-total">¥1,500</span></button>
+          <button class="qty-btn" onclick="selectPosts(30)"><span class="qty-num">30 篇</span><span class="qty-unit">¥60/篇</span><span class="qty-total">¥1,800</span></button>
+          <button class="qty-btn" onclick="selectPosts(40)"><span class="qty-num">40 篇</span><span class="qty-unit">¥50/篇</span><span class="qty-total">¥2,000</span></button>
+          <button class="qty-btn" onclick="selectPosts(50)"><span class="qty-num">50 篇</span><span class="qty-unit">¥50/篇</span><span class="qty-total">¥2,500</span></button>
         </div>
         <div id="posts-tier" class="tier-badge" style="display:none"></div>
       </div>
@@ -388,13 +396,13 @@
         <h4>💬 评论（每周）</h4>
         <p class="panel-sub">在高流量帖子下精准回复</p>
         <div class="qty-grid" id="comments-btns">
-          <button class="qty-btn" onclick="selectComments(40)">40</button>
-          <button class="qty-btn" onclick="selectComments(80)">80</button>
-          <button class="qty-btn" onclick="selectComments(120)">120</button>
-          <button class="qty-btn" onclick="selectComments(160)">160</button>
-          <button class="qty-btn" onclick="selectComments(200)">200</button>
-          <button class="qty-btn" onclick="selectComments(250)">250</button>
-          <button class="qty-btn" onclick="selectComments(300)">300</button>
+          <button class="qty-btn" onclick="selectComments(40)"><span class="qty-num">40 条</span><span class="qty-unit">¥20/条</span><span class="qty-total">¥800</span></button>
+          <button class="qty-btn" onclick="selectComments(80)"><span class="qty-num">80 条</span><span class="qty-unit">¥17/条</span><span class="qty-total">¥1,360</span></button>
+          <button class="qty-btn" onclick="selectComments(120)"><span class="qty-num">120 条</span><span class="qty-unit">¥14/条</span><span class="qty-total">¥1,680</span></button>
+          <button class="qty-btn" onclick="selectComments(160)"><span class="qty-num">160 条</span><span class="qty-unit">¥11/条</span><span class="qty-total">¥1,760</span></button>
+          <button class="qty-btn" onclick="selectComments(200)"><span class="qty-num">200 条</span><span class="qty-unit">¥11/条</span><span class="qty-total">¥2,200</span></button>
+          <button class="qty-btn" onclick="selectComments(250)"><span class="qty-num">250 条</span><span class="qty-unit">¥11/条</span><span class="qty-total">¥2,750</span></button>
+          <button class="qty-btn" onclick="selectComments(300)"><span class="qty-num">300 条</span><span class="qty-unit">¥11/条</span><span class="qty-total">¥3,300</span></button>
         </div>
         <div id="comments-tier" class="tier-badge" style="display:none"></div>
       </div>
@@ -585,7 +593,7 @@
   function selectPosts(qty) {
     selectedPosts = qty;
     document.querySelectorAll('#posts-btns .qty-btn').forEach(b => {
-      b.classList.toggle('selected', parseInt(b.textContent) === qty);
+      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === qty);
     });
     const tierEl = document.getElementById('posts-tier');
     tierEl.style.display = 'inline-block';
@@ -596,7 +604,7 @@
   function selectComments(qty) {
     selectedComments = qty;
     document.querySelectorAll('#comments-btns .qty-btn').forEach(b => {
-      b.classList.toggle('selected', parseInt(b.textContent) === qty);
+      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === qty);
     });
     const tierEl = document.getElementById('comments-tier');
     tierEl.style.display = 'inline-block';
