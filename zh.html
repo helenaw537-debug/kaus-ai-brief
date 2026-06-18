@@ -566,8 +566,12 @@
       b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === selectedPosts);
     });
     const tierEl = document.getElementById('posts-tier');
-    tierEl.style.display = 'inline-block';
-    tierEl.textContent = postTierName(qty) + ' · ¥' + postPrice(qty) + '/篇';
+    if (selectedPosts === 0) {
+      tierEl.style.display = 'none';
+    } else {
+      tierEl.style.display = 'inline-block';
+      tierEl.textContent = postTierName(selectedPosts) + ' · ¥' + postPrice(selectedPosts) + '/篇';
+    }
     updatePrice();
   }
 
@@ -577,8 +581,12 @@
       b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === selectedComments);
     });
     const tierEl = document.getElementById('comments-tier');
-    tierEl.style.display = 'inline-block';
-    tierEl.textContent = commentTierName(qty) + ' · ¥' + commentPrice(qty) + '/条';
+    if (selectedComments === 0) {
+      tierEl.style.display = 'none';
+    } else {
+      tierEl.style.display = 'inline-block';
+      tierEl.textContent = commentTierName(selectedComments) + ' · ¥' + commentPrice(selectedComments) + '/条';
+    }
     updatePrice();
   }
 
