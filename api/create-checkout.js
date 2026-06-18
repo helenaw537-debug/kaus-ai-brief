@@ -29,6 +29,8 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       customer_email: email,
+      // Accept card, Alipay, and WeChat Pay
+      payment_method_types: ['card', 'alipay', 'wechat_pay'],
       line_items: [
         {
           price_data: {
