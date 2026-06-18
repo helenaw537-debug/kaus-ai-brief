@@ -172,6 +172,7 @@
     .qty-btn .qty-num { font-weight: 700; color: var(--dark); min-width: 52px; }
     .qty-btn .qty-unit { color: var(--light); font-size: 0.78rem; font-weight: 500; }
     .qty-btn .qty-total { font-weight: 700; color: var(--dark); }
+    .qty-btn:focus { outline: none; }
     .qty-btn:hover { border-color: var(--red); }
     .qty-btn.selected {
       background: var(--red-pale);
@@ -568,6 +569,7 @@
     const tierEl = document.getElementById('posts-tier');
     if (selectedPosts === 0) {
       tierEl.style.display = 'none';
+      document.activeElement.blur();
     } else {
       tierEl.style.display = 'inline-block';
       tierEl.textContent = postTierName(selectedPosts) + ' · ¥' + postPrice(selectedPosts) + '/篇';
@@ -583,6 +585,7 @@
     const tierEl = document.getElementById('comments-tier');
     if (selectedComments === 0) {
       tierEl.style.display = 'none';
+      document.activeElement.blur();
     } else {
       tierEl.style.display = 'inline-block';
       tierEl.textContent = commentTierName(selectedComments) + ' · ¥' + commentPrice(selectedComments) + '/条';
