@@ -369,12 +369,6 @@
     <h2 class="section-title">选择套餐</h2>
     <p class="section-sub">按数量计费，选多少付多少。</p>
 
-    <div class="pkg-tabs">
-      <button class="pkg-tab active" onclick="setTab('combined', event)">帖子 + 评论</button>
-      <button class="pkg-tab" onclick="setTab('posts', event)">仅发帖</button>
-      <button class="pkg-tab" onclick="setTab('comments', event)">仅评论</button>
-    </div>
-
     <div class="calc-grid">
       <div class="calc-panel" id="posts-panel">
         <h4>📝 帖子（每周）</h4>
@@ -526,7 +520,6 @@
 </footer>
 
 <script>
-  let currentTab = 'combined';
   let selectedPosts = 0;
   let selectedComments = 0;
 
@@ -567,29 +560,6 @@
     return 'pro';
   }
 
-  function setTab(tab, e) {
-    currentTab = tab;
-    selectedPosts = 0;
-    selectedComments = 0;
-    document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('selected'));
-    document.querySelectorAll('.pkg-tab').forEach(b => b.classList.remove('active'));
-    if (e && e.target) e.target.classList.add('active');
-
-    const postsPanel = document.getElementById('posts-panel');
-    const commentsPanel = document.getElementById('comments-panel');
-    if (tab === 'combined') {
-      postsPanel.style.display = '';
-      commentsPanel.style.display = '';
-    } else if (tab === 'posts') {
-      postsPanel.style.display = '';
-      commentsPanel.style.display = 'none';
-    } else {
-      postsPanel.style.display = 'none';
-      commentsPanel.style.display = '';
-    }
-    updatePrice();
-  }
-
   function selectPosts(qty) {
     selectedPosts = qty;
     document.querySelectorAll('#posts-btns .qty-btn').forEach(b => {
@@ -623,14 +593,12 @@
 
     errEl.classList.remove('visible');
 
-    const needsPosts = currentTab === 'combined' || currentTab === 'posts';
-    const needsComments = currentTab === 'combined' || currentTab === 'comments';
-    const p = needsPosts ? selectedPosts : 0;
-    const c = needsComments ? selectedComments : 0;
+    const p = selectedPosts;
+    const c = selectedComments;
 
-    if ((needsPosts && p === 0) || (needsComments && c === 0)) {
+    if (p === 0 && c === 0) {
       totalEl.innerHTML = '¥ —';
-      breakdownEl.textContent = '请选择套餐';
+      breakdownEl.textContent = '帖子或评论，各自选一个';
       submitBtn.disabled = true;
       summaryPkg.textContent = '未选择套餐';
       summaryPrice.textContent = '—';
@@ -657,9 +625,9 @@
     totalEl.innerHTML = '¥' + fmt(total);
 
     let breakdown = '';
-    if (needsPosts && needsComments) {
+    if (p > 0 && c > 0) {
       breakdown = p + '篇 × ¥' + postPrice(p) + ' + ' + c + '条 × ¥' + commentPrice(c);
-    } else if (needsPosts) {
+    } else if (p > 0) {
       breakdown = p + '篇 × ¥' + postPrice(p) + '/篇';
     } else {
       breakdown = c + '条 × ¥' + commentPrice(c) + '/条';
@@ -667,8 +635,8 @@
     breakdownEl.innerHTML = breakdown;
 
     let pkgDesc = '';
-    if (needsPosts && needsComments) pkgDesc = p + ' 篇帖子 + ' + c + ' 条评论';
-    else if (needsPosts) pkgDesc = p + ' 篇帖子';
+    if (p > 0 && c > 0) pkgDesc = p + ' 篇帖子 + ' + c + ' 条评论';
+    else if (p > 0) pkgDesc = p + ' 篇帖子';
     else pkgDesc = c + ' 条评论';
 
     summaryPkg.textContent = pkgDesc;
@@ -676,7 +644,7 @@
     btnAmount.textContent = '¥' + fmt(total);
     submitBtn.disabled = false;
 
-    updateTierTable(needsPosts ? postTierKey(p) : null, needsComments ? commentTierKey(c) : null);
+    updateTierTable(p > 0 ? postTierKey(p) : null, c > 0 ? commentTierKey(c) : null);
   }
 
   function updateTierTable(postTier, commentTier) {
@@ -689,10 +657,8 @@
 
   function handleSubmit(e) {
     e.preventDefault();
-    const needsPosts = currentTab === 'combined' || currentTab === 'posts';
-    const needsComments = currentTab === 'combined' || currentTab === 'comments';
-    const p = needsPosts ? selectedPosts : 0;
-    const c = needsComments ? selectedComments : 0;
+    const p = selectedPosts;
+    const c = selectedComments;
     const total = p * postPrice(p) + c * commentPrice(c);
 
     const data = {
@@ -701,7 +667,7 @@
       company: document.getElementById('fcompany').value,
       wechat: document.getElementById('fwechat').value,
       content_brief: document.getElementById('fbrief').value,
-      package_type: currentTab,
+      package_type: (p > 0 && c > 0) ? 'combined' : (p > 0 ? 'posts' : 'comments'),
       posts_qty: p,
       comments_qty: c,
       order_price: total
@@ -730,10 +696,6 @@
       btn.textContent = '提交订单';
     });
   }
-
-  // Init
-  document.querySelector('.pkg-tab.active').addEventListener('click', function(e) {});
-  setTab('combined', { target: document.querySelector('.pkg-tab.active') });
 </script>
 </body>
 </html>
