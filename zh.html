@@ -128,7 +128,7 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px; padding: 4px;
-      margin-bottom: 32px;
+      margin: 0 auto 32px;
       width: fit-content;
     }
     .pkg-tab {
@@ -156,7 +156,7 @@
     .calc-panel h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
     .calc-panel .panel-sub { font-size: 0.78rem; color: var(--light); margin-bottom: 16px; }
 
-    .qty-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .qty-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; justify-content: center; }
     .qty-btn {
       padding: 7px 14px; border-radius: 8px;
       border: 1.5px solid var(--border);
@@ -358,7 +358,7 @@
   <div class="section-inner">
     <p class="section-label">价格</p>
     <h2 class="section-title">选择套餐</h2>
-    <p class="section-sub">按周量计费，按月结算，随时可取消。</p>
+    <p class="section-sub">按数量计费，选多少付多少。</p>
 
     <div class="pkg-tabs">
       <button class="pkg-tab active" onclick="setTab('combined', event)">帖子 + 评论</button>
@@ -401,11 +401,11 @@
 
     <div class="price-box" id="price-box">
       <div class="price-left">
-        <div class="price-label">月度费用</div>
-        <div class="price-main" id="price-monthly">¥ —<span>/月</span></div>
+        <div class="price-label">订单费用</div>
+        <div class="price-main" id="price-total">¥ —</div>
       </div>
       <div class="price-right">
-        <div class="price-weekly" id="price-weekly">请选择套餐</div>
+        <div class="price-weekly" id="price-breakdown">请选择套餐</div>
       </div>
     </div>
     <div class="price-error" id="price-error"></div>
@@ -605,8 +605,8 @@
 
   function updatePrice() {
     const errEl = document.getElementById('price-error');
-    const monthlyEl = document.getElementById('price-monthly');
-    const weeklyEl = document.getElementById('price-weekly');
+    const totalEl = document.getElementById('price-total');
+    const breakdownEl = document.getElementById('price-breakdown');
     const submitBtn = document.getElementById('submit-btn');
     const summaryPkg = document.getElementById('summary-pkg');
     const summaryPrice = document.getElementById('summary-price');
@@ -620,8 +620,8 @@
     const c = needsComments ? selectedComments : 0;
 
     if ((needsPosts && p === 0) || (needsComments && c === 0)) {
-      monthlyEl.innerHTML = '¥ —<span>/月</span>';
-      weeklyEl.textContent = '请选择套餐';
+      totalEl.innerHTML = '¥ —';
+      breakdownEl.textContent = '请选择套餐';
       submitBtn.disabled = true;
       summaryPkg.textContent = '未选择套餐';
       summaryPrice.textContent = '—';
@@ -630,12 +630,13 @@
       return;
     }
 
-    const weekly = p * postPrice(p) + c * commentPrice(c);
-    const monthly = Math.round(weekly * 4.33);
+    const postTotal = p * postPrice(p);
+    const commentTotal = c * commentPrice(c);
+    const total = postTotal + commentTotal;
 
     const accounts = Math.max(Math.ceil(p / 7), Math.ceil(c / 49), 1);
     const infraCost = accounts * 218 + 725;
-    const margin = (monthly - infraCost) / monthly;
+    const margin = (total * 4.33 - infraCost) / (total * 4.33);
     if (margin < 0.70) {
       errEl.textContent = '当前组合低于最低起订量，请增加数量后再试。';
       errEl.classList.add('visible');
@@ -644,17 +645,26 @@
     }
 
     const fmt = n => n.toLocaleString('zh-CN');
-    monthlyEl.innerHTML = '¥' + fmt(monthly) + '<span>/月</span>';
-    weeklyEl.innerHTML = '周费用：<strong>¥' + fmt(weekly) + '</strong>';
+    totalEl.innerHTML = '¥' + fmt(total);
+
+    let breakdown = '';
+    if (needsPosts && needsComments) {
+      breakdown = p + '篇 × ¥' + postPrice(p) + ' + ' + c + '条 × ¥' + commentPrice(c);
+    } else if (needsPosts) {
+      breakdown = p + '篇 × ¥' + postPrice(p) + '/篇';
+    } else {
+      breakdown = c + '条 × ¥' + commentPrice(c) + '/条';
+    }
+    breakdownEl.innerHTML = breakdown;
 
     let pkgDesc = '';
-    if (needsPosts && needsComments) pkgDesc = p + ' 篇帖子 + ' + c + ' 条评论/周';
-    else if (needsPosts) pkgDesc = p + ' 篇帖子/周';
-    else pkgDesc = c + ' 条评论/周';
+    if (needsPosts && needsComments) pkgDesc = p + ' 篇帖子 + ' + c + ' 条评论';
+    else if (needsPosts) pkgDesc = p + ' 篇帖子';
+    else pkgDesc = c + ' 条评论';
 
     summaryPkg.textContent = pkgDesc;
-    summaryPrice.textContent = '¥' + fmt(monthly) + '/月';
-    btnAmount.textContent = '¥' + fmt(monthly);
+    summaryPrice.textContent = '¥' + fmt(total);
+    btnAmount.textContent = '¥' + fmt(total);
     submitBtn.disabled = false;
 
     updateTierTable(needsPosts ? postTierKey(p) : null, needsComments ? commentTierKey(c) : null);
@@ -674,8 +684,7 @@
     const needsComments = currentTab === 'combined' || currentTab === 'comments';
     const p = needsPosts ? selectedPosts : 0;
     const c = needsComments ? selectedComments : 0;
-    const weekly = p * postPrice(p) + c * commentPrice(c);
-    const monthly = Math.round(weekly * 4.33);
+    const total = p * postPrice(p) + c * commentPrice(c);
 
     const data = {
       name: document.getElementById('fname').value,
@@ -686,7 +695,7 @@
       package_type: currentTab,
       posts_qty: p,
       comments_qty: c,
-      monthly_price: monthly
+      order_price: total
     };
 
     const btn = document.querySelector('.submit-btn');
