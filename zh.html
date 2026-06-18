@@ -563,7 +563,7 @@
   function selectPosts(qty) {
     selectedPosts = (selectedPosts === qty) ? 0 : qty;
     document.querySelectorAll('#posts-btns .qty-btn').forEach(b => {
-      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === qty);
+      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === selectedPosts);
     });
     const tierEl = document.getElementById('posts-tier');
     tierEl.style.display = 'inline-block';
@@ -574,7 +574,7 @@
   function selectComments(qty) {
     selectedComments = (selectedComments === qty) ? 0 : qty;
     document.querySelectorAll('#comments-btns .qty-btn').forEach(b => {
-      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === qty);
+      b.classList.toggle('selected', parseInt(b.querySelector('.qty-num').textContent) === selectedComments);
     });
     const tierEl = document.getElementById('comments-tier');
     tierEl.style.display = 'inline-block';
