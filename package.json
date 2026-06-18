@@ -1,0 +1,9 @@
+{
+  "name": "kaus-site",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "nodemailer": "^6.9.14",
+    "stripe": "^14.25.0"
+  }
+}
