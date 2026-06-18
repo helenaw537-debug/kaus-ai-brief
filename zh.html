@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ThreadSignal — Reddit 代发 & 代运营</title>
+  <title>Kaus — Reddit 代发 & 代运营</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -144,14 +144,15 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
 
-    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    @media (max-width: 640px) { .calc-grid { grid-template-columns: 1fr; } }
+    .calc-grid { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; }
+    @media (max-width: 640px) { .calc-grid { flex-direction: column; } }
 
     .calc-panel {
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 24px;
+      flex: 1 1 280px; max-width: 420px;
     }
     .calc-panel h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
     .calc-panel .panel-sub { font-size: 0.78rem; color: var(--light); margin-bottom: 16px; }
@@ -307,7 +308,7 @@
 
 <!-- NAV -->
 <nav>
-  <span class="nav-logo">ThreadSignal</span>
+  <span class="nav-logo">Kaus</span>
   <div class="nav-right">
     <a href="index.html" class="nav-lang">EN</a>
     <a href="#order" class="nav-cta">提交需求</a>
@@ -337,7 +338,7 @@
       <div class="step-card">
         <div class="step-num">2</div>
         <h4>填写内容表格</h4>
-        <p>收到内容确认表格后回复，告知品牌介绍、目标受众、发帖 & 评论方向。我们生成内容样本供你确认后正式开始。</p>
+        <p>直接发给我们你想发的内容，以及目标版块地址，我们按你提供的内容执行，不改动、不代写。</p>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
@@ -513,7 +514,7 @@
 </section>
 
 <footer>
-  © 2026 ThreadSignal · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a> · <a href="index.html" style="color:inherit">English</a>
+  © 2026 Kaus · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a> · <a href="index.html" style="color:inherit">English</a>
 </footer>
 
 <script>
