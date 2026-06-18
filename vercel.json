@@ -6,7 +6,9 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/content", "dest": "/content.html" },
     { "src": "/checkout", "dest": "/checkout.html" },
+    { "src": "/zh", "dest": "/zh.html" },
     { "src": "/", "dest": "/index.html" }
   ]
 }

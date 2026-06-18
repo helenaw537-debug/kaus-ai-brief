@@ -338,7 +338,7 @@
       <div class="step-card">
         <div class="step-num">2</div>
         <h4>填写内容表格</h4>
-        <p>直接发给我们你想发的内容，以及目标版块地址，我们按你提供的内容执行，不改动、不代写。</p>
+        <p>直接发给我们你想发的内容，以及目标版块地址，我们按你提供的内容执行。</p>
       </div>
       <div class="step-card">
         <div class="step-num">3</div>
@@ -497,10 +497,10 @@
           </div>
 
           <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            <span>提交需求</span>
+            <span>提交订单 — 跳转支付</span>
             <span class="btn-amount" id="btn-amount"></span>
           </button>
-          <p class="form-note">提交后24小时内回复 · 正式开始前确认所有内容</p>
+          <p class="form-note">付款后自动发送内容填写链接 · 支持微信/支付宝联系</p>
         </form>
       </div>
 
@@ -701,29 +701,25 @@
 
     const btn = document.querySelector('.submit-btn');
     btn.disabled = true;
-    btn.textContent = '提交中…';
+    btn.textContent = '跳转支付…';
 
-    fetch('https://formsubmit.co/ajax/helena.w537@gmail.com', {
+    fetch('/api/create-checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: `新订单 — ${data.company} (${data.package_type})`,
-        _template: 'table',
-        ...data
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     })
     .then(r => r.json())
-    .then(() => {
-      document.getElementById('order-form-wrap').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
+    .then(res => {
+      if (res.url) {
+        window.location.href = res.url;
+      } else {
+        throw new Error(res.error || 'Checkout error');
+      }
     })
-    .catch(() => {
-      document.getElementById('order-form-wrap').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
-    })
-    .finally(() => {
+    .catch(err => {
+      alert('支付跳转失败，请稍后重试: ' + err.message);
       btn.disabled = false;
-      btn.textContent = '提交需求';
+      btn.textContent = '提交订单';
     });
   }
 

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaus — 填写发帖内容</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #D13239;
+      --red-light: #FFF0F0;
+      --bg: #FAFAFA;
+      --border: #E5E5E5;
+      --text: #111;
+      --muted: #777;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Geist', system-ui, sans-serif;
+      background: #fff;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px); z-index: 10;
+    }
+    .nav-logo { font-weight: 600; font-size: 17px; letter-spacing: -0.3px; }
+    .nav-status {
+      font-size: 13px; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #22c55e; flex-shrink: 0;
+    }
+
+    /* MAIN */
+    main {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ORDER SUMMARY */
+    .order-summary {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .order-summary-left { }
+    .order-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .order-pkg { font-weight: 600; font-size: 16px; }
+    .order-price { font-size: 22px; font-weight: 700; color: var(--red); }
+
+    /* PAGE HEADER */
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-size: 24px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .page-header p { color: var(--muted); font-size: 15px; }
+
+    /* SECTION */
+    .section {
+      margin-bottom: 32px;
+    }
+    .section-title {
+      font-size: 13px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .field-group { display: flex; flex-direction: column; gap: 12px; }
+
+    label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+    .field-hint { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(209,50,57,0.08);
+    }
+    textarea.content-area {
+      min-height: 160px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    textarea.subreddit-area { min-height: 100px; }
+    textarea.direction-area { min-height: 80px; }
+
+    /* PASTE BUTTON */
+    .paste-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .paste-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 5px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .paste-btn:hover { border-color: var(--red); color: var(--red); }
+    .paste-btn.pasted { border-color: #22c55e; color: #22c55e; }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+    /* SUBMIT */
+    .submit-area { margin-top: 32px; }
+    .submit-btn {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px 24px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .submit-btn:hover:not(:disabled) { background: #C4282F; }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .submit-note { font-size: 12px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+    /* SUCCESS */
+    #success-screen {
+      display: none;
+      text-align: center;
+      padding: 60px 24px;
+    }
+    .success-icon { font-size: 48px; margin-bottom: 16px; }
+    .success-title { font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+    .success-sub { color: var(--muted); }
+
+    /* LOADING */
+    #loading-screen {
+      text-align: center;
+      padding: 80px 24px;
+      color: var(--muted);
+    }
+
+    /* ERROR */
+    #error-screen {
+      display: none;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    #error-screen p { color: var(--muted); }
+
+    @media (max-width: 480px) {
+      nav { padding: 14px 16px; }
+      main { padding: 24px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">Kaus</span>
+  <div class="nav-status">
+    <span class="status-dot"></span>
+    <span id="nav-status-text">正在加载订单…</span>
+  </div>
+</nav>
+
+<main>
+
+  <!-- Loading -->
+  <div id="loading-screen">
+    <p>加载订单中…</p>
+  </div>
+
+  <!-- Error -->
+  <div id="error-screen">
+    <p id="error-msg">订单不存在或链接已失效。</p>
+  </div>
+
+  <!-- Main form -->
+  <div id="content-form-wrap" style="display:none">
+
+    <div class="order-summary">
+      <div class="order-summary-left">
+        <div class="order-label">你的订单</div>
+        <div class="order-pkg" id="order-pkg-desc">—</div>
+      </div>
+      <div class="order-price" id="order-price-disp">¥—</div>
+    </div>
+
+    <div class="page-header">
+      <h1>填写发帖内容</h1>
+      <p>把你要发的内容直接粘贴进来，我们的算法自动匹配账号开始发帖。</p>
+    </div>
+
+    <form id="content-form" onsubmit="handleSubmit(event)">
+
+      <!-- POSTS SECTION -->
+      <div class="section" id="posts-section" style="display:none">
+        <div class="section-title">📄 帖子内容</div>
+        <div class="field-group">
+          <div>
+            <div class="paste-row">
+              <label for="post-content">帖子正文</label>
+              <button type="button" class="paste-btn" onclick="pasteToField('post-content', this)">
+                📋 一键粘贴
+              </button>
+            </div>
+            <p class="field-hint">多篇帖子之间用 <code>---</code> 分隔，一次全部粘贴进来。</p>
+            <textarea
+              id="post-content"
+              name="post_content"
+              class="content-area"
+              placeholder="在此粘贴帖子内容&#10;&#10;第一篇帖子…&#10;&#10;---&#10;&#10;第二篇帖子…"
+            ></textarea>
+          </div>
+
+          <div>
+            <div class="paste-row">
+              <label for="subreddits">目标版块</label>
+              <button type="button" class="paste-btn" onclick="pasteToField('subreddits', this)">
+                📋 一键粘贴
+              </button>
+            </div>
+            <p class="field-hint">每行一个版块名，例如 <code>r/SaaS</code>，或直接粘贴 Reddit URL。</p>
+            <textarea
+              id="subreddits"
+              name="subreddits"
+              class="subreddit-area"
+              placeholder="r/SaaS&#10;r/entrepreneur&#10;r/smallbusiness"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <hr class="divider" id="section-divider" style="display:none" />
+
+      <!-- COMMENTS SECTION -->
+      <div class="section" id="comments-section" style="display:none">
+        <div class="section-title">💬 评论目标</div>
+        <div class="field-group">
+          <div>
+            <div class="paste-row">
+              <label for="comment-targets">目标帖子链接</label>
+              <button type="button" class="paste-btn" onclick="pasteToField('comment-targets', this)">
+                📋 一键粘贴
+              </button>
+            </div>
+            <p class="field-hint">每行一个 Reddit 帖子 URL，我们在这些帖子下评论。</p>
+            <textarea
+              id="comment-targets"
+              name="comment_targets"
+              class="subreddit-area"
+              placeholder="https://www.reddit.com/r/SaaS/comments/abc123/...&#10;https://www.reddit.com/r/SEO/comments/def456/..."
+            ></textarea>
+          </div>
+
+          <div>
+            <label for="comment-direction">评论方向 <span style="font-weight:400;color:#999">（选填）</span></label>
+            <p class="field-hint">说明你希望评论传达的核心信息或关键点，算法会据此生成自然评论。</p>
+            <textarea
+              id="comment-direction"
+              name="comment_direction"
+              class="direction-area"
+              placeholder="例如：主要强调我们的 AI 搜索可见性服务，不要直接推销，以经验分享角度切入。"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-area">
+        <button type="submit" class="submit-btn" id="submit-btn">🚀 提交内容，开始发帖</button>
+        <p class="submit-note">提交后 24 小时内开始发帖 · 每日邮件报告</p>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Success -->
+  <div id="success-screen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">内容已收到，开始发帖！</div>
+    <p class="success-sub">我们的算法正在匹配账号，24小时内开始发帖。<br/>每日进度报告会发送到你的邮箱。</p>
+  </div>
+
+</main>
+
+<script>
+  const TOKEN = new URLSearchParams(window.location.search).get('token');
+  let orderData = null;
+
+  // Load order on page load
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!TOKEN) {
+      showError('链接无效，缺少订单 token。');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/get-order?token=${encodeURIComponent(TOKEN)}`);
+      if (!res.ok) throw new Error('not found');
+      orderData = await res.json();
+    } catch {
+      showError('订单不存在或链接已失效。请联系我们获取新链接。');
+      return;
+    }
+
+    if (orderData.status === 'ready' || orderData.status === 'processing' || orderData.status === 'completed') {
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      return;
+    }
+
+    renderForm(orderData);
+  });
+
+  function renderForm(order) {
+    // Order summary
+    const needsPosts = order.package_type === 'combined' || order.package_type === 'posts';
+    const needsComments = order.package_type === 'combined' || order.package_type === 'comments';
+
+    let pkgDesc = '';
+    if (order.package_type === 'combined') pkgDesc = `${order.posts_qty} 篇帖子 + ${order.comments_qty} 条评论`;
+    else if (order.package_type === 'posts') pkgDesc = `${order.posts_qty} 篇帖子`;
+    else pkgDesc = `${order.comments_qty} 条评论`;
+
+    document.getElementById('order-pkg-desc').textContent = pkgDesc;
+    document.getElementById('order-price-disp').textContent = '¥' + Number(order.order_price).toLocaleString('zh-CN');
+    document.getElementById('nav-status-text').textContent = '订单已确认';
+
+    // Show/hide sections
+    if (needsPosts) document.getElementById('posts-section').style.display = 'block';
+    if (needsComments) document.getElementById('comments-section').style.display = 'block';
+    if (needsPosts && needsComments) document.getElementById('section-divider').style.display = 'block';
+
+    // Show form
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('content-form-wrap').style.display = 'block';
+  }
+
+  // One-click paste
+  async function pasteToField(fieldId, btn) {
+    try {
+      const text = await navigator.clipboard.readText();
+      document.getElementById(fieldId).value = text;
+      btn.textContent = '✅ 已粘贴';
+      btn.classList.add('pasted');
+      setTimeout(() => {
+        btn.textContent = '📋 一键粘贴';
+        btn.classList.remove('pasted');
+      }, 2000);
+    } catch {
+      // Clipboard API not available (e.g. HTTP) — focus field so user can Ctrl+V
+      document.getElementById(fieldId).focus();
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '提交中…';
+
+    const needsPosts = orderData.package_type === 'combined' || orderData.package_type === 'posts';
+    const needsComments = orderData.package_type === 'combined' || orderData.package_type === 'comments';
+
+    // Validation
+    if (needsPosts && !document.getElementById('post-content').value.trim()) {
+      alert('请填写帖子内容再提交。');
+      btn.disabled = false;
+      btn.textContent = '🚀 提交内容，开始发帖';
+      return;
+    }
+    if (needsComments && !document.getElementById('comment-targets').value.trim()) {
+      alert('请填写评论目标帖子链接再提交。');
+      btn.disabled = false;
+      btn.textContent = '🚀 提交内容，开始发帖';
+      return;
+    }
+
+    const payload = {
+      token: TOKEN,
+      post_content: needsPosts ? document.getElementById('post-content').value.trim() : null,
+      subreddits: needsPosts ? document.getElementById('subreddits').value.trim() : null,
+      comment_targets: needsComments ? document.getElementById('comment-targets').value.trim() : null,
+      comment_direction: needsComments ? document.getElementById('comment-direction').value.trim() : null,
+    };
+
+    try {
+      const res = await fetch('/api/submit-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Submit failed');
+
+      document.getElementById('content-form-wrap').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+    } catch (err) {
+      alert('提交失败，请重试: ' + err.message);
+      btn.disabled = false;
+      btn.textContent = '🚀 提交内容，开始发帖';
+    }
+  }
+
+  function showError(msg) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('error-msg').textContent = msg;
+    document.getElementById('error-screen').style.display = 'block';
+    document.getElementById('nav-status-text').textContent = '链接无效';
+  }
+</script>
+</body>
+</html>
