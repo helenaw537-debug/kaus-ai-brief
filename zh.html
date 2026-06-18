@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ThreadSignal — Reddit Presence for AI Search Visibility</title>
+  <title>ThreadSignal — Reddit 代发 & 代运营</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -14,7 +14,6 @@
       --red-light: #FF6B6B;
       --red-pale: #FFF0F0;
       --red-border: #FFCDD0;
-      --pink: #FF8FA3;
       --dark: #1A1A1A;
       --mid: #555;
       --light: #888;
@@ -27,7 +26,7 @@
     }
 
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
       background: var(--white);
       color: var(--dark);
       line-height: 1.6;
@@ -44,6 +43,12 @@
       height: 60px;
     }
     .nav-logo { font-weight: 800; font-size: 1.15rem; color: var(--red); letter-spacing: -0.5px; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-lang {
+      font-size: 0.8rem; color: var(--light);
+      text-decoration: none; font-weight: 500;
+    }
+    .nav-lang:hover { color: var(--red); }
     .nav-cta {
       background: var(--red); color: #fff;
       border: none; border-radius: 8px;
@@ -58,24 +63,20 @@
       padding: 80px 5% 60px;
       text-align: center;
     }
-    .hero-badge {
-      display: inline-block;
-      background: var(--red-pale); color: var(--red);
-      border: 1px solid var(--red-border);
-      border-radius: 100px; padding: 5px 14px;
-      font-size: 0.78rem; font-weight: 600;
-      margin-bottom: 24px; letter-spacing: 0.3px;
-    }
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      font-weight: 800; line-height: 1.15;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 800; line-height: 1.2;
       letter-spacing: -1px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
     .hero h1 span { color: var(--red); }
-    .hero p {
-      font-size: 1.05rem; color: var(--mid);
-      max-width: 580px; margin: 0 auto 32px;
+    .hero-sub {
+      font-size: 1rem; color: var(--mid);
+      margin-bottom: 12px;
+    }
+    .hero-service {
+      font-size: 0.88rem; color: var(--light);
+      margin-bottom: 36px;
     }
     .hero-cta {
       display: inline-block;
@@ -86,19 +87,6 @@
     }
     .hero-cta:hover { background: #C4282F; }
 
-    /* ── STATS ── */
-    .stats {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      padding: 32px 5%;
-      display: flex; justify-content: center; gap: 60px;
-      flex-wrap: wrap;
-    }
-    .stat-item { text-align: center; }
-    .stat-num { font-size: 1.75rem; font-weight: 800; color: var(--red); }
-    .stat-label { font-size: 0.8rem; color: var(--light); margin-top: 2px; }
-
     /* ── SECTION WRAPPER ── */
     section { padding: 64px 5%; }
     .section-inner { max-width: 900px; margin: 0 auto; }
@@ -108,11 +96,29 @@
       margin-bottom: 10px;
     }
     .section-title {
-      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
       font-weight: 800; letter-spacing: -0.5px;
       margin-bottom: 6px;
     }
     .section-sub { color: var(--mid); font-size: 0.95rem; margin-bottom: 40px; }
+
+    /* ── PROCESS STEPS ── */
+    #process { background: var(--bg); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .step-card {
+      background: var(--white);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; position: relative;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--red-pale); color: var(--red);
+      font-size: 0.85rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .step-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .step-card p { font-size: 0.83rem; color: var(--mid); line-height: 1.55; }
 
     /* ── PRICING CALCULATOR ── */
     #pricing { background: var(--white); }
@@ -147,22 +153,12 @@
       border-radius: var(--radius);
       padding: 24px;
     }
-    .calc-panel h4 {
-      font-size: 0.9rem; font-weight: 700;
-      margin-bottom: 6px; color: var(--dark);
-    }
-    .calc-panel .panel-sub {
-      font-size: 0.78rem; color: var(--light);
-      margin-bottom: 16px;
-    }
+    .calc-panel h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; color: var(--dark); }
+    .calc-panel .panel-sub { font-size: 0.78rem; color: var(--light); margin-bottom: 16px; }
 
-    .qty-grid {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-bottom: 16px;
-    }
+    .qty-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
     .qty-btn {
-      padding: 7px 14px;
-      border-radius: 8px;
+      padding: 7px 14px; border-radius: 8px;
       border: 1.5px solid var(--border);
       background: var(--white);
       font-size: 0.82rem; font-weight: 600;
@@ -185,10 +181,8 @@
     }
 
     .price-box {
-      background: var(--dark);
-      color: var(--white);
-      border-radius: var(--radius);
-      padding: 24px;
+      background: var(--dark); color: var(--white);
+      border-radius: var(--radius); padding: 24px;
       margin-top: 24px;
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 16px;
@@ -207,7 +201,6 @@
     }
     .price-error.visible { display: block; }
 
-    /* Tier table */
     .tier-table { width: 100%; border-collapse: collapse; margin-top: 32px; font-size: 0.85rem; }
     .tier-table th {
       text-align: left; padding: 10px 14px;
@@ -235,8 +228,8 @@
       max-width: 640px; margin: 0 auto;
       box-shadow: var(--shadow);
     }
-    .order-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
-    .order-card .order-sub { color: var(--mid); font-size: 0.9rem; margin-bottom: 32px; }
+    .order-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+    .order-card .order-sub { color: var(--mid); font-size: 0.88rem; margin-bottom: 28px; }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
@@ -245,8 +238,7 @@
     .form-group.full { grid-column: 1 / -1; }
     .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--mid); }
     .form-group input,
-    .form-group textarea,
-    .form-group select {
+    .form-group textarea {
       padding: 10px 14px;
       border: 1.5px solid var(--border);
       border-radius: 8px;
@@ -257,8 +249,7 @@
       resize: vertical;
     }
     .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
+    .form-group textarea:focus {
       outline: none; border-color: var(--red);
     }
     .form-group textarea { min-height: 110px; }
@@ -288,10 +279,7 @@
 
     .form-note { font-size: 0.75rem; color: var(--light); text-align: center; margin-top: 12px; }
 
-    /* Success screen */
-    .success-screen {
-      display: none; text-align: center; padding: 32px 0;
-    }
+    .success-screen { display: none; text-align: center; padding: 32px 0; }
     .success-screen .check {
       width: 56px; height: 56px; border-radius: 50%;
       background: #DCFCE7; color: var(--green);
@@ -301,56 +289,6 @@
     .success-screen h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
     .success-screen p { color: var(--mid); font-size: 0.9rem; }
 
-    /* ── PROCESS ── */
-    #process { background: var(--white); }
-    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
-    .step-card {
-      border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 24px; position: relative;
-    }
-    .step-num {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--red-pale); color: var(--red);
-      font-size: 0.85rem; font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 14px;
-    }
-    .step-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
-    .step-card p { font-size: 0.83rem; color: var(--mid); }
-
-    /* ── FAQ ── */
-    #faq { background: var(--bg); }
-    .faq-list { display: flex; flex-direction: column; gap: 4px; }
-    .faq-item {
-      border: 1px solid var(--border); border-radius: 10px;
-      background: var(--white); overflow: hidden;
-    }
-    .faq-q {
-      padding: 16px 20px; font-size: 0.92rem; font-weight: 600;
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      user-select: none;
-    }
-    .faq-q::after { content: '+'; font-size: 1.2rem; color: var(--light); transition: transform 0.2s; }
-    .faq-item.open .faq-q::after { transform: rotate(45deg); }
-    .faq-a { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
-    .faq-item.open .faq-a { max-height: 300px; padding: 0 20px 16px; }
-    .faq-a p { font-size: 0.87rem; color: var(--mid); }
-
-    /* ── CTA BANNER ── */
-    .cta-banner {
-      background: var(--dark); color: #fff;
-      padding: 60px 5%; text-align: center;
-    }
-    .cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin-bottom: 10px; }
-    .cta-banner p { color: #aaa; margin-bottom: 28px; }
-    .cta-banner a {
-      background: var(--red); color: #fff;
-      border-radius: 10px; padding: 14px 36px;
-      font-size: 1rem; font-weight: 700;
-      text-decoration: none; display: inline-block;
-    }
-    .cta-banner a:hover { background: #C4282F; }
-
     footer {
       border-top: 1px solid var(--border);
       padding: 24px 5%;
@@ -358,9 +296,7 @@
       font-size: 0.8rem; color: var(--light);
     }
 
-    /* Responsive */
     @media (max-width: 640px) {
-      .stats { gap: 32px; }
       .order-card { padding: 24px; }
       .pkg-tabs { width: 100%; justify-content: stretch; }
       .pkg-tab { flex: 1; text-align: center; }
@@ -372,61 +308,68 @@
 <!-- NAV -->
 <nav>
   <span class="nav-logo">ThreadSignal</span>
-  <div style="display:flex;align-items:center;gap:16px;">
-    <a href="zh.html" style="font-size:0.8rem;color:#888;text-decoration:none;font-weight:500;">中文</a>
-    <a href="#order" class="nav-cta">Get Started</a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-lang">EN</a>
+    <a href="#order" class="nav-cta">提交需求</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <span class="hero-badge">Done-For-You · Reddit Presence · AI Citation</span>
-  <h1>Your brand cited in <span>ChatGPT & Perplexity</span>.<br>We make it happen on Reddit.</h1>
-  <p>ThreadSignal runs authentic Reddit posts and comments at scale — so AI engines find your brand when buyers search.</p>
-  <a href="#pricing" class="hero-cta">See Pricing →</a>
+  <h1>Reddit <span>代发</span> & <span>代运营</span></h1>
+  <p class="hero-sub">代发 Reddit · Reddit 账号代运营</p>
+  <p class="hero-service">自动发帖 · 多账号管理 · 真人语气评论<br>通过算法降低封号删帖风险</p>
+  <a href="#pricing" class="hero-cta">查看报价 →</a>
 </div>
 
-<!-- STATS -->
-<div class="stats">
-  <div class="stat-item">
-    <div class="stat-num">46.7%</div>
-    <div class="stat-label">of Perplexity citations come from Reddit</div>
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-inner">
+    <p class="section-label">合作流程</p>
+    <h2 class="section-title">四步开始</h2>
+    <p class="section-sub">下单后48小时内启动，首周即可看到发帖动态。</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>下单</h4>
+        <p>选择套餐，填写需求表单，提交订单。收到确认邮件后点击激活链接。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>填写内容表格</h4>
+        <p>收到内容确认表格后回复，告知品牌介绍、目标受众、发帖 & 评论方向。我们生成内容样本供你确认后正式开始。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>发帖执行</h4>
+        <p>账号预热完成后开始批量发帖 & 评论，多账号轮换，规避风控，真人语气输出。</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h4>每日报告</h4>
+        <p>每天发送发帖 & 评论状态汇报，附 Reddit 直链，随时可查看每条内容的真实动态。</p>
+      </div>
+    </div>
   </div>
-  <div class="stat-item">
-    <div class="stat-num">6 wks</div>
-    <div class="stat-label">avg. time to first AI citation</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">0→40%</div>
-    <div class="stat-label">AI citation lift for clients</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">¥0 extra</div>
-    <div class="stat-label">no retainer, no hidden fees</div>
-  </div>
-</div>
+</section>
 
 <!-- PRICING CALCULATOR -->
 <section id="pricing">
   <div class="section-inner">
-    <p class="section-label">Pricing</p>
-    <h2 class="section-title">Pick your package</h2>
-    <p class="section-sub">Fixed weekly volume. Monthly billing. Cancel anytime.</p>
+    <p class="section-label">价格</p>
+    <h2 class="section-title">选择套餐</h2>
+    <p class="section-sub">按周量计费，按月结算，随时可取消。</p>
 
-    <!-- Package tabs -->
     <div class="pkg-tabs">
-      <button class="pkg-tab active" onclick="setTab('combined')">Posts + Comments</button>
-      <button class="pkg-tab" onclick="setTab('posts')">Posts Only</button>
-      <button class="pkg-tab" onclick="setTab('comments')">Comments Only</button>
+      <button class="pkg-tab active" onclick="setTab('combined', event)">帖子 + 评论</button>
+      <button class="pkg-tab" onclick="setTab('posts', event)">仅发帖</button>
+      <button class="pkg-tab" onclick="setTab('comments', event)">仅评论</button>
     </div>
 
-    <!-- Calculator panels -->
     <div class="calc-grid">
-
-      <!-- Posts panel -->
       <div class="calc-panel" id="posts-panel">
-        <h4>📝 Posts</h4>
-        <p class="panel-sub">Original Reddit posts in relevant subreddits</p>
+        <h4>📝 帖子（每周）</h4>
+        <p class="panel-sub">在相关版块发布原创帖子</p>
         <div class="qty-grid" id="posts-btns">
           <button class="qty-btn" onclick="selectPosts(5)">5</button>
           <button class="qty-btn" onclick="selectPosts(10)">10</button>
@@ -440,10 +383,9 @@
         <div id="posts-tier" class="tier-badge" style="display:none"></div>
       </div>
 
-      <!-- Comments panel -->
       <div class="calc-panel" id="comments-panel">
-        <h4>💬 Comments</h4>
-        <p class="panel-sub">Targeted replies in high-traffic threads</p>
+        <h4>💬 评论（每周）</h4>
+        <p class="panel-sub">在高流量帖子下精准回复</p>
         <div class="qty-grid" id="comments-btns">
           <button class="qty-btn" onclick="selectComments(40)">40</button>
           <button class="qty-btn" onclick="selectComments(80)">80</button>
@@ -457,47 +399,45 @@
       </div>
     </div>
 
-    <!-- Price display -->
     <div class="price-box" id="price-box">
       <div class="price-left">
-        <div class="price-label">Monthly total</div>
-        <div class="price-main" id="price-monthly">¥ —<span>/mo</span></div>
+        <div class="price-label">月度费用</div>
+        <div class="price-main" id="price-monthly">¥ —<span>/月</span></div>
       </div>
       <div class="price-right">
-        <div class="price-weekly" id="price-weekly">Select a package above</div>
+        <div class="price-weekly" id="price-weekly">请选择套餐</div>
       </div>
     </div>
     <div class="price-error" id="price-error"></div>
 
-    <!-- Tier table -->
     <table class="tier-table">
       <thead>
         <tr>
-          <th>Tier</th>
-          <th>Posts</th>
-          <th>¥ / post</th>
-          <th>Comments</th>
-          <th>¥ / comment</th>
+          <th>档位</th>
+          <th>帖子</th>
+          <th>¥ / 篇</th>
+          <th>评论</th>
+          <th>¥ / 条</th>
         </tr>
       </thead>
       <tbody id="tier-tbody">
         <tr data-post-tier="starter" data-comment-tier="starter">
-          <td><span class="tier-badge-sm">Starter</span></td>
+          <td><span class="tier-badge-sm">入门</span></td>
           <td>5 – 10</td><td>¥80</td>
           <td>40</td><td>¥20</td>
         </tr>
         <tr data-post-tier="growth" data-comment-tier="growth">
-          <td><span class="tier-badge-sm">Growth</span></td>
+          <td><span class="tier-badge-sm">成长</span></td>
           <td>15 – 20</td><td>¥70</td>
           <td>80</td><td>¥17</td>
         </tr>
         <tr data-post-tier="scale" data-comment-tier="scale">
-          <td><span class="tier-badge-sm">Scale</span></td>
+          <td><span class="tier-badge-sm">规模</span></td>
           <td>25 – 30</td><td>¥60</td>
           <td>120</td><td>¥14</td>
         </tr>
         <tr data-post-tier="pro" data-comment-tier="pro">
-          <td><span class="tier-badge-sm">Pro</span></td>
+          <td><span class="tier-badge-sm">专业</span></td>
           <td>40+</td><td>¥50</td>
           <td>160+</td><td>¥11</td>
         </tr>
@@ -509,153 +449,78 @@
 <!-- ORDER FORM -->
 <section id="order">
   <div class="section-inner">
-    <p class="section-label">Get Started</p>
-    <h2 class="section-title">Place your order</h2>
-    <p class="section-sub">One-time upfront. Setup within 48h. First results in week 1.</p>
+    <p class="section-label">提交需求</p>
+    <h2 class="section-title">下单</h2>
+    <p class="section-sub">填写信息后，我们在24小时内与你确认。</p>
 
     <div class="order-card">
-      <h3>Start your Reddit presence</h3>
-      <p class="order-sub">Fill in your details and content brief — we'll handle everything else.</p>
+      <h3>提交需求</h3>
+      <p class="order-sub">填写基本信息和内容方向，其余由我们处理。</p>
 
       <div id="order-form-wrap">
         <form id="order-form" onsubmit="handleSubmit(event)">
           <div class="form-grid">
             <div class="form-group">
-              <label for="fname">Full name *</label>
-              <input type="text" id="fname" name="name" required placeholder="Your name">
+              <label for="fname">姓名 *</label>
+              <input type="text" id="fname" name="name" required placeholder="你的姓名">
             </div>
             <div class="form-group">
-              <label for="femail">Email *</label>
+              <label for="femail">邮箱 *</label>
               <input type="email" id="femail" name="email" required placeholder="you@company.com">
             </div>
             <div class="form-group">
-              <label for="fcompany">Company / Brand *</label>
-              <input type="text" id="fcompany" name="company" required placeholder="Acme Inc.">
+              <label for="fcompany">公司 / 品牌 *</label>
+              <input type="text" id="fcompany" name="company" required placeholder="品牌名称">
             </div>
             <div class="form-group">
-              <label for="fwechat">WeChat ID</label>
-              <input type="text" id="fwechat" name="wechat" placeholder="Optional — for onboarding">
+              <label for="fwechat">微信号</label>
+              <input type="text" id="fwechat" name="wechat" placeholder="选填，用于后续对接">
             </div>
 
             <div class="form-group full">
-              <label for="fbrief">Content brief *</label>
+              <label for="fbrief">内容简介 *</label>
               <textarea id="fbrief" name="content_brief" required
-                placeholder="Tell us about your brand:
-• What does your product do?
-• Who is your target audience?
-• Any specific subreddits you want to target?
-• Key messages, URLs, or talking points to include
-• Anything to avoid?"></textarea>
-              <span class="form-hint">This will be included in your confirmation email and used to set up your campaign.</span>
+                placeholder="告诉我们关于你的品牌：
+• 产品/服务是什么？
+• 目标受众是谁？
+• 想覆盖哪些 Reddit 版块？
+• 核心卖点、网站链接、关键词
+• 有什么需要避免提及的？"></textarea>
+              <span class="form-hint">提交后，我们会发送内容确认表格，正式开始前你可以审核所有内容。</span>
             </div>
           </div>
 
           <div class="order-summary-bar">
-            <span class="summary-pkg" id="summary-pkg">No package selected</span>
+            <span class="summary-pkg" id="summary-pkg">未选择套餐</span>
             <span class="summary-price" id="summary-price">—</span>
           </div>
 
           <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            <span>Proceed to Payment</span>
+            <span>提交需求</span>
             <span class="btn-amount" id="btn-amount"></span>
           </button>
-          <p class="form-note">🔒 Secure checkout via Stripe · WeChat Pay coming soon · One-time payment</p>
+          <p class="form-note">提交后24小时内回复 · 正式开始前确认所有内容</p>
         </form>
       </div>
 
       <div class="success-screen" id="success-screen">
         <div class="check">✓</div>
-        <h3>Order received!</h3>
-        <p>Check your email for a confirmation with your content brief.<br>We'll be in touch within 24 hours to kick things off.</p>
+        <h3>已收到</h3>
+        <p>24小时内联系你确认细节，<br>请留意邮箱及微信。</p>
       </div>
     </div>
   </div>
 </section>
-
-<!-- PROCESS -->
-<section id="process">
-  <div class="section-inner">
-    <p class="section-label">How it works</p>
-    <h2 class="section-title">Live in under a week</h2>
-    <p class="section-sub">You pay, we build. No Reddit account needed on your end.</p>
-    <div class="steps">
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <h4>Pick your package</h4>
-        <p>Choose post and comment volume. Submit your content brief and pay.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <h4>We set up your accounts</h4>
-        <p>Dedicated Reddit personas aligned to your niche. Warm-up period included.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <h4>Posts go live</h4>
-        <p>Your brand narrative enters high-traffic threads, naturally, at scale.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">4</div>
-        <h4>AI engines cite you</h4>
-        <p>ChatGPT, Perplexity, and Gemini start pulling Reddit as a source — your brand shows up.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq">
-  <div class="section-inner">
-    <p class="section-label">FAQ</p>
-    <h2 class="section-title">Common questions</h2>
-    <p class="section-sub" style="margin-bottom: 28px"></p>
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How quickly will I see results in AI search?</div>
-        <div class="faq-a"><p>Most clients see their first AI citation within 4–6 weeks. It depends on your niche, content quality, and posting volume. We target subreddits that AI engines actively index.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Are the posts and comments authentic?</div>
-        <div class="faq-a"><p>Yes. Every post and comment is crafted around your content brief and written to provide genuine value in context. We follow Reddit's community norms and never do spam-style posting.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What do I need to provide?</div>
-        <div class="faq-a"><p>Just the content brief in the order form: your brand story, product links, target audience, and any specific talking points. We handle the Reddit accounts, writing, scheduling, and posting.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is this a one-time or recurring payment?</div>
-        <div class="faq-a"><p>One-time upfront payment per month. You'll receive a renewal reminder before each new month. No automatic charges — you re-order when you're ready to continue.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How will I see the posts being made?</div>
-        <div class="faq-a"><p>We send a weekly report with direct links to every post and comment. You can view them publicly on Reddit at any time. A client dashboard with live links is coming soon.</p></div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What if I want to scale up mid-month?</div>
-        <div class="faq-a"><p>Contact us and we'll issue a top-up order for the remaining weeks. You only pay for what's delivered.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA BANNER -->
-<div class="cta-banner">
-  <h2>Ready to show up in AI search?</h2>
-  <p>Join brands already building Reddit presence for ChatGPT and Perplexity visibility.</p>
-  <a href="#order">Place Your Order →</a>
-</div>
 
 <footer>
-  © 2026 ThreadSignal · Powered by Kaus AI · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a>
+  © 2026 ThreadSignal · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a> · <a href="index.html" style="color:inherit">English</a>
 </footer>
 
 <script>
-  // ── State ──
   let currentTab = 'combined';
   let selectedPosts = 0;
   let selectedComments = 0;
 
-  // ── Pricing logic ──
   function postPrice(p) {
     if (p <= 10) return 80;
     if (p <= 20) return 70;
@@ -669,30 +534,40 @@
     return 11;
   }
   function postTierName(p) {
-    if (p <= 10) return 'Starter';
-    if (p <= 20) return 'Growth';
-    if (p <= 30) return 'Scale';
-    return 'Pro';
+    if (p <= 10) return '入门';
+    if (p <= 20) return '成长';
+    if (p <= 30) return '规模';
+    return '专业';
+  }
+  function postTierKey(p) {
+    if (p <= 10) return 'starter';
+    if (p <= 20) return 'growth';
+    if (p <= 30) return 'scale';
+    return 'pro';
   }
   function commentTierName(c) {
-    if (c <= 40) return 'Starter';
-    if (c <= 80) return 'Growth';
-    if (c <= 120) return 'Scale';
-    return 'Pro';
+    if (c <= 40) return '入门';
+    if (c <= 80) return '成长';
+    if (c <= 120) return '规模';
+    return '专业';
+  }
+  function commentTierKey(c) {
+    if (c <= 40) return 'starter';
+    if (c <= 80) return 'growth';
+    if (c <= 120) return 'scale';
+    return 'pro';
   }
 
-  // ── Tab switching ──
-  function setTab(tab) {
+  function setTab(tab, e) {
     currentTab = tab;
     selectedPosts = 0;
     selectedComments = 0;
     document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('selected'));
     document.querySelectorAll('.pkg-tab').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    if (e && e.target) e.target.classList.add('active');
 
     const postsPanel = document.getElementById('posts-panel');
     const commentsPanel = document.getElementById('comments-panel');
-
     if (tab === 'combined') {
       postsPanel.style.display = '';
       commentsPanel.style.display = '';
@@ -713,7 +588,7 @@
     });
     const tierEl = document.getElementById('posts-tier');
     tierEl.style.display = 'inline-block';
-    tierEl.textContent = postTierName(qty) + ' · ¥' + postPrice(qty) + '/post';
+    tierEl.textContent = postTierName(qty) + ' · ¥' + postPrice(qty) + '/篇';
     updatePrice();
   }
 
@@ -724,7 +599,7 @@
     });
     const tierEl = document.getElementById('comments-tier');
     tierEl.style.display = 'inline-block';
-    tierEl.textContent = commentTierName(qty) + ' · ¥' + commentPrice(qty) + '/comment';
+    tierEl.textContent = commentTierName(qty) + ' · ¥' + commentPrice(qty) + '/条';
     updatePrice();
   }
 
@@ -741,15 +616,14 @@
 
     const needsPosts = currentTab === 'combined' || currentTab === 'posts';
     const needsComments = currentTab === 'combined' || currentTab === 'comments';
-
     const p = needsPosts ? selectedPosts : 0;
     const c = needsComments ? selectedComments : 0;
 
     if ((needsPosts && p === 0) || (needsComments && c === 0)) {
-      monthlyEl.innerHTML = '¥ —<span>/mo</span>';
-      weeklyEl.textContent = 'Select a package above';
+      monthlyEl.innerHTML = '¥ —<span>/月</span>';
+      weeklyEl.textContent = '请选择套餐';
       submitBtn.disabled = true;
-      summaryPkg.textContent = 'No package selected';
+      summaryPkg.textContent = '未选择套餐';
       summaryPrice.textContent = '—';
       btnAmount.textContent = '';
       updateTierTable(null, null);
@@ -759,34 +633,31 @@
     const weekly = p * postPrice(p) + c * commentPrice(c);
     const monthly = Math.round(weekly * 4.33);
 
-    // Margin guard (internal)
     const accounts = Math.max(Math.ceil(p / 7), Math.ceil(c / 49), 1);
     const infraCost = accounts * 218 + 725;
     const margin = (monthly - infraCost) / monthly;
     if (margin < 0.70) {
-      errEl.textContent = 'This volume combination is below our minimum order. Please increase your selection.';
+      errEl.textContent = '当前组合低于最低起订量，请增加数量后再试。';
       errEl.classList.add('visible');
       submitBtn.disabled = true;
       return;
     }
 
-    // Format
     const fmt = n => n.toLocaleString('zh-CN');
-    monthlyEl.innerHTML = '¥' + fmt(monthly) + '<span>/mo</span>';
-    weeklyEl.innerHTML = 'Weekly: <strong>¥' + fmt(weekly) + '</strong>';
+    monthlyEl.innerHTML = '¥' + fmt(monthly) + '<span>/月</span>';
+    weeklyEl.innerHTML = '周费用：<strong>¥' + fmt(weekly) + '</strong>';
 
-    // Package description
     let pkgDesc = '';
-    if (needsPosts && needsComments) pkgDesc = p + ' posts + ' + c + ' comments';
-    else if (needsPosts) pkgDesc = p + ' posts';
-    else pkgDesc = c + ' comments';
+    if (needsPosts && needsComments) pkgDesc = p + ' 篇帖子 + ' + c + ' 条评论/周';
+    else if (needsPosts) pkgDesc = p + ' 篇帖子/周';
+    else pkgDesc = c + ' 条评论/周';
 
     summaryPkg.textContent = pkgDesc;
-    summaryPrice.textContent = '¥' + fmt(monthly) + '/mo';
+    summaryPrice.textContent = '¥' + fmt(monthly) + '/月';
     btnAmount.textContent = '¥' + fmt(monthly);
     submitBtn.disabled = false;
 
-    updateTierTable(needsPosts ? postTierName(p).toLowerCase() : null, needsComments ? commentTierName(c).toLowerCase() : null);
+    updateTierTable(needsPosts ? postTierKey(p) : null, needsComments ? commentTierKey(c) : null);
   }
 
   function updateTierTable(postTier, commentTier) {
@@ -797,7 +668,6 @@
     });
   }
 
-  // ── Form submit ──
   function handleSubmit(e) {
     e.preventDefault();
     const needsPosts = currentTab === 'combined' || currentTab === 'posts';
@@ -819,16 +689,15 @@
       monthly_price: monthly
     };
 
-    // Submit order via FormSubmit (no server required — delivers to helena.w537@gmail.com)
     const btn = document.querySelector('.submit-btn');
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = '提交中…';
 
     fetch('https://formsubmit.co/ajax/helena.w537@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
-        _subject: `New ThreadSignal Order — ${data.company} (${data.package_type})`,
+        _subject: `新订单 — ${data.company} (${data.package_type})`,
         _template: 'table',
         ...data
       })
@@ -844,18 +713,13 @@
     })
     .finally(() => {
       btn.disabled = false;
-      btn.textContent = 'Place Order →';
+      btn.textContent = '提交需求';
     });
   }
 
-  // ── FAQ toggle ──
-  function toggleFaq(el) {
-    el.parentElement.classList.toggle('open');
-  }
-
   // Init
-  setTab('combined');
-  document.querySelector('.pkg-tab.active').dispatchEvent(new Event('click'));
+  document.querySelector('.pkg-tab.active').addEventListener('click', function(e) {});
+  setTab('combined', { target: document.querySelector('.pkg-tab.active') });
 </script>
 </body>
 </html>
