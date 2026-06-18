@@ -11,6 +11,7 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SITE_URL = process.env.SITE_URL || 'https://kaus-site.vercel.app';
+const KAUS_EMAIL = process.env.ZOHO_EMAIL; // hello@kaus-ai.com
 
 // Zoho SMTP transporter
 // EU accounts: smtp.zoho.eu | Global accounts: smtp.zoho.com
@@ -27,7 +28,7 @@ const transporter = nodemailer.createTransport({
 async function sendEmail({ to, subject, html }) {
   try {
     await transporter.sendMail({
-      from: `Kaus <${process.env.ZOHO_EMAIL}>`,
+      from: `Kaus <${KAUS_EMAIL}>`,
       to,
       subject,
       html,
@@ -71,7 +72,7 @@ export default async function handler(req, res) {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
     const m = session.metadata;
-    const token = session.id; // Use Stripe session ID as order token
+    const token = session.id;
     const contentUrl = `${SITE_URL}/content?token=${token}`;
 
     // 1. Save order to Supabase
@@ -117,9 +118,9 @@ export default async function handler(req, res) {
       `,
     });
 
-    // 3. Internal notification to Helena
+    // 3. Internal notification — new order alert
     await sendEmail({
-      to: 'helena.w537@gmail.com',
+      to: KAUS_EMAIL,
       subject: `📦 新订单 — ${m.company || m.client_name} (¥${m.order_price})`,
       html: `
         <div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#111">
