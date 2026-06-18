@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreadSignal — Checkout</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      padding: 18px 40px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { font-weight: 800; font-size: 1.1rem; color: #1a1a1a; letter-spacing: -0.5px; }
+    .logo span { color: #e03050; }
+    .back-btn {
+      font-size: 0.85rem;
+      color: #888;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .back-btn:hover { color: #e03050; }
+
+    /* STEPS */
+    .steps-bar {
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #bbb;
+    }
+    .step.done { color: #4caf50; }
+    .step.active { color: #1a1a1a; font-weight: 600; }
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: #ddd; color: #fff;
+    }
+    .step.done .step-num { background: #4caf50; }
+    .step.active .step-num { background: #e03050; }
+    .step-arrow {
+      width: 32px; text-align: center;
+      color: #ddd; font-size: 0.8rem;
+    }
+
+    /* LAYOUT */
+    .checkout-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 0;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      min-height: calc(100vh - 120px);
+    }
+
+    /* LEFT PANEL */
+    .left-panel { padding-right: 48px; }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-tag {
+      font-size: 0.7rem;
+      background: #e03050;
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    /* CONTENT BRIEF FORM */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+
+    .field label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .field label .req { color: #e03050; margin-left: 2px; }
+    .field input, .field textarea, .field select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #1a1a1a;
+      background: #fff;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none;
+      border-color: #e03050;
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    .field .hint {
+      font-size: 0.72rem;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    .tone-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tone-chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid #e8e8e8;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fff;
+      color: #555;
+    }
+    .tone-chip:hover { border-color: #e03050; color: #e03050; }
+    .tone-chip.active {
+      background: #fff0f3;
+      border-color: #e03050;
+      color: #e03050;
+      font-weight: 600;
+    }
+
+    /* CONTACT SECTION */
+    .section-gap { margin-top: 32px; }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      border-left: 1px solid #f0f0f0;
+      padding-left: 40px;
+      position: sticky;
+      top: 20px;
+      align-self: start;
+    }
+
+    .order-card {
+      background: #fafafa;
+      border: 1.5px solid #f0f0f0;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .order-card-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    .order-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.88rem;
+      color: #444;
+    }
+    .order-line .label { color: #888; }
+    .order-divider {
+      height: 1px;
+      background: #eee;
+      margin: 12px 0;
+    }
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+    .order-total .t-label { font-weight: 700; font-size: 0.9rem; }
+    .order-total .t-price {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #e03050;
+    }
+
+    .pay-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #e03050, #c0283e);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      margin-bottom: 12px;
+    }
+    .pay-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(224,48,80,0.25);
+    }
+
+    .wechat-btn {
+      width: 100%;
+      padding: 13px;
+      background: #fff;
+      color: #07c160;
+      border: 1.5px solid #07c160;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: background 0.15s;
+    }
+    .wechat-btn:hover { background: #f0fdf4; }
+
+    .security-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #bbb;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .refund-note {
+      font-size: 0.75rem;
+      color: #aaa;
+      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .edit-link {
+      font-size: 0.75rem;
+      color: #e03050;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .edit-link:hover { text-decoration: underline; }
+
+    /* PLACEHOLDER BADGES */
+    .placeholder-note {
+      background: #fff8f0;
+      border: 1px dashed #ffc080;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: #a06010;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 700px) {
+      .checkout-grid { grid-template-columns: 1fr; }
+      .left-panel { padding-right: 0; padding-bottom: 32px; }
+      .right-panel { border-left: none; border-top: 1px solid #f0f0f0; padding-left: 0; padding-top: 32px; position: static; }
+      nav { padding: 14px 20px; }
+      .checkout-grid { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Thread<span>Signal</span></div>
+  <a href="index.html" class="back-btn">← Back to pricing</a>
+</nav>
+
+<!-- PROGRESS STEPS -->
+<div class="steps-bar">
+  <div class="step done">
+    <div class="step-num">✓</div>
+    <span>Select package</span>
+  </div>
+  <div class="step-arrow">›</div>
+  <div class="step active">
+    <div class="step-num">2</div>
+    <span>Content brief + payment</span>
+  </div>
+  <div class="step-arrow">›</div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <span>Confirmation</span>
+  </div>
+</div>
+
+<!-- CHECKOUT GRID -->
+<div class="checkout-grid">
+
+  <!-- LEFT: BRIEF + CONTACT -->
+  <div class="left-panel">
+
+    <!-- CONTENT BRIEF -->
+    <div class="section-title">
+      Content
+      <span class="section-tag">Required</span>
+    </div>
+
+    <div class="form-row full">
+      <div class="field">
+        <label>Subreddit links <span class="req">*</span></label>
+        <input type="text" id="subredditInput" placeholder="https://reddit.com/r/SaaS, https://reddit.com/r/SEO" oninput="autoFillSubreddits(this.value)">
+        <div class="hint">Paste the subreddit URLs you want us to post in. Comma-separated.</div>
+      </div>
+    </div>
+
+    <div class="form-row full">
+      <div class="field">
+        <label>Content <span class="req">*</span></label>
+        <textarea id="contentInput" style="min-height:120px" placeholder="Paste what you want us to say — your talking points, brand story, key claims, or specific copy you'd like us to work from."></textarea>
+        <div class="hint">No formatting needed. Write naturally — we'll adapt it to fit each thread.</div>
+      </div>
+    </div>
+
+    <!-- AUTO-FILL PREVIEW (populates as user types) -->
+    <div id="autofill-preview" style="display:none; background:#f9f9f9; border:1.5px solid #f0f0f0; border-radius:10px; padding:16px; margin-top:8px;">
+      <div style="font-size:0.72rem; font-weight:700; color:#aaa; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">⚡ Auto-fill preview — bot config</div>
+      <div style="display:grid; grid-template-columns:110px 1fr; gap:6px 12px; font-size:0.82rem;">
+        <span style="color:#aaa; font-weight:600;">Subreddits</span>
+        <span id="preview-subreddits" style="color:#1a1a1a;">—</span>
+        <span style="color:#aaa; font-weight:600;">Content</span>
+        <span id="preview-content" style="color:#1a1a1a; line-height:1.4;">—</span>
+        <span style="color:#aaa; font-weight:600;">Posts qty</span>
+        <span id="preview-posts" style="color:#1a1a1a;">—</span>
+        <span style="color:#aaa; font-weight:600;">Comments qty</span>
+        <span id="preview-comments" style="color:#1a1a1a;">—</span>
+      </div>
+      <div style="font-size:0.72rem; color:#bbb; margin-top:10px;">This is sent to our team on payment — no setup call needed.</div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section-gap">
+      <div class="section-title">Contact Info</div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" placeholder="Jane Smith">
+      </div>
+      <div class="field">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" placeholder="jane@company.com">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field">
+        <label>Company</label>
+        <input type="text" placeholder="Acme Inc.">
+      </div>
+      <div class="field">
+        <label>WeChat ID</label>
+        <input type="text" placeholder="For coordination (optional)">
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: ORDER SUMMARY + PAY -->
+  <div class="right-panel">
+
+    <div class="order-card">
+      <div class="order-card-title">Order Summary <a class="edit-link" href="index.html">Edit</a></div>
+
+      <div class="order-line">
+        <span class="label">Package</span>
+        <span>Posts + Comments</span>
+      </div>
+      <div class="order-line">
+        <span class="label">Posts</span>
+        <span>20</span>
+      </div>
+      <div class="order-line">
+        <span class="label">Comments</span>
+        <span>80</span>
+      </div>
+      <div class="order-line">
+        <span class="label">Unit price</span>
+        <span>¥70 / post · ¥17 / comment</span>
+      </div>
+
+      <div class="order-divider"></div>
+
+      <div class="order-line">
+        <span class="label">Weekly</span>
+        <span>¥2,760</span>
+      </div>
+      <div class="order-line">
+        <span class="label">× 4.33 weeks</span>
+        <span></span>
+      </div>
+
+      <div class="order-divider"></div>
+
+      <div class="order-total">
+        <span class="t-label">Monthly total</span>
+        <span class="t-price">¥11,951</span>
+      </div>
+    </div>
+
+    <button class="pay-btn">Pay ¥11,951 — Stripe</button>
+    <button class="wechat-btn">💚 Pay with WeChat Pay</button>
+
+    <div class="security-note">
+      🔒 Secured by Stripe · One-time payment
+    </div>
+    <div class="refund-note">
+      Service starts within 48 hours of payment.<br>
+      Questions? WeChat: <strong>ThreadSignal_ops</strong>
+    </div>
+
+    <div class="placeholder-note">
+      ⚙️ <span><strong>Layout mockup</strong> — Stripe + WeChat Pay wired up once API keys are provided.</span>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Auto-fill preview
+  function autoFillSubreddits(val) {
+    updatePreview();
+  }
+
+  function updatePreview() {
+    const subreddits = document.getElementById('subredditInput').value.trim();
+    const content = document.getElementById('contentInput').value.trim();
+    const preview = document.getElementById('autofill-preview');
+
+    if (!subreddits && !content) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+
+    // Parse subreddit names from URLs or raw names
+    const subs = subreddits.split(',').map(s => {
+      s = s.trim();
+      const m = s.match(/reddit\.com\/r\/([\w]+)/);
+      return m ? 'r/' + m[1] : s;
+    }).filter(Boolean).join(', ');
+
+    document.getElementById('preview-subreddits').textContent = subs || '—';
+    document.getElementById('preview-content').textContent = content ? content.slice(0, 120) + (content.length > 120 ? '…' : '') : '—';
+    document.getElementById('preview-posts').textContent = '20';     // pulled from parent page in real impl
+    document.getElementById('preview-comments').textContent = '80';
+  }
+
+  document.getElementById('subredditInput').addEventListener('input', updatePreview);
+  document.getElementById('contentInput').addEventListener('input', updatePreview);
+</script>
+</body>
+</html>

@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreadSignal — Reddit Presence for AI Search Visibility</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E8323C;
+      --red-light: #FF6B6B;
+      --red-pale: #FFF0F0;
+      --red-border: #FFCDD0;
+      --pink: #FF8FA3;
+      --dark: #1A1A1A;
+      --mid: #555;
+      --light: #888;
+      --border: #E8E8E8;
+      --bg: #FAFAFA;
+      --white: #FFFFFF;
+      --green: #22C55E;
+      --radius: 12px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.15rem; color: var(--red); letter-spacing: -0.5px; }
+    .nav-cta {
+      background: var(--red); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 8px 20px; font-size: 0.875rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+    }
+    .nav-cta:hover { background: #C4282F; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 760px; margin: 0 auto;
+      padding: 80px 5% 60px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--red-pale); color: var(--red);
+      border: 1px solid var(--red-border);
+      border-radius: 100px; padding: 5px 14px;
+      font-size: 0.78rem; font-weight: 600;
+      margin-bottom: 24px; letter-spacing: 0.3px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800; line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 18px;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero p {
+      font-size: 1.05rem; color: var(--mid);
+      max-width: 580px; margin: 0 auto 32px;
+    }
+    .hero-cta {
+      display: inline-block;
+      background: var(--red); color: #fff;
+      border-radius: 10px; padding: 14px 36px;
+      font-size: 1rem; font-weight: 700;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .hero-cta:hover { background: #C4282F; }
+
+    /* ── STATS ── */
+    .stats {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      padding: 32px 5%;
+      display: flex; justify-content: center; gap: 60px;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 1.75rem; font-weight: 800; color: var(--red); }
+    .stat-label { font-size: 0.8rem; color: var(--light); margin-top: 2px; }
+
+    /* ── SECTION WRAPPER ── */
+    section { padding: 64px 5%; }
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--red);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800; letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .section-sub { color: var(--mid); font-size: 0.95rem; margin-bottom: 40px; }
+
+    /* ── PRICING CALCULATOR ── */
+    #pricing { background: var(--white); }
+
+    .pkg-tabs {
+      display: flex; gap: 4px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 4px;
+      margin-bottom: 32px;
+      width: fit-content;
+    }
+    .pkg-tab {
+      padding: 8px 20px; border-radius: 8px;
+      border: none; background: transparent;
+      font-size: 0.88rem; font-weight: 600;
+      color: var(--mid); cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .pkg-tab.active {
+      background: var(--white); color: var(--dark);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 640px) { .calc-grid { grid-template-columns: 1fr; } }
+
+    .calc-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+    .calc-panel h4 {
+      font-size: 0.9rem; font-weight: 700;
+      margin-bottom: 6px; color: var(--dark);
+    }
+    .calc-panel .panel-sub {
+      font-size: 0.78rem; color: var(--light);
+      margin-bottom: 16px;
+    }
+
+    .qty-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .qty-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--mid); cursor: pointer;
+      transition: all 0.12s;
+    }
+    .qty-btn:hover { border-color: var(--red-light); color: var(--red); }
+    .qty-btn.selected {
+      background: var(--red-pale);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .tier-badge {
+      display: inline-block;
+      padding: 3px 10px; border-radius: 100px;
+      font-size: 0.72rem; font-weight: 700;
+      background: var(--red-pale); color: var(--red);
+      margin-top: 4px;
+    }
+
+    .price-box {
+      background: var(--dark);
+      color: var(--white);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .price-left .price-label { font-size: 0.78rem; color: #aaa; margin-bottom: 4px; }
+    .price-left .price-main { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+    .price-left .price-main span { font-size: 1rem; font-weight: 500; color: #aaa; }
+    .price-right .price-weekly { font-size: 0.85rem; color: #aaa; }
+    .price-right .price-weekly strong { color: #fff; }
+
+    .price-error {
+      background: #FFF3F3; border: 1px solid #FFCDD0;
+      color: var(--red); border-radius: 8px;
+      padding: 10px 14px; font-size: 0.82rem;
+      margin-top: 16px; display: none;
+    }
+    .price-error.visible { display: block; }
+
+    /* Tier table */
+    .tier-table { width: 100%; border-collapse: collapse; margin-top: 32px; font-size: 0.85rem; }
+    .tier-table th {
+      text-align: left; padding: 10px 14px;
+      background: var(--bg); font-weight: 600;
+      border-bottom: 2px solid var(--border);
+      color: var(--mid);
+    }
+    .tier-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .tier-table tr.tier-active { background: var(--red-pale); }
+    .tier-table tr.tier-active td { color: var(--red); font-weight: 600; }
+    .tier-badge-sm {
+      font-size: 0.7rem; font-weight: 700;
+      padding: 2px 8px; border-radius: 100px;
+      background: var(--red-pale); color: var(--red);
+    }
+
+    /* ── ORDER FORM ── */
+    #order { background: var(--bg); }
+
+    .order-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 640px; margin: 0 auto;
+      box-shadow: var(--shadow);
+    }
+    .order-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; }
+    .order-card .order-sub { color: var(--mid); font-size: 0.9rem; margin-bottom: 32px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 520px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.8rem; font-weight: 600; color: var(--mid); }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      background: var(--white);
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none; border-color: var(--red);
+    }
+    .form-group textarea { min-height: 110px; }
+    .form-hint { font-size: 0.72rem; color: var(--light); margin-top: 2px; }
+
+    .order-summary-bar {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px;
+      font-size: 0.85rem; margin: 24px 0;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .order-summary-bar .summary-pkg { color: var(--mid); }
+    .order-summary-bar .summary-price { font-weight: 800; font-size: 1.05rem; color: var(--red); }
+
+    .submit-btn {
+      width: 100%; padding: 14px;
+      background: var(--red); color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .submit-btn:hover:not(:disabled) { background: #C4282F; }
+    .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .submit-btn .btn-amount { opacity: 0.75; font-weight: 500; font-size: 0.9rem; }
+
+    .form-note { font-size: 0.75rem; color: var(--light); text-align: center; margin-top: 12px; }
+
+    /* Success screen */
+    .success-screen {
+      display: none; text-align: center; padding: 32px 0;
+    }
+    .success-screen .check {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #DCFCE7; color: var(--green);
+      font-size: 1.6rem; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .success-screen h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
+    .success-screen p { color: var(--mid); font-size: 0.9rem; }
+
+    /* ── PROCESS ── */
+    #process { background: var(--white); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+    .step-card {
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; position: relative;
+    }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--red-pale); color: var(--red);
+      font-size: 0.85rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .step-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .step-card p { font-size: 0.83rem; color: var(--mid); }
+
+    /* ── FAQ ── */
+    #faq { background: var(--bg); }
+    .faq-list { display: flex; flex-direction: column; gap: 4px; }
+    .faq-item {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--white); overflow: hidden;
+    }
+    .faq-q {
+      padding: 16px 20px; font-size: 0.92rem; font-weight: 600;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .faq-q::after { content: '+'; font-size: 1.2rem; color: var(--light); transition: transform 0.2s; }
+    .faq-item.open .faq-q::after { transform: rotate(45deg); }
+    .faq-a { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 20px 16px; }
+    .faq-a p { font-size: 0.87rem; color: var(--mid); }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: var(--dark); color: #fff;
+      padding: 60px 5%; text-align: center;
+    }
+    .cta-banner h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin-bottom: 10px; }
+    .cta-banner p { color: #aaa; margin-bottom: 28px; }
+    .cta-banner a {
+      background: var(--red); color: #fff;
+      border-radius: 10px; padding: 14px 36px;
+      font-size: 1rem; font-weight: 700;
+      text-decoration: none; display: inline-block;
+    }
+    .cta-banner a:hover { background: #C4282F; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 5%;
+      text-align: center;
+      font-size: 0.8rem; color: var(--light);
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .stats { gap: 32px; }
+      .order-card { padding: 24px; }
+      .pkg-tabs { width: 100%; justify-content: stretch; }
+      .pkg-tab { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">ThreadSignal</span>
+  <a href="#order" class="nav-cta">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-badge">Done-For-You · Reddit Presence · AI Citation</span>
+  <h1>Your brand cited in <span>ChatGPT & Perplexity</span>.<br>We make it happen on Reddit.</h1>
+  <p>ThreadSignal runs authentic Reddit posts and comments at scale — so AI engines find your brand when buyers search.</p>
+  <a href="#pricing" class="hero-cta">See Pricing →</a>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">46.7%</div>
+    <div class="stat-label">of Perplexity citations come from Reddit</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">6 wks</div>
+    <div class="stat-label">avg. time to first AI citation</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">0→40%</div>
+    <div class="stat-label">AI citation lift for clients</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">¥0 extra</div>
+    <div class="stat-label">no retainer, no hidden fees</div>
+  </div>
+</div>
+
+<!-- PRICING CALCULATOR -->
+<section id="pricing">
+  <div class="section-inner">
+    <p class="section-label">Pricing</p>
+    <h2 class="section-title">Pick your package</h2>
+    <p class="section-sub">Fixed weekly volume. Monthly billing. Cancel anytime.</p>
+
+    <!-- Package tabs -->
+    <div class="pkg-tabs">
+      <button class="pkg-tab active" onclick="setTab('combined')">Posts + Comments</button>
+      <button class="pkg-tab" onclick="setTab('posts')">Posts Only</button>
+      <button class="pkg-tab" onclick="setTab('comments')">Comments Only</button>
+    </div>
+
+    <!-- Calculator panels -->
+    <div class="calc-grid">
+
+      <!-- Posts panel -->
+      <div class="calc-panel" id="posts-panel">
+        <h4>📝 Posts</h4>
+        <p class="panel-sub">Original Reddit posts in relevant subreddits</p>
+        <div class="qty-grid" id="posts-btns">
+          <button class="qty-btn" onclick="selectPosts(5)">5</button>
+          <button class="qty-btn" onclick="selectPosts(10)">10</button>
+          <button class="qty-btn" onclick="selectPosts(15)">15</button>
+          <button class="qty-btn" onclick="selectPosts(20)">20</button>
+          <button class="qty-btn" onclick="selectPosts(25)">25</button>
+          <button class="qty-btn" onclick="selectPosts(30)">30</button>
+          <button class="qty-btn" onclick="selectPosts(40)">40</button>
+          <button class="qty-btn" onclick="selectPosts(50)">50</button>
+        </div>
+        <div id="posts-tier" class="tier-badge" style="display:none"></div>
+      </div>
+
+      <!-- Comments panel -->
+      <div class="calc-panel" id="comments-panel">
+        <h4>💬 Comments</h4>
+        <p class="panel-sub">Targeted replies in high-traffic threads</p>
+        <div class="qty-grid" id="comments-btns">
+          <button class="qty-btn" onclick="selectComments(40)">40</button>
+          <button class="qty-btn" onclick="selectComments(80)">80</button>
+          <button class="qty-btn" onclick="selectComments(120)">120</button>
+          <button class="qty-btn" onclick="selectComments(160)">160</button>
+          <button class="qty-btn" onclick="selectComments(200)">200</button>
+          <button class="qty-btn" onclick="selectComments(250)">250</button>
+          <button class="qty-btn" onclick="selectComments(300)">300</button>
+        </div>
+        <div id="comments-tier" class="tier-badge" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Price display -->
+    <div class="price-box" id="price-box">
+      <div class="price-left">
+        <div class="price-label">Monthly total</div>
+        <div class="price-main" id="price-monthly">¥ —<span>/mo</span></div>
+      </div>
+      <div class="price-right">
+        <div class="price-weekly" id="price-weekly">Select a package above</div>
+      </div>
+    </div>
+    <div class="price-error" id="price-error"></div>
+
+    <!-- Tier table -->
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th>Tier</th>
+          <th>Posts</th>
+          <th>¥ / post</th>
+          <th>Comments</th>
+          <th>¥ / comment</th>
+        </tr>
+      </thead>
+      <tbody id="tier-tbody">
+        <tr data-post-tier="starter" data-comment-tier="starter">
+          <td><span class="tier-badge-sm">Starter</span></td>
+          <td>5 – 10</td><td>¥80</td>
+          <td>40</td><td>¥20</td>
+        </tr>
+        <tr data-post-tier="growth" data-comment-tier="growth">
+          <td><span class="tier-badge-sm">Growth</span></td>
+          <td>15 – 20</td><td>¥70</td>
+          <td>80</td><td>¥17</td>
+        </tr>
+        <tr data-post-tier="scale" data-comment-tier="scale">
+          <td><span class="tier-badge-sm">Scale</span></td>
+          <td>25 – 30</td><td>¥60</td>
+          <td>120</td><td>¥14</td>
+        </tr>
+        <tr data-post-tier="pro" data-comment-tier="pro">
+          <td><span class="tier-badge-sm">Pro</span></td>
+          <td>40+</td><td>¥50</td>
+          <td>160+</td><td>¥11</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ORDER FORM -->
+<section id="order">
+  <div class="section-inner">
+    <p class="section-label">Get Started</p>
+    <h2 class="section-title">Place your order</h2>
+    <p class="section-sub">One-time upfront. Setup within 48h. First results in week 1.</p>
+
+    <div class="order-card">
+      <h3>Start your Reddit presence</h3>
+      <p class="order-sub">Fill in your details and content brief — we'll handle everything else.</p>
+
+      <div id="order-form-wrap">
+        <form id="order-form" onsubmit="handleSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fname">Full name *</label>
+              <input type="text" id="fname" name="name" required placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="femail">Email *</label>
+              <input type="email" id="femail" name="email" required placeholder="you@company.com">
+            </div>
+            <div class="form-group">
+              <label for="fcompany">Company / Brand *</label>
+              <input type="text" id="fcompany" name="company" required placeholder="Acme Inc.">
+            </div>
+            <div class="form-group">
+              <label for="fwechat">WeChat ID</label>
+              <input type="text" id="fwechat" name="wechat" placeholder="Optional — for onboarding">
+            </div>
+
+            <div class="form-group full">
+              <label for="fbrief">Content brief *</label>
+              <textarea id="fbrief" name="content_brief" required
+                placeholder="Tell us about your brand:
+• What does your product do?
+• Who is your target audience?
+• Any specific subreddits you want to target?
+• Key messages, URLs, or talking points to include
+• Anything to avoid?"></textarea>
+              <span class="form-hint">This will be included in your confirmation email and used to set up your campaign.</span>
+            </div>
+          </div>
+
+          <div class="order-summary-bar">
+            <span class="summary-pkg" id="summary-pkg">No package selected</span>
+            <span class="summary-price" id="summary-price">—</span>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submit-btn" disabled>
+            <span>Proceed to Payment</span>
+            <span class="btn-amount" id="btn-amount"></span>
+          </button>
+          <p class="form-note">🔒 Secure checkout via Stripe · WeChat Pay coming soon · One-time payment</p>
+        </form>
+      </div>
+
+      <div class="success-screen" id="success-screen">
+        <div class="check">✓</div>
+        <h3>Order received!</h3>
+        <p>Check your email for a confirmation with your content brief.<br>We'll be in touch within 24 hours to kick things off.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-inner">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Live in under a week</h2>
+    <p class="section-sub">You pay, we build. No Reddit account needed on your end.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>Pick your package</h4>
+        <p>Choose post and comment volume. Submit your content brief and pay.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>We set up your accounts</h4>
+        <p>Dedicated Reddit personas aligned to your niche. Warm-up period included.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>Posts go live</h4>
+        <p>Your brand narrative enters high-traffic threads, naturally, at scale.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h4>AI engines cite you</h4>
+        <p>ChatGPT, Perplexity, and Gemini start pulling Reddit as a source — your brand shows up.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section-inner">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">Common questions</h2>
+    <p class="section-sub" style="margin-bottom: 28px"></p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How quickly will I see results in AI search?</div>
+        <div class="faq-a"><p>Most clients see their first AI citation within 4–6 weeks. It depends on your niche, content quality, and posting volume. We target subreddits that AI engines actively index.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Are the posts and comments authentic?</div>
+        <div class="faq-a"><p>Yes. Every post and comment is crafted around your content brief and written to provide genuine value in context. We follow Reddit's community norms and never do spam-style posting.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What do I need to provide?</div>
+        <div class="faq-a"><p>Just the content brief in the order form: your brand story, product links, target audience, and any specific talking points. We handle the Reddit accounts, writing, scheduling, and posting.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Is this a one-time or recurring payment?</div>
+        <div class="faq-a"><p>One-time upfront payment per month. You'll receive a renewal reminder before each new month. No automatic charges — you re-order when you're ready to continue.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How will I see the posts being made?</div>
+        <div class="faq-a"><p>We send a weekly report with direct links to every post and comment. You can view them publicly on Reddit at any time. A client dashboard with live links is coming soon.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What if I want to scale up mid-month?</div>
+        <div class="faq-a"><p>Contact us and we'll issue a top-up order for the remaining weeks. You only pay for what's delivered.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Ready to show up in AI search?</h2>
+  <p>Join brands already building Reddit presence for ChatGPT and Perplexity visibility.</p>
+  <a href="#order">Place Your Order →</a>
+</div>
+
+<footer>
+  © 2026 ThreadSignal · Powered by Kaus AI · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a>
+</footer>
+
+<script>
+  // ── State ──
+  let currentTab = 'combined';
+  let selectedPosts = 0;
+  let selectedComments = 0;
+
+  // ── Pricing logic ──
+  function postPrice(p) {
+    if (p <= 10) return 80;
+    if (p <= 20) return 70;
+    if (p <= 30) return 60;
+    return 50;
+  }
+  function commentPrice(c) {
+    if (c <= 40) return 20;
+    if (c <= 80) return 17;
+    if (c <= 120) return 14;
+    return 11;
+  }
+  function postTierName(p) {
+    if (p <= 10) return 'Starter';
+    if (p <= 20) return 'Growth';
+    if (p <= 30) return 'Scale';
+    return 'Pro';
+  }
+  function commentTierName(c) {
+    if (c <= 40) return 'Starter';
+    if (c <= 80) return 'Growth';
+    if (c <= 120) return 'Scale';
+    return 'Pro';
+  }
+
+  // ── Tab switching ──
+  function setTab(tab) {
+    currentTab = tab;
+    selectedPosts = 0;
+    selectedComments = 0;
+    document.querySelectorAll('.qty-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.pkg-tab').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const postsPanel = document.getElementById('posts-panel');
+    const commentsPanel = document.getElementById('comments-panel');
+
+    if (tab === 'combined') {
+      postsPanel.style.display = '';
+      commentsPanel.style.display = '';
+    } else if (tab === 'posts') {
+      postsPanel.style.display = '';
+      commentsPanel.style.display = 'none';
+    } else {
+      postsPanel.style.display = 'none';
+      commentsPanel.style.display = '';
+    }
+    updatePrice();
+  }
+
+  function selectPosts(qty) {
+    selectedPosts = qty;
+    document.querySelectorAll('#posts-btns .qty-btn').forEach(b => {
+      b.classList.toggle('selected', parseInt(b.textContent) === qty);
+    });
+    const tierEl = document.getElementById('posts-tier');
+    tierEl.style.display = 'inline-block';
+    tierEl.textContent = postTierName(qty) + ' · ¥' + postPrice(qty) + '/post';
+    updatePrice();
+  }
+
+  function selectComments(qty) {
+    selectedComments = qty;
+    document.querySelectorAll('#comments-btns .qty-btn').forEach(b => {
+      b.classList.toggle('selected', parseInt(b.textContent) === qty);
+    });
+    const tierEl = document.getElementById('comments-tier');
+    tierEl.style.display = 'inline-block';
+    tierEl.textContent = commentTierName(qty) + ' · ¥' + commentPrice(qty) + '/comment';
+    updatePrice();
+  }
+
+  function updatePrice() {
+    const errEl = document.getElementById('price-error');
+    const monthlyEl = document.getElementById('price-monthly');
+    const weeklyEl = document.getElementById('price-weekly');
+    const submitBtn = document.getElementById('submit-btn');
+    const summaryPkg = document.getElementById('summary-pkg');
+    const summaryPrice = document.getElementById('summary-price');
+    const btnAmount = document.getElementById('btn-amount');
+
+    errEl.classList.remove('visible');
+
+    const needsPosts = currentTab === 'combined' || currentTab === 'posts';
+    const needsComments = currentTab === 'combined' || currentTab === 'comments';
+
+    const p = needsPosts ? selectedPosts : 0;
+    const c = needsComments ? selectedComments : 0;
+
+    if ((needsPosts && p === 0) || (needsComments && c === 0)) {
+      monthlyEl.innerHTML = '¥ —<span>/mo</span>';
+      weeklyEl.textContent = 'Select a package above';
+      submitBtn.disabled = true;
+      summaryPkg.textContent = 'No package selected';
+      summaryPrice.textContent = '—';
+      btnAmount.textContent = '';
+      updateTierTable(null, null);
+      return;
+    }
+
+    const weekly = p * postPrice(p) + c * commentPrice(c);
+    const monthly = Math.round(weekly * 4.33);
+
+    // Margin guard (internal)
+    const accounts = Math.max(Math.ceil(p / 7), Math.ceil(c / 49), 1);
+    const infraCost = accounts * 218 + 725;
+    const margin = (monthly - infraCost) / monthly;
+    if (margin < 0.70) {
+      errEl.textContent = 'This volume combination is below our minimum order. Please increase your selection.';
+      errEl.classList.add('visible');
+      submitBtn.disabled = true;
+      return;
+    }
+
+    // Format
+    const fmt = n => n.toLocaleString('zh-CN');
+    monthlyEl.innerHTML = '¥' + fmt(monthly) + '<span>/mo</span>';
+    weeklyEl.innerHTML = 'Weekly: <strong>¥' + fmt(weekly) + '</strong>';
+
+    // Package description
+    let pkgDesc = '';
+    if (needsPosts && needsComments) pkgDesc = p + ' posts + ' + c + ' comments';
+    else if (needsPosts) pkgDesc = p + ' posts';
+    else pkgDesc = c + ' comments';
+
+    summaryPkg.textContent = pkgDesc;
+    summaryPrice.textContent = '¥' + fmt(monthly) + '/mo';
+    btnAmount.textContent = '¥' + fmt(monthly);
+    submitBtn.disabled = false;
+
+    updateTierTable(needsPosts ? postTierName(p).toLowerCase() : null, needsComments ? commentTierName(c).toLowerCase() : null);
+  }
+
+  function updateTierTable(postTier, commentTier) {
+    document.querySelectorAll('#tier-tbody tr').forEach(row => {
+      const pt = row.dataset.postTier;
+      const ct = row.dataset.commentTier;
+      row.classList.toggle('tier-active', pt === postTier || ct === commentTier);
+    });
+  }
+
+  // ── Form submit ──
+  function handleSubmit(e) {
+    e.preventDefault();
+    const needsPosts = currentTab === 'combined' || currentTab === 'posts';
+    const needsComments = currentTab === 'combined' || currentTab === 'comments';
+    const p = needsPosts ? selectedPosts : 0;
+    const c = needsComments ? selectedComments : 0;
+    const weekly = p * postPrice(p) + c * commentPrice(c);
+    const monthly = Math.round(weekly * 4.33);
+
+    const data = {
+      name: document.getElementById('fname').value,
+      email: document.getElementById('femail').value,
+      company: document.getElementById('fcompany').value,
+      wechat: document.getElementById('fwechat').value,
+      content_brief: document.getElementById('fbrief').value,
+      package_type: currentTab,
+      posts_qty: p,
+      comments_qty: c,
+      monthly_price: monthly
+    };
+
+    // Submit order via FormSubmit (no server required — delivers to helena.w537@gmail.com)
+    const btn = document.querySelector('.submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    fetch('https://formsubmit.co/ajax/helena.w537@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: `New ThreadSignal Order — ${data.company} (${data.package_type})`,
+        _template: 'table',
+        ...data
+      })
+    })
+    .then(r => r.json())
+    .then(() => {
+      document.getElementById('order-form-wrap').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+    })
+    .catch(() => {
+      document.getElementById('order-form-wrap').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.textContent = 'Place Order →';
+    });
+  }
+
+  // ── FAQ toggle ──
+  function toggleFaq(el) {
+    el.parentElement.classList.toggle('open');
+  }
+
+  // Init
+  setTab('combined');
+  document.querySelector('.pkg-tab.active').dispatchEvent(new Event('click'));
+</script>
+</body>
+</html>
