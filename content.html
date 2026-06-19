@@ -154,12 +154,27 @@
     /* SUCCESS */
     #success-screen {
       display: none;
-      text-align: center;
-      padding: 60px 24px;
+      padding: 40px 0 80px;
     }
-    .success-icon { font-size: 48px; margin-bottom: 16px; }
-    .success-title { font-size: 22px; font-weight: 600; margin-bottom: 10px; }
-    .success-sub { color: var(--muted); }
+    .success-header { text-align: center; margin-bottom: 32px; }
+    .success-icon { font-size: 48px; margin-bottom: 12px; }
+    .success-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+    .success-sub { color: var(--muted); font-size: 15px; }
+    .success-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .success-card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 12px; }
+    .success-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .success-row:last-child { border-bottom: none; }
+    .success-row-label { font-size: 13px; color: var(--muted); }
+    .success-row-value { font-size: 13px; font-weight: 500; text-align: right; max-width: 60%; }
+    .contact-link { text-align: center; margin-top: 24px; font-size: 13px; color: var(--muted); }
+    .contact-link a { color: var(--red); text-decoration: none; }
+    .contact-link a:hover { text-decoration: underline; }
 
     /* LOADING */
     #loading-screen {
@@ -303,11 +318,50 @@
     </form>
   </div>
 
-  <!-- Success -->
+  <!-- Success confirmation -->
   <div id="success-screen">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">内容已收到，开始发帖！</div>
-    <p class="success-sub">我们的算法正在匹配账号，24小时内开始发帖。<br/>每日进度报告会发送到你的邮箱。</p>
+    <div class="success-header">
+      <div class="success-icon">✅</div>
+      <div class="success-title">内容已提交，正在安排发帖</div>
+      <p class="success-sub">我们将在 24 小时内开始发帖，每日进度报告发送至你的邮箱。</p>
+    </div>
+
+    <div class="success-card">
+      <div class="success-card-title">订单详情</div>
+      <div class="success-row">
+        <span class="success-row-label">套餐</span>
+        <span class="success-row-value" id="sc-pkg">—</span>
+      </div>
+      <div class="success-row">
+        <span class="success-row-label">金额</span>
+        <span class="success-row-value" id="sc-price" style="color:var(--red);font-weight:700">¥—</span>
+      </div>
+    </div>
+
+    <div class="success-card" id="success-content-card" style="display:none">
+      <div class="success-card-title">已提交内容</div>
+      <div id="sc-posts-section" style="display:none">
+        <div class="success-row">
+          <span class="success-row-label">帖子数量</span>
+          <span class="success-row-value" id="sc-post-count">—</span>
+        </div>
+        <div class="success-row" id="sc-subreddits-row" style="display:none">
+          <span class="success-row-label">目标版块</span>
+          <span class="success-row-value" id="sc-subreddits-val">—</span>
+        </div>
+      </div>
+      <div id="sc-comments-section" style="display:none">
+        <div class="success-row">
+          <span class="success-row-label">评论目标</span>
+          <span class="success-row-value" id="sc-comment-count">—</span>
+        </div>
+        <div id="sc-direction-row" style="display:none">
+          <p style="font-size:12px;color:var(--muted);padding-top:8px" id="sc-direction-val"></p>
+        </div>
+      </div>
+    </div>
+
+    <p class="contact-link">有问题？联系 <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
   </div>
 
 </main>
@@ -315,6 +369,45 @@
 <script>
   const TOKEN = new URLSearchParams(window.location.search).get('token');
   let orderData = null;
+
+  function populateSuccessOrder(order) {
+    let pkgText = '';
+    if (order.package_type === 'combined') pkgText = `${order.posts_qty} 篇帖子 + ${order.comments_qty} 条评论`;
+    else if (order.package_type === 'posts') pkgText = `${order.posts_qty} 篇帖子`;
+    else pkgText = `${order.comments_qty} 条评论`;
+    document.getElementById('sc-pkg').textContent = pkgText;
+    document.getElementById('sc-price').textContent = '¥' + Number(order.order_price).toLocaleString('zh-CN');
+  }
+
+  function populateSuccessContent(order, payload) {
+    const needsPosts = order.package_type === 'combined' || order.package_type === 'posts';
+    const needsComments = order.package_type === 'combined' || order.package_type === 'comments';
+    let hasContent = false;
+    if (needsPosts && payload.post_content) {
+      hasContent = true;
+      document.getElementById('sc-posts-section').style.display = 'block';
+      const posts = payload.post_content.split('---').filter(p => p.trim());
+      document.getElementById('sc-post-count').textContent = `${posts.length || 1} 篇`;
+      if (payload.subreddits) {
+        const subs = payload.subreddits.split('\n').filter(s => s.trim());
+        document.getElementById('sc-subreddits-row').style.display = 'flex';
+        document.getElementById('sc-subreddits-val').textContent =
+          subs.slice(0, 3).join('，') + (subs.length > 3 ? ` 等 ${subs.length} 个` : '');
+      }
+    }
+    if (needsComments && payload.comment_targets) {
+      hasContent = true;
+      document.getElementById('sc-comments-section').style.display = 'block';
+      const targets = payload.comment_targets.split('\n').filter(t => t.trim());
+      document.getElementById('sc-comment-count').textContent = `${targets.length} 个帖子`;
+      if (payload.comment_direction) {
+        document.getElementById('sc-direction-row').style.display = 'block';
+        const dir = payload.comment_direction;
+        document.getElementById('sc-direction-val').textContent = dir.length > 120 ? dir.slice(0, 120) + '…' : dir;
+      }
+    }
+    if (hasContent) document.getElementById('success-content-card').style.display = 'block';
+  }
 
   // Load order on page load
   window.addEventListener('DOMContentLoaded', async () => {
@@ -334,6 +427,7 @@
 
     if (orderData.status === 'ready' || orderData.status === 'processing' || orderData.status === 'completed') {
       document.getElementById('loading-screen').style.display = 'none';
+      populateSuccessOrder(orderData);
       document.getElementById('success-screen').style.display = 'block';
       return;
     }
@@ -422,6 +516,8 @@
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Submit failed');
 
+      populateSuccessOrder(orderData);
+      populateSuccessContent(orderData, payload);
       document.getElementById('content-form-wrap').style.display = 'none';
       document.getElementById('success-screen').style.display = 'block';
     } catch (err) {
