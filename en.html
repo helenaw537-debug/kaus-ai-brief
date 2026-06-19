@@ -1067,8 +1067,14 @@
     const needsComments = currentTab === 'combined' || currentTab === 'comments';
     const p = needsPosts ? selectedPosts : 0;
     const c = needsComments ? selectedComments : 0;
-    const weekly = p * postPrice(p) + c * commentPrice(c);
-    const monthly = Math.round(weekly * 4.33);
+    const total = p * postPrice(p) + c * commentPrice(c);
+
+    // Include upload form content rows
+    const uploadRows = rows && rows.length > 0 ? rows : [];
+    if (!uploadRows.length) {
+      alert('Please upload your content in Step 1 before placing your order.');
+      return;
+    }
 
     const data = {
       name: document.getElementById('fname').value,
@@ -1076,36 +1082,34 @@
       company: document.getElementById('fcompany').value,
       wechat: document.getElementById('fwechat').value,
       content_brief: document.getElementById('fbrief').value,
-      package_type: currentTab,
+      package_type: (p > 0 && c > 0) ? 'combined' : (p > 0 ? 'posts' : 'comments'),
       posts_qty: p,
       comments_qty: c,
-      monthly_price: monthly
+      order_price: total,
+      rows: uploadRows,
+      content_type: currentType,
+      lang: 'en',
     };
 
-    // Submit order via FormSubmit (no server required — delivers to helena.w537@gmail.com)
     const btn = document.querySelector('.submit-btn');
     btn.disabled = true;
-    btn.textContent = 'Submitting…';
+    btn.textContent = 'Redirecting to payment…';
 
-    fetch('https://formsubmit.co/ajax/helena.w537@gmail.com', {
+    fetch('/api/create-checkout', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: `New ThreadSignal Order — ${data.company} (${data.package_type})`,
-        _template: 'table',
-        ...data
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     })
     .then(r => r.json())
-    .then(() => {
-      document.getElementById('order-form-wrap').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
+    .then(res => {
+      if (res.url) {
+        window.location.href = res.url;
+      } else {
+        throw new Error(res.error || 'Checkout error');
+      }
     })
-    .catch(() => {
-      document.getElementById('order-form-wrap').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
-    })
-    .finally(() => {
+    .catch(err => {
+      alert('Payment redirect failed, please try again: ' + err.message);
       btn.disabled = false;
       btn.textContent = 'Place Order →';
     });
