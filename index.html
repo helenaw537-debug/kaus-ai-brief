@@ -911,6 +911,13 @@
     const c = selectedComments;
     const total = p * postPrice(p) + c * commentPrice(c);
 
+    // Include upload form content rows
+    const uploadRows = rows && rows.length > 0 ? rows : [];
+    if (!uploadRows.length) {
+      alert('请先在"第一步"上传发帖内容后再提交订单。');
+      return;
+    }
+
     const data = {
       name: document.getElementById('fname').value,
       email: document.getElementById('femail').value,
@@ -920,7 +927,10 @@
       package_type: (p > 0 && c > 0) ? 'combined' : (p > 0 ? 'posts' : 'comments'),
       posts_qty: p,
       comments_qty: c,
-      order_price: total
+      order_price: total,
+      rows: uploadRows,
+      content_type: currentType,
+      lang: 'zh',
     };
 
     const btn = document.querySelector('.submit-btn');
