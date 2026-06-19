@@ -78,11 +78,18 @@ ALTER TABLE order_content   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pending_content ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_posts     ENABLE ROW LEVEL SECURITY;
 
--- Service role has full access
-CREATE POLICY IF NOT EXISTS "service_full_access_orders"   ON orders          FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "service_full_access_content"  ON order_content   FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "service_full_access_pending"  ON pending_content FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY IF NOT EXISTS "service_full_access_posts"    ON order_posts     FOR ALL TO service_role USING (true) WITH CHECK (true);
+-- Service role has full access (DROP IF EXISTS + CREATE is safe across PostgreSQL 14/15)
+DROP POLICY IF EXISTS "service_full_access_orders"   ON orders;
+CREATE POLICY "service_full_access_orders"   ON orders          FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "service_full_access_content"  ON order_content;
+CREATE POLICY "service_full_access_content"  ON order_content   FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "service_full_access_pending"  ON pending_content;
+CREATE POLICY "service_full_access_pending"  ON pending_content FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "service_full_access_posts"    ON order_posts;
+CREATE POLICY "service_full_access_posts"    ON order_posts     FOR ALL TO service_role USING (true) WITH CHECK (true);
 
 -- ── INDEXES ──────────────────────────────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_orders_status    ON orders(status);
