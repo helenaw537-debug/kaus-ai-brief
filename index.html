@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -620,45 +620,45 @@
 <!-- CONTENT UPLOAD -->
 <section id="content-upload">
   <div class="section-inner">
-    <p class="section-label">内容上传</p>
-    <h2 class="section-title">准备你的内容</h2>
-    <p class="section-sub">选择内容类型，粘贴或上传文件，确认后前往下单</p>
+    <p class="section-label">Content Upload</p>
+    <h2 class="section-title">Prepare your content</h2>
+    <p class="section-sub">Choose content type, paste or upload your file, then place your order</p>
 
     <div class="uf-wrap">
 
       <!-- ═══ STEP 1: TYPE ═══ -->
       <div id="step-1">
-        <div class="uf-title">选择内容类型</div>
-        <p class="uf-sub">选择你要发布的内容类型</p>
+        <div class="uf-title">Select content type</div>
+        <p class="uf-sub">Choose the type of content you want to publish</p>
         <div class="type-grid">
           <div class="type-card" onclick="selectType('post')">
-            <div class="tc-label">帖子</div>
-            <div class="tc-desc">发布到指定 subreddit 的原创帖子内容</div>
+            <div class="tc-label">Posts</div>
+            <div class="tc-desc">Original posts published to a specified subreddit</div>
           </div>
           <div class="type-card" onclick="selectType('comment')">
-            <div class="tc-label">评论</div>
-            <div class="tc-desc">回复特定帖子链接的评论内容</div>
+            <div class="tc-label">Comments</div>
+            <div class="tc-desc">Replies to a specific post link</div>
           </div>
         </div>
       </div>
 
       <!-- ═══ STEP 2: INPUT ═══ -->
       <div id="step-2">
-        <button class="back-btn" onclick="goTo(1)">← 重新选择</button>
-        <div class="type-badge" id="type-badge">帖子</div>
+        <button class="back-btn" onclick="goTo(1)">← Back</button>
+        <div class="type-badge" id="type-badge">Posts</div>
         <div style="margin-bottom:20px">
-          <div class="uf-title" id="step2-title">上传帖子内容</div>
-          <p style="font-size:14px;color:var(--light);margin-top:4px">粘贴文本或上传文件，下一步确认内容</p>
+          <div class="uf-title" id="step2-title">Upload post content</div>
+          <p style="font-size:14px;color:var(--light);margin-top:4px">Paste text or upload a file, review in the next step</p>
         </div>
 
         <div class="input-tabs">
-          <button class="input-tab active" onclick="ufSwitchTab('paste')">粘贴文本</button>
-          <button class="input-tab" onclick="ufSwitchTab('upload')">上传文件</button>
+          <button class="input-tab active" onclick="ufSwitchTab('paste')">Paste text</button>
+          <button class="input-tab" onclick="ufSwitchTab('upload')">Upload file</button>
         </div>
 
         <div class="uf-hint" id="hint-text">
-          自动识别 <code>r/subreddit</code> 行和含 <code>https://</code> 的行为目标，其余为正文；"回复类型: …"等标签行自动跳过。<br/>
-          从飞书 / Notion 表格复制后直接粘贴 — 自动识别为表格列，下一步选列。
+          Lines starting with <code>r/subreddit</code> or <code>https://</code> are auto-detected as targets; everything else is body text. Label lines like "Reply type: …" are skipped automatically.<br/>
+          Copy and paste from Feishu / Notion tables — columns are detected automatically, you'll map them in the next step.
         </div>
 
         <div id="paste-area">
@@ -668,8 +668,8 @@
         <div id="upload-area" class="upload-zone"
           onclick="document.getElementById('file-input').click()"
           ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="handleDrop(event)">
-          <div class="upload-label">点击或拖入文件</div>
-          <div class="upload-sub">自动检测列，下一步手动选择</div>
+          <div class="upload-label">Click or drag a file here</div>
+          <div class="upload-sub">Columns detected automatically — map them in the next step</div>
           <div class="filetypes">
             <span class="ft xl">xlsx</span><span class="ft xl">xls</span><span class="ft xl">ods</span>
             <span class="ft csv">csv</span><span class="ft csv">tsv</span>
@@ -680,46 +680,46 @@
         <input type="file" id="file-input" accept=".txt,.md,.csv,.tsv,.xlsx,.xls,.ods,.docx" onchange="handleFileSelect(event)"/>
 
         <div class="uf-spinner-row" id="spinner">
-          <div class="uf-spinner"></div> 正在读取文件…
+          <div class="uf-spinner"></div> Reading file…
         </div>
         <div class="uf-error" id="parse-error"></div>
-        <button class="uf-primary-btn" id="parse-btn" onclick="parseText()" disabled>下一步：选择内容 →</button>
+        <button class="uf-primary-btn" id="parse-btn" onclick="parseText()" disabled>Next: review content →</button>
       </div>
 
       <!-- ═══ STEP 2.5: COLUMN MAPPER ═══ -->
       <div id="step-mapper">
-        <button class="back-btn" onclick="goTo(2)">← 返回</button>
-        <div class="type-badge" id="mapper-badge">帖子</div>
+        <button class="back-btn" onclick="goTo(2)">← Back</button>
+        <div class="type-badge" id="mapper-badge">Posts</div>
         <div style="margin-bottom:20px">
-          <div class="uf-title">选择内容</div>
-          <p style="font-size:14px;color:var(--light);margin-top:4px">选择哪列是 subreddit，哪列是评论内容</p>
+          <div class="uf-title">Map columns</div>
+          <p style="font-size:14px;color:var(--light);margin-top:4px">Select which column is the subreddit and which is the content</p>
         </div>
 
         <div class="mapper-card">
-          <div class="mapper-title">列对应关系</div>
-          <div class="mapper-sub" id="mapper-sub">从下拉菜单中选择每个字段对应的列</div>
+          <div class="mapper-title">Column mapping</div>
+          <div class="mapper-sub" id="mapper-sub">Select the column for each field from the dropdowns</div>
           <div class="mapper-row">
             <div class="mapper-label" id="target-label">
               Subreddit
-              <small id="target-label-small">如 r/SaaS, r/entrepreneur</small>
+              <small id="target-label-small">e.g. r/SaaS, r/entrepreneur</small>
             </div>
             <select class="col-select" id="target-col-select" onchange="updatePreview()">
-              <option value="">— 选择列 —</option>
+              <option value="">— Select column —</option>
             </select>
           </div>
           <div class="mapper-row">
             <div class="mapper-label">
-              内容
-              <small>评论 / Post</small>
+              Content
+              <small>Comment / Post body</small>
             </div>
             <select class="col-select" id="content-col-select" onchange="updatePreview()">
-              <option value="">— 选择列 —</option>
+              <option value="">— Select column —</option>
             </select>
           </div>
         </div>
 
         <div class="col-preview" id="preview-card" style="display:none">
-          <div class="preview-title">数据预览（前 5 行）</div>
+          <div class="preview-title">Data preview (first 5 rows)</div>
           <div style="overflow-x:auto">
             <table class="preview-table" id="preview-table"></table>
           </div>
@@ -727,25 +727,25 @@
         </div>
 
         <div class="uf-error" id="mapper-error" style="margin-top:14px"></div>
-        <button class="uf-primary-btn" id="mapper-btn" onclick="applyMapping()" style="margin-top:16px" disabled>确认，生成表格 →</button>
+        <button class="uf-primary-btn" id="mapper-btn" onclick="applyMapping()" style="margin-top:16px" disabled>Confirm mapping →</button>
       </div>
 
       <!-- ═══ STEP 3: TABLE ═══ -->
       <div id="step-3">
         <div class="uf-table-header">
-          <span class="uf-table-title" id="table-title">帖子列表</span>
-          <span class="uf-count-badge" id="count-badge">0 条</span>
+          <span class="uf-table-title" id="table-title">Posts</span>
+          <span class="uf-count-badge" id="count-badge">0 items</span>
         </div>
 
         <div class="quota-bar" id="quota-bar">
-          <span class="quota-label">已上传 <span class="quota-used" id="quota-used">0</span> / <span id="quota-max">0</span> 条</span>
+          <span class="quota-label">Uploaded <span class="quota-used" id="quota-used">0</span> / <span id="quota-max">0</span> items</span>
           <div class="quota-track"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
         </div>
         <div class="limit-warn" id="limit-warn"></div>
 
         <div class="uf-action-row">
-          <button class="uf-action-btn" onclick="goTo(2)">← 重新上传</button>
-          <button class="uf-action-btn" id="add-btn" onclick="addRow()">+ 手动添加</button>
+          <button class="uf-action-btn" onclick="goTo(2)">← Re-upload</button>
+          <button class="uf-action-btn" id="add-btn" onclick="addRow()">+ Add row</button>
         </div>
 
         <div class="uf-table-wrap">
@@ -754,18 +754,18 @@
               <tr>
                 <th style="width:5%">#</th>
                 <th style="width:35%" id="col-target-head">Subreddit</th>
-                <th style="width:52%">内容</th>
+                <th style="width:52%">Content</th>
                 <th style="width:8%"></th>
               </tr>
             </thead>
             <tbody id="table-body"></tbody>
           </table>
-          <div style="text-align:center;padding:36px;color:var(--light);font-size:14px;display:none" id="empty-state">暂无内容</div>
+          <div style="text-align:center;padding:36px;color:var(--light);font-size:14px;display:none" id="empty-state">No content yet</div>
         </div>
 
         <div class="uf-submit-bar" id="uf-submit-bar">
-          <span class="uf-submit-total">共 <strong id="submit-count">0</strong> 条内容</span>
-          <button class="uf-submit-btn" onclick="submitContent()">确认，前往下单 →</button>
+          <span class="uf-submit-total"><strong id="submit-count">0</strong> items</span>
+          <button class="uf-submit-btn" onclick="submitContent()">Confirm &amp; place order →</button>
         </div>
       </div>
 
@@ -1148,15 +1148,15 @@
   function selectType(type) {
     currentType = type;
     const isPost = type === 'post';
-    document.getElementById('type-badge').textContent  = isPost ? '帖子' : '评论';
-    document.getElementById('mapper-badge').textContent = isPost ? '帖子' : '评论';
-    document.getElementById('step2-title').textContent  = isPost ? '上传帖子内容' : '上传评论内容';
-    document.getElementById('target-label-small').textContent = isPost ? '如 r/SaaS, r/entrepreneur' : '帖子 URL';
-    document.getElementById('col-target-head').textContent    = isPost ? 'Subreddit' : '目标帖子';
-    document.getElementById('table-title').textContent        = isPost ? '帖子列表' : '评论列表';
+    document.getElementById('type-badge').textContent  = isPost ? 'Posts' : 'Comments';
+    document.getElementById('mapper-badge').textContent = isPost ? 'Posts' : 'Comments';
+    document.getElementById('step2-title').textContent  = isPost ? 'Upload post content' : 'Upload comment content';
+    document.getElementById('target-label-small').textContent = isPost ? 'e.g. r/SaaS, r/entrepreneur' : 'Post URL';
+    document.getElementById('col-target-head').textContent    = isPost ? 'Subreddit' : 'Target post';
+    document.getElementById('table-title').textContent        = isPost ? 'Posts' : 'Comments';
     document.getElementById('text-input').placeholder = isPost
-      ? 'r/SaaS\n我们发现 AI 搜索正在取代传统 SEO...\n\nr/entrepreneur\n更多创业者必须关注的增长策略...'
-      : '帖子链接: https://www.reddit.com/r/SaaS/comments/abc123/\nThis is a great point about AI adoption...\n\nhttps://www.reddit.com/r/entrepreneur/comments/def/\n完全同意，我也有类似经历...';
+      ? 'r/SaaS\nAI search is replacing traditional SEO — here\'s what we found...\n\nr/entrepreneur\nMore growth strategies every founder should know...'
+      : 'https://www.reddit.com/r/SaaS/comments/abc123/\nThis is a great point about AI adoption...\n\nhttps://www.reddit.com/r/entrepreneur/comments/def/\nTotally agree, had a similar experience...';
     goTo(2);
   }
 
@@ -1193,7 +1193,7 @@
       reader.onload = e => { document.getElementById('text-input').value = e.target.result; ufSwitchTab('paste'); setSpinner(false); checkParseBtn(); };
       reader.readAsText(file,'utf-8');
     } else {
-      setSpinner(false); showUfError('不支持此格式');
+      setSpinner(false); showUfError('Unsupported file format');
     }
   }
 
@@ -1204,13 +1204,13 @@
         const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
         const ws = wb.Sheets[wb.SheetNames[0]];
         const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
-        if (!data || data.length < 2) { setSpinner(false); showUfError('表格数据为空'); return; }
+        if (!data || data.length < 2) { setSpinner(false); showUfError('Table data is empty'); return; }
         const firstRow = data[0].map(c => String(c).trim());
         const looksLikeHeader = firstRow.some(c => c !== '' && !c.startsWith('r/') && !c.startsWith('http') && isNaN(c));
-        sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('列 '+(i+1))) : firstRow.map((_,i) => '列 '+(i+1));
+        sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('Col '+(i+1))) : firstRow.map((_,i) => 'Col '+(i+1));
         sheetData = (looksLikeHeader ? data.slice(1) : data).filter(r => r.some(c => String(c).trim()));
         setSpinner(false); openMapper();
-      } catch(err) { setSpinner(false); showUfError('文件读取失败：' + err.message); }
+      } catch(err) { setSpinner(false); showUfError('File read error: ' + err.message); }
     };
     reader.readAsArrayBuffer(file);
   }
@@ -1220,7 +1220,7 @@
     reader.onload = e => {
       mammoth.extractRawText({ arrayBuffer: e.target.result })
         .then(r => { document.getElementById('text-input').value = r.value; ufSwitchTab('paste'); setSpinner(false); checkParseBtn(); })
-        .catch(err => { setSpinner(false); showUfError('Word 文件读取失败：' + err.message); });
+        .catch(err => { setSpinner(false); showUfError('Word file read error: ' + err.message); });
     };
     reader.readAsArrayBuffer(file);
   }
@@ -1228,7 +1228,7 @@
   function openMapper() {
     const tSel = document.getElementById('target-col-select');
     const cSel = document.getElementById('content-col-select');
-    tSel.innerHTML = cSel.innerHTML = '<option value="">— 选择列 —</option>';
+    tSel.innerHTML = cSel.innerHTML = '<option value="">— Select column —</option>';
     sheetHeaders.forEach((h, i) => {
       tSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
       cSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
@@ -1241,7 +1241,7 @@
     sheetHeaders.forEach((h, i) => {
       if (i === guessTarget) return;
       const s = String(sheetData[0]?.[i]||'');
-      if (guessContent === -1 && (s.length > 20 || /content|内容|text/.test(h.toLowerCase()))) guessContent = i;
+      if (guessContent === -1 && (s.length > 20 || /content|text/.test(h.toLowerCase()))) guessContent = i;
     });
     if (guessTarget >= 0) tSel.value = guessTarget;
     if (guessContent >= 0) cSel.value = guessContent;
@@ -1280,18 +1280,18 @@
     });
     html2 += '</tbody>';
     table.innerHTML = html2;
-    document.getElementById('row-count-note').textContent = '共 ' + sheetData.length + ' 行数据';
+    document.getElementById('row-count-note').textContent = 'Total ' + sheetData.length + ' rows';
   }
 
   function applyMapping() {
     const tIdx = parseInt(document.getElementById('target-col-select').value);
     const cIdx = parseInt(document.getElementById('content-col-select').value);
-    if (isNaN(tIdx) || isNaN(cIdx) || tIdx === cIdx) { showMapperError('请选择两个不同的列'); return; }
+    if (isNaN(tIdx) || isNaN(cIdx) || tIdx === cIdx) { showMapperError('Please select two different columns'); return; }
     let mapped = sheetData
       .map(r => ({ target: String(r[tIdx]||'').trim(), content: String(r[cIdx]||'').trim() }))
       .filter(r => r.target && r.content)
       .map(r => ({ ...r, isUrl: r.target.startsWith('http') }));
-    if (!mapped.length) { showMapperError('所选列中没有有效数据'); return; }
+    if (!mapped.length) { showMapperError('No valid data in the selected columns'); return; }
     applyLimit(mapped); renderTable(); goTo(3);
   }
 
@@ -1301,13 +1301,13 @@
     // TSV detection
     if (text.includes('\t')) {
       const tsvRows = text.split('\n').map(l => l.split('\t').map(c => c.trim())).filter(r => r.some(c => c));
-      if (!tsvRows.length) { showUfError('表格数据为空'); return; }
+      if (!tsvRows.length) { showUfError('Table data is empty'); return; }
       const maxCols = Math.max(...tsvRows.map(r => r.length));
       const firstRow = tsvRows[0];
       const looksLikeHeader = firstRow.some(c => c !== '' && !c.startsWith('r/') && !c.startsWith('http') && isNaN(c));
-      sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('列 '+(i+1))) : Array.from({length:maxCols},(_,i)=>'列 '+(i+1));
+      sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('Col '+(i+1))) : Array.from({length:maxCols},(_,i)=>'Col '+(i+1));
       sheetData = (looksLikeHeader ? tsvRows.slice(1) : tsvRows).filter(r => r.some(c => c));
-      if (!sheetData.length) { showUfError('TSV 数据为空'); return; }
+      if (!sheetData.length) { showUfError('TSV data is empty'); return; }
       openMapper(); return;
     }
     const extractUrl = l => { const m = l.match(/https?:\/\/[^\s，。！？）)]+/); return m ? m[0].replace(/[.,;:）)]+$/,'') : null; };
@@ -1334,7 +1334,7 @@
       contentLines2.push(line);
     }
     flush2();
-    if (!parsed.length) { showUfError('未能识别任何内容，请确认每段包含链接或 r/subreddit'); return; }
+    if (!parsed.length) { showUfError('No content recognised — make sure each block contains a link or r/subreddit'); return; }
     applyLimit(parsed); renderTable(); goTo(3);
   }
 
@@ -1342,7 +1342,7 @@
     hideLimitWarn();
     if (maxRows && parsed.length > maxRows) {
       rows = parsed.slice(0, maxRows);
-      showLimitWarn('已截取前 ' + maxRows + ' 条（你的订单限额），多余的 ' + (parsed.length - maxRows) + ' 条已忽略');
+      showLimitWarn('Trimmed to your order limit of ' + maxRows + ' — ' + (parsed.length - maxRows) + ' extra items removed');
     } else {
       rows = parsed;
     }
@@ -1355,10 +1355,10 @@
     const n = rows.length;
     const badge = document.getElementById('count-badge');
     if (maxRows) {
-      badge.textContent = n + ' / ' + maxRows + ' 条';
+      badge.textContent = n + ' / ' + maxRows;
       badge.className = 'uf-count-badge ' + (n >= maxRows ? 'at-limit' : 'under-limit');
     } else {
-      badge.textContent = n + ' 条';
+      badge.textContent = n;
       badge.className = 'uf-count-badge';
     }
     const bar = document.getElementById('quota-bar');
@@ -1392,9 +1392,9 @@
 
   function addRow() {
     if (maxRows && rows.length >= maxRows) return;
-    const t = prompt(currentType==='post'?'输入 Subreddit（如 r/SaaS）：':'输入目标帖子 URL：');
+    const t = prompt(currentType==='post'?'Enter subreddit (e.g. r/SaaS):':'Enter target post URL:');
     if (!t) return;
-    const c = prompt('输入内容：');
+    const c = prompt('Enter content:');
     if (!c) return;
     rows.push({ target:t.trim(), content:c.trim(), isUrl: t.trim().startsWith('http') });
     renderTable();
@@ -1412,7 +1412,7 @@
     if (existing) existing.remove();
     const note = document.createElement('p');
     note.className = 'uf-confirm-note';
-    note.textContent = '✓ 已确认 ' + rows.length + ' 条' + (currentType==='post'?'帖子':'评论') + ' 内容，请填写下方订单信息完成下单';
+    note.textContent = '✓ ' + rows.length + ' ' + (currentType==='post'?'post':'comment') + ' items confirmed — fill in the order form below';
     bar.appendChild(note);
   }
 
