@@ -31,13 +31,17 @@ export default async function handler(req, res) {
       customer_email: email,
       // Accept card, Alipay, and WeChat Pay
       payment_method_types: ['card', 'alipay', 'wechat_pay'],
+      // WeChat Pay requires client type to be specified for web
+      payment_method_options: {
+        wechat_pay: { client: 'web' },
+      },
       line_items: [
         {
           price_data: {
             currency: 'cny',
             unit_amount: amountCents,
             product_data: {
-              name: `Kaus Reddit 代发 — ${packageLabel}`,
+              name: `Kaus Reddit $��发 — ${packageLabel}`,
               description: `客户: ${company || name}`,
             },
           },
