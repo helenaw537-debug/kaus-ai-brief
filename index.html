@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ThreadSignal — Reddit Presence for AI Search Visibility</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -365,6 +367,114 @@
       .pkg-tabs { width: 100%; justify-content: stretch; }
       .pkg-tab { flex: 1; text-align: center; }
     }
+
+    /* ────────────────────────────────────────────────────────
+       UPLOAD SECTION — all styles scoped under #content-upload
+       ──────────────────────────────────────────────────────── */
+    @keyframes uf-spin { to { transform: rotate(360deg); } }
+
+    #content-upload { background: var(--white); }
+    #content-upload .uf-wrap { max-width: 680px; margin: 0 auto; }
+
+    #content-upload .back-btn { display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--light);cursor:pointer;margin-bottom:22px;background:none;border:none;padding:0;font-family:inherit; }
+    #content-upload .back-btn:hover { color:var(--dark); }
+    #content-upload .type-badge { display:inline-flex;align-items:center;background:var(--red-pale);color:var(--red);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin-bottom:16px; }
+
+    /* Step 1 */
+    #content-upload #step-1 { padding:8px 0 32px; }
+    #content-upload .uf-title { font-size:15px;font-weight:600;margin-bottom:6px; }
+    #content-upload .uf-sub   { font-size:14px;color:var(--light);margin-bottom:28px; }
+    #content-upload .type-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    #content-upload .type-card { border:2px solid var(--border);border-radius:12px;padding:28px 24px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center; }
+    #content-upload .type-card:hover { border-color:#bbb;background:var(--bg); }
+    #content-upload .type-card .tc-label { font-size:15px;font-weight:600;margin-bottom:5px; }
+    #content-upload .type-card .tc-desc  { font-size:12px;color:var(--light);line-height:1.5; }
+
+    /* Step 2 */
+    #content-upload #step-2 { padding:8px 0 32px;display:none; }
+    #content-upload .input-tabs { display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px; }
+    #content-upload .input-tab  { flex:1;padding:9px;text-align:center;font-size:13px;cursor:pointer;background:#fff;color:var(--light);border:none;font-family:inherit;transition:all .1s; }
+    #content-upload .input-tab.active { background:var(--dark);color:#fff;font-weight:500; }
+    #content-upload .uf-hint { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:#555;line-height:1.8;margin-bottom:14px; }
+    #content-upload .uf-hint code { background:#e8e8e8;padding:1px 5px;border-radius:3px;font-size:11px;color:#333;font-family:monospace; }
+    #content-upload textarea { width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13px;font-family:'Menlo','Consolas',monospace;resize:vertical;color:var(--dark);outline:none;transition:border .15s;line-height:1.6; }
+    #content-upload textarea:focus { border-color:var(--red); }
+    #content-upload .upload-zone { border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:all .15s;display:none; }
+    #content-upload .upload-zone:hover,#content-upload .upload-zone.drag { border-color:var(--red);background:var(--red-pale); }
+    #content-upload .upload-label { font-size:14px;font-weight:500;margin-bottom:5px; }
+    #content-upload .upload-sub   { font-size:12px;color:var(--light);margin-bottom:12px; }
+    #content-upload .filetypes { display:flex;flex-wrap:wrap;gap:5px;justify-content:center; }
+    #content-upload .ft      { background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600;color:#555; }
+    #content-upload .ft.xl   { border-color:#107c41;color:#107c41; }
+    #content-upload .ft.csv  { border-color:#1565c0;color:#1565c0; }
+    #content-upload .ft.word { border-color:#2b5797;color:#2b5797; }
+    #content-upload .uf-spinner-row { display:none;align-items:center;gap:8px;font-size:13px;color:var(--light);margin-top:10px; }
+    #content-upload .uf-spinner { width:15px;height:15px;border:2px solid #eee;border-top-color:var(--red);border-radius:50%;animation:uf-spin .7s linear infinite; }
+    #content-upload .uf-error { background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#c0392b;margin-top:10px;display:none; }
+    #content-upload .uf-primary-btn { width:100%;background:var(--dark);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;transition:background .15s;font-family:inherit; }
+    #content-upload .uf-primary-btn:hover { background:var(--red); }
+    #content-upload .uf-primary-btn:disabled { background:#ccc;cursor:not-allowed; }
+
+    /* Step 2.5 Mapper */
+    #content-upload #step-mapper { padding:8px 0 32px;display:none; }
+    #content-upload .mapper-card { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px; }
+    #content-upload .mapper-title { font-size:14px;font-weight:600;margin-bottom:4px; }
+    #content-upload .mapper-sub   { font-size:12px;color:var(--light);margin-bottom:18px; }
+    #content-upload .mapper-row   { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
+    #content-upload .mapper-row:last-child { margin-bottom:0; }
+    #content-upload .mapper-label { font-size:13px;font-weight:500;width:120px;flex-shrink:0; }
+    #content-upload .mapper-label small { display:block;font-size:11px;color:var(--light);font-weight:400; }
+    #content-upload .col-select { flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--dark);background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;transition:border .15s; }
+    #content-upload .col-select:focus { border-color:var(--red); }
+    #content-upload .col-preview { background:#fff;border:1px solid var(--border);border-radius:var(--radius); }
+    #content-upload .preview-title { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);padding:10px 14px;border-bottom:1px solid var(--border); }
+    #content-upload .preview-table { width:100%;border-collapse:collapse;font-size:12px; }
+    #content-upload .preview-table th { padding:8px 12px;text-align:left;background:var(--bg);font-weight:600;font-size:11px;border-bottom:1px solid var(--border); }
+    #content-upload .preview-table td { padding:7px 12px;border-bottom:1px solid var(--border);color:#555;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #content-upload .preview-table tr:last-child td { border-bottom:none; }
+    #content-upload .preview-table th.highlight,
+    #content-upload .preview-table td.highlight-target  { background:var(--red-pale);color:var(--red);font-weight:600; }
+    #content-upload .preview-table td.highlight-content { background:#f0f7ff;color:#2b5797; }
+    #content-upload .preview-table th.highlight-content-th { background:#f0f7ff;color:#2b5797; }
+    #content-upload .row-count-note { font-size:12px;color:var(--light);margin-top:10px;text-align:right;padding:0 14px 10px; }
+
+    /* Step 3 */
+    #content-upload #step-3 { padding:8px 0 40px;display:none; }
+    #content-upload .uf-table-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+    #content-upload .uf-table-title  { font-size:15px;font-weight:600; }
+    #content-upload .uf-count-badge  { border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;background:var(--red);color:#fff; }
+    #content-upload .uf-count-badge.under-limit { background:#e8e8e8;color:#555; }
+    #content-upload .uf-action-row { display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap; }
+    #content-upload .uf-action-btn { padding:7px 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;transition:background .1s;font-family:inherit; }
+    #content-upload .uf-action-btn:hover { background:var(--bg); }
+    #content-upload .uf-action-btn:disabled { opacity:.4;cursor:not-allowed; }
+    #content-upload .quota-bar { display:none;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px; }
+    #content-upload .quota-bar.visible { display:flex; }
+    #content-upload .quota-label { color:var(--light); }
+    #content-upload .quota-used  { font-weight:600; }
+    #content-upload .quota-used.full { color:var(--red); }
+    #content-upload .quota-track { width:120px;height:5px;background:#e5e5e5;border-radius:3px;overflow:hidden; }
+    #content-upload .quota-fill  { height:100%;background:var(--red);border-radius:3px;transition:width .2s; }
+    #content-upload .limit-warn { background:#fff8e1;border:1px solid #ffe082;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#8a6200;margin-bottom:14px;display:none; }
+    #content-upload .uf-table-wrap { border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto; }
+    #content-upload table.result-table { width:100%;border-collapse:collapse;min-width:500px; }
+    #content-upload table.result-table thead tr { background:var(--bg); }
+    #content-upload table.result-table th { padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);border-bottom:1px solid var(--border); }
+    #content-upload table.result-table td { padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top; }
+    #content-upload table.result-table tr:last-child td { border-bottom:none; }
+    #content-upload table.result-table tr:hover td { background:var(--bg); }
+    #content-upload .target-pill  { display:inline-block;background:var(--red-pale);color:var(--red);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #content-upload .url-pill     { display:inline-block;background:#f0f4ff;color:#3a5bd9;border-radius:6px;padding:3px 8px;font-size:11px;font-family:monospace;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #content-upload .content-preview { color:#333;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden; }
+    #content-upload .row-num { color:var(--light);font-size:11px;background:var(--bg);border-radius:4px;padding:2px 6px;font-weight:600; }
+    #content-upload .del-btn { background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:0 4px; }
+    #content-upload .del-btn:hover { color:var(--red); }
+    #content-upload .uf-submit-bar { border-top:1px solid var(--border);padding:16px 0 0;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; }
+    #content-upload .uf-submit-total { font-size:13px;color:var(--light); }
+    #content-upload .uf-submit-total strong { color:var(--dark); }
+    #content-upload .uf-submit-btn { background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit; }
+    #content-upload .uf-submit-btn:hover { background:#C4282F; }
+    #content-upload .uf-confirm-note { font-size:13px;color:var(--red);font-weight:500;margin-top:10px;width:100%; }
   </style>
 </head>
 <body>
@@ -856,6 +966,307 @@
   // Init
   setTab('combined');
   document.querySelector('.pkg-tab.active').dispatchEvent(new Event('click'));
+
+  // ═══════════════════════════════════════════════════════
+  //  UPLOAD FORM JS
+  // ═══════════════════════════════════════════════════════
+  let currentType = 'post';
+  let rows = [];
+  let sheetData = [];
+  let sheetHeaders = [];
+  let maxRows = null;
+
+  (function initLimit() {
+    const p = new URLSearchParams(location.search).get('max');
+    if (p && parseInt(p) > 0) maxRows = parseInt(p);
+  })();
+
+  const UF_STEPS = ['step-1','step-2','step-mapper','step-3'];
+  function goTo(n) {
+    const ids = { 1:'step-1', 2:'step-2', 2.5:'step-mapper', 3:'step-3' };
+    UF_STEPS.forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
+    const el = document.getElementById(ids[n] || 'step-1');
+    if (el) el.style.display = 'block';
+  }
+
+  function selectType(type) {
+    currentType = type;
+    const isPost = type === 'post';
+    document.getElementById('type-badge').textContent  = isPost ? '帖子' : '评论';
+    document.getElementById('mapper-badge').textContent = isPost ? '帖子' : '评论';
+    document.getElementById('step2-title').textContent  = isPost ? '上传帖子内容' : '上传评论内容';
+    document.getElementById('target-label-small').textContent = isPost ? '如 r/SaaS, r/entrepreneur' : '帖子 URL';
+    document.getElementById('col-target-head').textContent    = isPost ? 'Subreddit' : '目标帖子';
+    document.getElementById('table-title').textContent        = isPost ? '帖子列表' : '评论列表';
+    document.getElementById('text-input').placeholder = isPost
+      ? 'r/SaaS\n我们发现 AI 搜索正在取代传统 SEO...\n\nr/entrepreneur\n更多创业者必须关注的增长策略...'
+      : '帖子链接: https://www.reddit.com/r/SaaS/comments/abc123/\nThis is a great point about AI adoption...\n\nhttps://www.reddit.com/r/entrepreneur/comments/def/\n完全同意，我也有类似经历...';
+    goTo(2);
+  }
+
+  function ufSwitchTab(tab) {
+    document.querySelectorAll('#content-upload .input-tab').forEach((b,i) =>
+      b.classList.toggle('active', (i===0&&tab==='paste')||(i===1&&tab==='upload')));
+    document.getElementById('paste-area').style.display  = tab==='paste' ? 'block' : 'none';
+    document.getElementById('upload-area').style.display = tab==='upload'? 'block' : 'none';
+    document.getElementById('hint-text').style.display   = tab==='paste' ? 'block' : 'none';
+    if (tab==='paste') checkParseBtn();
+  }
+  function onTextInput() { document.getElementById('parse-error').style.display='none'; checkParseBtn(); }
+  function checkParseBtn() { document.getElementById('parse-btn').disabled = !document.getElementById('text-input').value.trim(); }
+
+  function onDragOver(e)  { e.preventDefault(); document.getElementById('upload-area').classList.add('drag'); }
+  function onDragLeave()  { document.getElementById('upload-area').classList.remove('drag'); }
+  function handleDrop(e)  { e.preventDefault(); document.getElementById('upload-area').classList.remove('drag'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); }
+  function handleFileSelect(e) { if (e.target.files[0]) processFile(e.target.files[0]); e.target.value=''; }
+
+  function setSpinner(on) {
+    document.getElementById('spinner').style.display = on ? 'flex' : 'none';
+    document.getElementById('parse-btn').disabled = on;
+  }
+
+  function processFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    setSpinner(true); showUfError('');
+    if (['xlsx','xls','ods','csv','tsv'].includes(ext)) {
+      processSpreadsheet(file);
+    } else if (ext === 'docx') {
+      processDocx(file);
+    } else if (['txt','md'].includes(ext)) {
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById('text-input').value = e.target.result; ufSwitchTab('paste'); setSpinner(false); checkParseBtn(); };
+      reader.readAsText(file,'utf-8');
+    } else {
+      setSpinner(false); showUfError('不支持此格式');
+    }
+  }
+
+  function processSpreadsheet(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+        if (!data || data.length < 2) { setSpinner(false); showUfError('表格数据为空'); return; }
+        const firstRow = data[0].map(c => String(c).trim());
+        const looksLikeHeader = firstRow.some(c => c !== '' && !c.startsWith('r/') && !c.startsWith('http') && isNaN(c));
+        sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('列 '+(i+1))) : firstRow.map((_,i) => '列 '+(i+1));
+        sheetData = (looksLikeHeader ? data.slice(1) : data).filter(r => r.some(c => String(c).trim()));
+        setSpinner(false); openMapper();
+      } catch(err) { setSpinner(false); showUfError('文件读取失败：' + err.message); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function processDocx(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      mammoth.extractRawText({ arrayBuffer: e.target.result })
+        .then(r => { document.getElementById('text-input').value = r.value; ufSwitchTab('paste'); setSpinner(false); checkParseBtn(); })
+        .catch(err => { setSpinner(false); showUfError('Word 文件读取失败：' + err.message); });
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function openMapper() {
+    const tSel = document.getElementById('target-col-select');
+    const cSel = document.getElementById('content-col-select');
+    tSel.innerHTML = cSel.innerHTML = '<option value="">— 选择列 —</option>';
+    sheetHeaders.forEach((h, i) => {
+      tSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
+      cSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
+    });
+    let guessTarget = -1, guessContent = -1;
+    sheetHeaders.forEach((h, i) => {
+      const s = String(sheetData[0]?.[i]||'').trim().toLowerCase();
+      if (guessTarget === -1 && (s.startsWith('r/') || s.startsWith('http') || /sub|url|target/.test(h.toLowerCase()))) guessTarget = i;
+    });
+    sheetHeaders.forEach((h, i) => {
+      if (i === guessTarget) return;
+      const s = String(sheetData[0]?.[i]||'');
+      if (guessContent === -1 && (s.length > 20 || /content|内容|text/.test(h.toLowerCase()))) guessContent = i;
+    });
+    if (guessTarget >= 0) tSel.value = guessTarget;
+    if (guessContent >= 0) cSel.value = guessContent;
+    updatePreview(); goTo(2.5);
+  }
+
+  function previewVal(colIdx, rowIdx) {
+    const val = String(sheetData[rowIdx]?.[colIdx]||'').trim();
+    return val.length > 18 ? val.slice(0,18)+'…' : (val||'—');
+  }
+
+  function updatePreview() {
+    const tIdx = parseInt(document.getElementById('target-col-select').value);
+    const cIdx = parseInt(document.getElementById('content-col-select').value);
+    const hasBoth = !isNaN(tIdx) && !isNaN(cIdx) && tIdx !== cIdx;
+    document.getElementById('mapper-btn').disabled = !hasBoth;
+    document.getElementById('mapper-error').style.display = 'none';
+    const card = document.getElementById('preview-card');
+    if (isNaN(tIdx) && isNaN(cIdx)) { card.style.display='none'; return; }
+    card.style.display = 'block';
+    const table = document.getElementById('preview-table');
+    let html2 = '<thead><tr>';
+    sheetHeaders.forEach((h,i) => {
+      const cls = i===tIdx?'highlight':i===cIdx?'highlight-content-th':'';
+      html2 += '<th class="'+cls+'">' + ufEsc(h) + '</th>';
+    });
+    html2 += '</tr></thead><tbody>';
+    sheetData.slice(0,5).forEach(row => {
+      html2 += '<tr>';
+      sheetHeaders.forEach((_,i) => {
+        const cls = i===tIdx?'highlight-target':i===cIdx?'highlight-content':'';
+        const val = String(row[i]||'').trim();
+        html2 += '<td class="'+cls+'" title="'+ufEsc(val)+'">'+ufEsc(val.length>40?val.slice(0,40)+'…':val)||'—'+'</td>';
+      });
+      html2 += '</tr>';
+    });
+    html2 += '</tbody>';
+    table.innerHTML = html2;
+    document.getElementById('row-count-note').textContent = '共 ' + sheetData.length + ' 行数据';
+  }
+
+  function applyMapping() {
+    const tIdx = parseInt(document.getElementById('target-col-select').value);
+    const cIdx = parseInt(document.getElementById('content-col-select').value);
+    if (isNaN(tIdx) || isNaN(cIdx) || tIdx === cIdx) { showMapperError('请选择两个不同的列'); return; }
+    let mapped = sheetData
+      .map(r => ({ target: String(r[tIdx]||'').trim(), content: String(r[cIdx]||'').trim() }))
+      .filter(r => r.target && r.content)
+      .map(r => ({ ...r, isUrl: r.target.startsWith('http') }));
+    if (!mapped.length) { showMapperError('所选列中没有有效数据'); return; }
+    applyLimit(mapped); renderTable(); goTo(3);
+  }
+
+  function parseText() {
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) return;
+    // TSV detection
+    if (text.includes('\t')) {
+      const tsvRows = text.split('\n').map(l => l.split('\t').map(c => c.trim())).filter(r => r.some(c => c));
+      if (!tsvRows.length) { showUfError('表格数据为空'); return; }
+      const maxCols = Math.max(...tsvRows.map(r => r.length));
+      const firstRow = tsvRows[0];
+      const looksLikeHeader = firstRow.some(c => c !== '' && !c.startsWith('r/') && !c.startsWith('http') && isNaN(c));
+      sheetHeaders = looksLikeHeader ? firstRow.map((h,i) => h || ('列 '+(i+1))) : Array.from({length:maxCols},(_,i)=>'列 '+(i+1));
+      sheetData = (looksLikeHeader ? tsvRows.slice(1) : tsvRows).filter(r => r.some(c => c));
+      if (!sheetData.length) { showUfError('TSV 数据为空'); return; }
+      openMapper(); return;
+    }
+    const extractUrl = l => { const m = l.match(/https?:\/\/[^\s，。！？）)]+/); return m ? m[0].replace(/[.,;:）)]+$/,'') : null; };
+    const isSubreddit = l => /^r\/[\w\d_]+/i.test(l);
+    const isPureLabel = l => /^[^:：]{1,20}[:：]\s*\S/.test(l) && !extractUrl(l) && !isSubreddit(l);
+    const isSeparator = l => /^-{3,}$/.test(l);
+    const lines = text.split('\n');
+    const parsed = [];
+    let currentTarget2 = null, contentLines2 = [];
+    const flush2 = () => {
+      const content = contentLines2.join('\n').trim();
+      if (currentTarget2 && content) parsed.push({ target: currentTarget2, content, isUrl: currentTarget2.startsWith('http') });
+      currentTarget2 = null; contentLines2 = [];
+    };
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) continue;
+      if (isSeparator(line))  { flush2(); continue; }
+      const url = extractUrl(line);
+      if (url)                { if (currentTarget2) flush2(); currentTarget2 = url; contentLines2 = []; continue; }
+      if (isSubreddit(line))  { if (currentTarget2) flush2(); currentTarget2 = line; contentLines2 = []; continue; }
+      if (isPureLabel(line))  continue;
+      if (!currentTarget2)    { currentTarget2 = line; continue; }
+      contentLines2.push(line);
+    }
+    flush2();
+    if (!parsed.length) { showUfError('未能识别任何内容，请确认每段包含链接或 r/subreddit'); return; }
+    applyLimit(parsed); renderTable(); goTo(3);
+  }
+
+  function applyLimit(parsed) {
+    hideLimitWarn();
+    if (maxRows && parsed.length > maxRows) {
+      rows = parsed.slice(0, maxRows);
+      showLimitWarn('已截取前 ' + maxRows + ' 条（你的订单限额），多余的 ' + (parsed.length - maxRows) + ' 条已忽略');
+    } else {
+      rows = parsed;
+    }
+  }
+
+  function showLimitWarn(msg) { const el=document.getElementById('limit-warn'); el.textContent=msg; el.style.display='block'; }
+  function hideLimitWarn()    { document.getElementById('limit-warn').style.display='none'; }
+
+  function renderTable() {
+    const n = rows.length;
+    const badge = document.getElementById('count-badge');
+    if (maxRows) {
+      badge.textContent = n + ' / ' + maxRows + ' 条';
+      badge.className = 'uf-count-badge ' + (n >= maxRows ? 'at-limit' : 'under-limit');
+    } else {
+      badge.textContent = n + ' 条';
+      badge.className = 'uf-count-badge';
+    }
+    const bar = document.getElementById('quota-bar');
+    if (maxRows) {
+      bar.classList.add('visible');
+      const pct = Math.min(100, Math.round(n / maxRows * 100));
+      document.getElementById('quota-used').textContent = n;
+      document.getElementById('quota-used').className = 'quota-used' + (n >= maxRows ? ' full' : '');
+      document.getElementById('quota-max').textContent = maxRows;
+      document.getElementById('quota-fill').style.width = pct + '%';
+    } else {
+      bar.classList.remove('visible');
+    }
+    document.getElementById('add-btn').disabled = !!(maxRows && n >= maxRows);
+    document.getElementById('submit-count').textContent = n;
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+    document.getElementById('empty-state').style.display = n ? 'none' : 'block';
+    rows.forEach((row, i) => {
+      const short = row.target.replace(/https?:\/\/(www\.)?reddit\.com/,'');
+      const targetCell = row.isUrl
+        ? '<span class="url-pill" title="'+ufEsc(row.target)+'">'+ufEsc(short.length>42?short.slice(0,42)+'…':short)+'</span>'
+        : '<span class="target-pill">'+ufEsc(row.target)+'</span>';
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td><span class="row-num">'+(i+1)+'</span></td><td>'+targetCell+'</td><td><div class="content-preview">'+ufEsc(row.content)+'</div></td><td><button class="del-btn" onclick="deleteRow('+i+')">×</button></td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  function deleteRow(i) { rows.splice(i,1); renderTable(); hideLimitWarn(); }
+
+  function addRow() {
+    if (maxRows && rows.length >= maxRows) return;
+    const t = prompt(currentType==='post'?'输入 Subreddit（如 r/SaaS）：':'输入目标帖子 URL：');
+    if (!t) return;
+    const c = prompt('输入内容：');
+    if (!c) return;
+    rows.push({ target:t.trim(), content:c.trim(), isUrl: t.trim().startsWith('http') });
+    renderTable();
+  }
+
+  function submitContent() {
+    if (!rows.length) return;
+    try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
+    // Scroll to order section
+    const orderSection = document.getElementById('order');
+    if (orderSection) orderSection.scrollIntoView({ behavior: 'smooth' });
+    // Show confirmation note under the submit bar
+    const bar = document.getElementById('uf-submit-bar');
+    const existing = bar.querySelector('.uf-confirm-note');
+    if (existing) existing.remove();
+    const note = document.createElement('p');
+    note.className = 'uf-confirm-note';
+    note.textContent = '✓ 已确认 ' + rows.length + ' 条' + (currentType==='post'?'帖子':'评论') + ' 内容，请填写下方订单信息完成下单';
+    bar.appendChild(note);
+  }
+
+  function showUfError(msg) { const el=document.getElementById('parse-error'); el.textContent=msg; el.style.display=msg?'block':'none'; }
+  function showMapperError(msg) { const el=document.getElementById('mapper-error'); el.textContent=msg; el.style.display='block'; }
+  function ufEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Init upload form
+  goTo(1);
+
 </script>
 </body>
 </html>
