@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaus Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f7; color: #111; font-size: 14px; }
+    .topbar { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 24px; display: flex; align-items: center; gap: 16px; }
+    .topbar h1 { font-size: 16px; font-weight: 600; }
+    .topbar .tag { background: #fef2f2; color: #D13239; border-radius: 12px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+    .main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .auth-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 32px; max-width: 400px; margin: 80px auto; }
+    .auth-card h2 { font-size: 18px; margin-bottom: 20px; }
+    input[type=password] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 12px; }
+    .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; font-weight: 500; }
+    .btn-primary { background: #D13239; color: #fff; }
+    .btn-primary:hover { background: #b82b31; }
+    .btn-sm { padding: 6px 14px; font-size: 12px; }
+    .btn-outline { background: #fff; border: 1px solid #ddd; color: #333; }
+    .btn-outline:hover { background: #f5f5f5; }
+    .btn-execute { background: #111; color: #fff; }
+    .btn-execute:hover { background: #333; }
+    .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px 20px; min-width: 140px; }
+    .stat-card .label { font-size: 12px; color: #888; margin-bottom: 4px; }
+    .stat-card .value { font-size: 22px; font-weight: 700; }
+    .orders-table { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f9f9f9; padding: 10px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #666; border-bottom: 1px solid #e5e5e5; }
+    td { padding: 12px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+    .status { display: inline-flex; align-items: center; border-radius: 12px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
+    .status-pending_content { background: #fff7ed; color: #c2410c; }
+    .status-ready { background: #eff6ff; color: #1d4ed8; }
+    .status-queued { background: #fef9c3; color: #854d0e; }
+    .status-executing { background: #f0fdf4; color: #15803d; }
+    .status-completed { background: #f0fdf4; color: #15803d; }
+    .status-unknown { background: #f5f5f5; color: #666; }
+    .progress-bar { background: #e5e5e5; border-radius: 4px; height: 6px; width: 100px; margin-top: 4px; }
+    .progress-fill { background: #D13239; border-radius: 4px; height: 6px; }
+    .expand-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 12px; padding: 0; }
+    .rows-preview { background: #f9f9f9; border-radius: 6px; padding: 8px 10px; font-size: 12px; margin-top: 8px; display: none; max-height: 200px; overflow-y: auto; }
+    .row-item { padding: 4px 0; border-bottom: 1px solid #eee; }
+    .row-item:last-child { border-bottom: none; }
+    .row-target { color: #D13239; font-weight: 500; }
+    .row-content { color: #444; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+    .error { color: #D13239; padding: 12px; }
+    .loading { color: #888; padding: 40px; text-align: center; }
+    .refresh-btn { background: none; border: 1px solid #ddd; border-radius: 8px; padding: 7px 14px; cursor: pointer; font-size: 13px; color: #444; }
+    .refresh-btn:hover { background: #f5f5f5; }
+  </style>
+</head>
+<body>
+
+<!-- AUTH GATE -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <h2>Kaus Admin</h2>
+    <input type="password" id="token-input" placeholder="Admin token" autocomplete="current-password">
+    <button class="btn btn-primary" onclick="login()" style="width:100%">Sign in</button>
+    <p id="auth-error" style="color:#D13239;font-size:13px;margin-top:10px;display:none">Invalid token</p>
+  </div>
+</div>
+
+<!-- MAIN DASHBOARD -->
+<div id="main-screen" style="display:none">
+  <div class="topbar">
+    <h1>Kaus Admin</h1>
+    <span class="tag">Internal</span>
+    <button class="refresh-btn" onclick="loadOrders()" style="margin-left:auto">↻ Refresh</button>
+    <button class="btn btn-sm btn-outline" onclick="logout()">Sign out</button>
+  </div>
+
+  <div class="main">
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="label">Total orders</div><div class="value" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="label">Pending content</div><div class="value" id="stat-pending">—</div></div>
+      <div class="stat-card"><div class="label">Ready to execute</div><div class="value" id="stat-ready">—</div></div>
+      <div class="stat-card"><div class="label">Completed</div><div class="value" id="stat-done">—</div></div>
+    </div>
+
+    <div class="orders-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Package</th>
+            <th>Content</th>
+            <th>Status</th>
+            <th>Progress</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orders-body">
+          <tr><td colspan="7" class="loading">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const API_BASE = 'https://kaus-site.vercel.app/api';  // ← update to your Vercel URL
+  let adminToken = '';
+
+  // ── Auth ────────────────────────────────────────────────────────────────────
+  function login() {
+    const t = document.getElementById('token-input').value.trim();
+    if (!t) return;
+    adminToken = t;
+    localStorage.setItem('kaus_admin_token', t);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+    loadOrders();
+  }
+
+  function logout() {
+    adminToken = '';
+    localStorage.removeItem('kaus_admin_token');
+    document.getElementById('auth-screen').style.display = 'block';
+    document.getElementById('main-screen').style.display = 'none';
+  }
+
+  document.getElementById('token-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+
+  // Auto-login if token cached
+  window.addEventListener('load', () => {
+    const cached = localStorage.getItem('kaus_admin_token');
+    if (cached) {
+      adminToken = cached;
+      document.getElementById('token-input').value = cached;
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('main-screen').style.display = 'block';
+      loadOrders();
+    }
+  });
+
+  // ── Load orders ─────────────────────────────────────────────────────────────
+  async function loadOrders() {
+    const tbody = document.getElementById('orders-body');
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading…</td></tr>';
+
+    let data;
+    try {
+      const res = await fetch(`${API_BASE}/admin-orders?token=${encodeURIComponent(adminToken)}`);
+      if (res.status === 401) {
+        document.getElementById('auth-error').style.display = 'block';
+        logout();
+        return;
+      }
+      data = await res.json();
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="7" class="error">Load failed: ${e.message}</td></tr>`;
+      return;
+    }
+
+    const orders = data.orders || [];
+
+    // Stats
+    document.getElementById('stat-total').textContent = orders.length;
+    document.getElementById('stat-pending').textContent = orders.filter(o => o.status === 'pending_content').length;
+    document.getElementById('stat-ready').textContent = orders.filter(o => o.status === 'ready').length;
+    document.getElementById('stat-done').textContent = orders.filter(o => o.status === 'completed').length;
+
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#888">No orders yet</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = orders.map(o => {
+      const pkg = o.package_type === 'combined'
+        ? `${o.posts_qty}p + ${o.comments_qty}c`
+        : o.package_type === 'posts' ? `${o.posts_qty} posts` : `${o.comments_qty} comments`;
+      const rowCount = o.content_rows?.length || 0;
+      const pct = o.posts_total > 0 ? Math.round((o.posts_done / o.posts_total) * 100) : 0;
+      const statusClass = `status-${o.status || 'unknown'}`;
+      const date = o.created_at ? new Date(o.created_at).toLocaleDateString('en-GB') : '—';
+      const canExecute = o.status === 'ready' || o.status === 'queued';
+      const canDeliver = o.status === 'executing' || o.status === 'queued';
+
+      const rowsHtml = o.content_rows?.length
+        ? o.content_rows.slice(0, 5).map(r => `
+            <div class="row-item">
+              <div class="row-target">${r.target || '—'}</div>
+              <div class="row-content">${(r.content || '').slice(0, 120)}</div>
+            </div>
+          `).join('') + (o.content_rows.length > 5 ? `<div style="color:#888;padding:4px 0">+${o.content_rows.length - 5} more…</div>` : '')
+        : '<div style="color:#888">No content uploaded</div>';
+
+      return `
+        <tr>
+          <td>
+            <div style="font-weight:500">${o.client_name || '—'}</div>
+            <div style="color:#888;font-size:12px">${o.company || ''}</div>
+            <div style="color:#888;font-size:11px">${o.email}</div>
+            ${o.wechat ? `<div style="color:#888;font-size:11px">WeChat: ${o.wechat}</div>` : ''}
+          </td>
+          <td>
+            <div>${pkg}</div>
+            <div style="color:#888;font-size:12px">¥${o.order_price}</div>
+            <div style="color:#888;font-size:11px">${o.lang === 'en' ? 'EN' : 'ZH'}</div>
+          </td>
+          <td>
+            <div>${rowCount} rows</div>
+            ${rowCount > 0 ? `
+              <button class="expand-btn" onclick="toggleRows('rows-${o.id}', this)">▸ View content</button>
+              <div id="rows-${o.id}" class="rows-preview">${rowsHtml}</div>
+            ` : '<div style="color:#ccc;font-size:12px">—</div>'}
+          </td>
+          <td><span class="status ${statusClass}">${o.status || 'unknown'}</span></td>
+          <td>
+            ${o.posts_total > 0 ? `
+              <div style="font-size:12px">${o.posts_done}/${o.posts_total}</div>
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+            ` : '<span style="color:#ccc">—</span>'}
+          </td>
+          <td style="color:#888">${date}</td>
+          <td>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              ${canExecute ? `<button class="btn btn-sm btn-execute" onclick="executeOrder('${o.id}', this)">▶ Execute</button>` : ''}
+              ${canDeliver ? `<button class="btn btn-sm btn-outline" onclick="sendDelivery('${o.id}', this)">✉ Deliver</button>` : ''}
+              ${o.status === 'pending_content' ? '<span style="color:#999;font-size:12px">Awaiting content</span>' : ''}
+              ${o.status === 'completed' ? '<span style="color:#15803d;font-size:12px">✓ Done</span>' : ''}
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function toggleRows(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const showing = el.style.display === 'block';
+    el.style.display = showing ? 'none' : 'block';
+    btn.textContent = showing ? '▸ View content' : '▾ Hide content';
+  }
+
+  async function executeOrder(orderId, btn) {
+    btn.disabled = true;
+    btn.textContent = 'Queueing…';
+    try {
+      const res = await fetch(`${API_BASE}/execute-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: orderId, token: adminToken }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.textContent = '✓ Queued';
+        btn.style.background = '#15803d';
+        setTimeout(loadOrders, 1500);
+      } else {
+        btn.textContent = data.error || 'Error';
+        btn.disabled = false;
+      }
+    } catch (e) {
+      btn.textContent = 'Failed';
+      btn.disabled = false;
+    }
+  }
+
+  async function sendDelivery(orderId, btn) {
+    if (!confirm('Send delivery email to client now?')) return;
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const res = await fetch(`${API_BASE}/delivery`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: orderId, token: adminToken }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        btn.textContent = `✓ Sent (${data.posts_sent})`;
+        btn.style.borderColor = '#15803d';
+        btn.style.color = '#15803d';
+        setTimeout(loadOrders, 1500);
+      } else {
+        btn.textContent = data.error || 'Error';
+        btn.disabled = false;
+      }
+    } catch (e) {
+      btn.textContent = 'Failed';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>

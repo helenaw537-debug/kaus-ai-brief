@@ -2,9 +2,10 @@
   "version": 2,
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/admin", "dest": "/admin.html" },
     { "src": "/content", "dest": "/content.html" },
     { "src": "/checkout", "dest": "/checkout.html" },
-    { "src": "/zh", "dest": "/zh.html" },
+    { "src": "/en", "dest": "/en.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
