@@ -617,6 +617,162 @@
 </section>
 
 <!-- ORDER FORM -->
+<!-- CONTENT UPLOAD -->
+<section id="content-upload">
+  <div class="section-inner">
+    <p class="section-label">内容上传</p>
+    <h2 class="section-title">准备你的内容</h2>
+    <p class="section-sub">选择内容类型，粘贴或上传文件，确认后前往下单</p>
+
+    <div class="uf-wrap">
+
+      <!-- ═══ STEP 1: TYPE ═══ -->
+      <div id="step-1">
+        <div class="uf-title">选择内容类型</div>
+        <p class="uf-sub">选择你要发布的内容类型</p>
+        <div class="type-grid">
+          <div class="type-card" onclick="selectType('post')">
+            <div class="tc-label">帖子</div>
+            <div class="tc-desc">发布到指定 subreddit 的原创帖子内容</div>
+          </div>
+          <div class="type-card" onclick="selectType('comment')">
+            <div class="tc-label">评论</div>
+            <div class="tc-desc">回复特定帖子链接的评论内容</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 2: INPUT ═══ -->
+      <div id="step-2">
+        <button class="back-btn" onclick="goTo(1)">← 重新选择</button>
+        <div class="type-badge" id="type-badge">帖子</div>
+        <div style="margin-bottom:20px">
+          <div class="uf-title" id="step2-title">上传帖子内容</div>
+          <p style="font-size:14px;color:var(--light);margin-top:4px">粘贴文本或上传文件，下一步确认内容</p>
+        </div>
+
+        <div class="input-tabs">
+          <button class="input-tab active" onclick="ufSwitchTab('paste')">粘贴文本</button>
+          <button class="input-tab" onclick="ufSwitchTab('upload')">上传文件</button>
+        </div>
+
+        <div class="uf-hint" id="hint-text">
+          自动识别 <code>r/subreddit</code> 行和含 <code>https://</code> 的行为目标，其余为正文；"回复类型: …"等标签行自动跳过。<br/>
+          从飞书 / Notion 表格复制后直接粘贴 — 自动识别为表格列，下一步选列。
+        </div>
+
+        <div id="paste-area">
+          <textarea id="text-input" rows="10" placeholder="" oninput="onTextInput()"></textarea>
+        </div>
+
+        <div id="upload-area" class="upload-zone"
+          onclick="document.getElementById('file-input').click()"
+          ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="handleDrop(event)">
+          <div class="upload-label">点击或拖入文件</div>
+          <div class="upload-sub">自动检测列，下一步手动选择</div>
+          <div class="filetypes">
+            <span class="ft xl">xlsx</span><span class="ft xl">xls</span><span class="ft xl">ods</span>
+            <span class="ft csv">csv</span><span class="ft csv">tsv</span>
+            <span class="ft word">docx</span>
+            <span class="ft">txt</span><span class="ft">md</span>
+          </div>
+        </div>
+        <input type="file" id="file-input" accept=".txt,.md,.csv,.tsv,.xlsx,.xls,.ods,.docx" onchange="handleFileSelect(event)"/>
+
+        <div class="uf-spinner-row" id="spinner">
+          <div class="uf-spinner"></div> 正在读取文件…
+        </div>
+        <div class="uf-error" id="parse-error"></div>
+        <button class="uf-primary-btn" id="parse-btn" onclick="parseText()" disabled>下一步：选择内容 →</button>
+      </div>
+
+      <!-- ═══ STEP 2.5: COLUMN MAPPER ═══ -->
+      <div id="step-mapper">
+        <button class="back-btn" onclick="goTo(2)">← 返回</button>
+        <div class="type-badge" id="mapper-badge">帖子</div>
+        <div style="margin-bottom:20px">
+          <div class="uf-title">选择内容</div>
+          <p style="font-size:14px;color:var(--light);margin-top:4px">选择哪列是 subreddit，哪列是评论内容</p>
+        </div>
+
+        <div class="mapper-card">
+          <div class="mapper-title">列对应关系</div>
+          <div class="mapper-sub" id="mapper-sub">从下拉菜单中选择每个字段对应的列</div>
+          <div class="mapper-row">
+            <div class="mapper-label" id="target-label">
+              Subreddit
+              <small id="target-label-small">如 r/SaaS, r/entrepreneur</small>
+            </div>
+            <select class="col-select" id="target-col-select" onchange="updatePreview()">
+              <option value="">— 选择列 —</option>
+            </select>
+          </div>
+          <div class="mapper-row">
+            <div class="mapper-label">
+              内容
+              <small>评论 / Post</small>
+            </div>
+            <select class="col-select" id="content-col-select" onchange="updatePreview()">
+              <option value="">— 选择列 —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-preview" id="preview-card" style="display:none">
+          <div class="preview-title">数据预览（前 5 行）</div>
+          <div style="overflow-x:auto">
+            <table class="preview-table" id="preview-table"></table>
+          </div>
+          <div class="row-count-note" id="row-count-note"></div>
+        </div>
+
+        <div class="uf-error" id="mapper-error" style="margin-top:14px"></div>
+        <button class="uf-primary-btn" id="mapper-btn" onclick="applyMapping()" style="margin-top:16px" disabled>确认，生成表格 →</button>
+      </div>
+
+      <!-- ═══ STEP 3: TABLE ═══ -->
+      <div id="step-3">
+        <div class="uf-table-header">
+          <span class="uf-table-title" id="table-title">帖子列表</span>
+          <span class="uf-count-badge" id="count-badge">0 条</span>
+        </div>
+
+        <div class="quota-bar" id="quota-bar">
+          <span class="quota-label">已上传 <span class="quota-used" id="quota-used">0</span> / <span id="quota-max">0</span> 条</span>
+          <div class="quota-track"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
+        </div>
+        <div class="limit-warn" id="limit-warn"></div>
+
+        <div class="uf-action-row">
+          <button class="uf-action-btn" onclick="goTo(2)">← 重新上传</button>
+          <button class="uf-action-btn" id="add-btn" onclick="addRow()">+ 手动添加</button>
+        </div>
+
+        <div class="uf-table-wrap">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th style="width:5%">#</th>
+                <th style="width:35%" id="col-target-head">Subreddit</th>
+                <th style="width:52%">内容</th>
+                <th style="width:8%"></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+          <div style="text-align:center;padding:36px;color:var(--light);font-size:14px;display:none" id="empty-state">暂无内容</div>
+        </div>
+
+        <div class="uf-submit-bar" id="uf-submit-bar">
+          <span class="uf-submit-total">共 <strong id="submit-count">0</strong> 条内容</span>
+          <button class="uf-submit-btn" onclick="submitContent()">确认，前往下单 →</button>
+        </div>
+      </div>
+
+    </div><!-- /.uf-wrap -->
+  </div><!-- /.section-inner -->
+</section>
+
 <section id="order">
   <div class="section-inner">
     <p class="section-label">Get Started</p>
