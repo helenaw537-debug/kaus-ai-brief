@@ -369,112 +369,112 @@
     }
 
     /* ────────────────────────────────────────────────────────
-       UPLOAD SECTION — all styles scoped under #content-upload
+       UPLOAD SECTION — all styles scoped under #upload-card
        ──────────────────────────────────────────────────────── */
     @keyframes uf-spin { to { transform: rotate(360deg); } }
 
-    #content-upload { background: var(--white); }
-    #content-upload .uf-wrap { max-width: 680px; margin: 0 auto; }
+    #upload-card { background: var(--white); }
+    #upload-card .uf-wrap { max-width: 680px; margin: 0 auto; }
 
-    #content-upload .back-btn { display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--light);cursor:pointer;margin-bottom:22px;background:none;border:none;padding:0;font-family:inherit; }
-    #content-upload .back-btn:hover { color:var(--dark); }
-    #content-upload .type-badge { display:inline-flex;align-items:center;background:var(--red-pale);color:var(--red);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin-bottom:16px; }
+    #upload-card .back-btn { display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--light);cursor:pointer;margin-bottom:22px;background:none;border:none;padding:0;font-family:inherit; }
+    #upload-card .back-btn:hover { color:var(--dark); }
+    #upload-card .type-badge { display:inline-flex;align-items:center;background:var(--red-pale);color:var(--red);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin-bottom:16px; }
 
     /* Step 1 */
-    #content-upload #step-1 { padding:8px 0 32px; }
-    #content-upload .uf-title { font-size:15px;font-weight:600;margin-bottom:6px; }
-    #content-upload .uf-sub   { font-size:14px;color:var(--light);margin-bottom:28px; }
-    #content-upload .type-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
-    #content-upload .type-card { border:2px solid var(--border);border-radius:12px;padding:28px 24px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center; }
-    #content-upload .type-card:hover { border-color:#bbb;background:var(--bg); }
-    #content-upload .type-card .tc-label { font-size:15px;font-weight:600;margin-bottom:5px; }
-    #content-upload .type-card .tc-desc  { font-size:12px;color:var(--light);line-height:1.5; }
+    #upload-card #step-1 { padding:8px 0 32px; }
+    #upload-card .uf-title { font-size:15px;font-weight:600;margin-bottom:6px; }
+    #upload-card .uf-sub   { font-size:14px;color:var(--light);margin-bottom:28px; }
+    #upload-card .type-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+    #upload-card .type-card { border:2px solid var(--border);border-radius:12px;padding:28px 24px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center; }
+    #upload-card .type-card:hover { border-color:#bbb;background:var(--bg); }
+    #upload-card .type-card .tc-label { font-size:15px;font-weight:600;margin-bottom:5px; }
+    #upload-card .type-card .tc-desc  { font-size:12px;color:var(--light);line-height:1.5; }
 
     /* Step 2 */
-    #content-upload #step-2 { padding:8px 0 32px;display:none; }
-    #content-upload .input-tabs { display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px; }
-    #content-upload .input-tab  { flex:1;padding:9px;text-align:center;font-size:13px;cursor:pointer;background:#fff;color:var(--light);border:none;font-family:inherit;transition:all .1s; }
-    #content-upload .input-tab.active { background:var(--dark);color:#fff;font-weight:500; }
-    #content-upload .uf-hint { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:#555;line-height:1.8;margin-bottom:14px; }
-    #content-upload .uf-hint code { background:#e8e8e8;padding:1px 5px;border-radius:3px;font-size:11px;color:#333;font-family:monospace; }
-    #content-upload textarea { width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13px;font-family:'Menlo','Consolas',monospace;resize:vertical;color:var(--dark);outline:none;transition:border .15s;line-height:1.6; }
-    #content-upload textarea:focus { border-color:var(--red); }
-    #content-upload .upload-zone { border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:all .15s;display:none; }
-    #content-upload .upload-zone:hover,#content-upload .upload-zone.drag { border-color:var(--red);background:var(--red-pale); }
-    #content-upload .upload-label { font-size:14px;font-weight:500;margin-bottom:5px; }
-    #content-upload .upload-sub   { font-size:12px;color:var(--light);margin-bottom:12px; }
-    #content-upload .filetypes { display:flex;flex-wrap:wrap;gap:5px;justify-content:center; }
-    #content-upload .ft      { background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600;color:#555; }
-    #content-upload .ft.xl   { border-color:#107c41;color:#107c41; }
-    #content-upload .ft.csv  { border-color:#1565c0;color:#1565c0; }
-    #content-upload .ft.word { border-color:#2b5797;color:#2b5797; }
-    #content-upload .uf-spinner-row { display:none;align-items:center;gap:8px;font-size:13px;color:var(--light);margin-top:10px; }
-    #content-upload .uf-spinner { width:15px;height:15px;border:2px solid #eee;border-top-color:var(--red);border-radius:50%;animation:uf-spin .7s linear infinite; }
-    #content-upload .uf-error { background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#c0392b;margin-top:10px;display:none; }
-    #content-upload .uf-primary-btn { width:100%;background:var(--dark);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;transition:background .15s;font-family:inherit; }
-    #content-upload .uf-primary-btn:hover { background:var(--red); }
-    #content-upload .uf-primary-btn:disabled { background:#ccc;cursor:not-allowed; }
+    #upload-card #step-2 { padding:8px 0 32px;display:none; }
+    #upload-card .input-tabs { display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px; }
+    #upload-card .input-tab  { flex:1;padding:9px;text-align:center;font-size:13px;cursor:pointer;background:#fff;color:var(--light);border:none;font-family:inherit;transition:all .1s; }
+    #upload-card .input-tab.active { background:var(--dark);color:#fff;font-weight:500; }
+    #upload-card .uf-hint { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:#555;line-height:1.8;margin-bottom:14px; }
+    #upload-card .uf-hint code { background:#e8e8e8;padding:1px 5px;border-radius:3px;font-size:11px;color:#333;font-family:monospace; }
+    #upload-card textarea { width:100%;border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:13px;font-family:'Menlo','Consolas',monospace;resize:vertical;color:var(--dark);outline:none;transition:border .15s;line-height:1.6; }
+    #upload-card textarea:focus { border-color:var(--red); }
+    #upload-card .upload-zone { border:2px dashed var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;cursor:pointer;transition:all .15s;display:none; }
+    #upload-card .upload-zone:hover,#upload-card .upload-zone.drag { border-color:var(--red);background:var(--red-pale); }
+    #upload-card .upload-label { font-size:14px;font-weight:500;margin-bottom:5px; }
+    #upload-card .upload-sub   { font-size:12px;color:var(--light);margin-bottom:12px; }
+    #upload-card .filetypes { display:flex;flex-wrap:wrap;gap:5px;justify-content:center; }
+    #upload-card .ft      { background:#fff;border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;font-weight:600;color:#555; }
+    #upload-card .ft.xl   { border-color:#107c41;color:#107c41; }
+    #upload-card .ft.csv  { border-color:#1565c0;color:#1565c0; }
+    #upload-card .ft.word { border-color:#2b5797;color:#2b5797; }
+    #upload-card .uf-spinner-row { display:none;align-items:center;gap:8px;font-size:13px;color:var(--light);margin-top:10px; }
+    #upload-card .uf-spinner { width:15px;height:15px;border:2px solid #eee;border-top-color:var(--red);border-radius:50%;animation:uf-spin .7s linear infinite; }
+    #upload-card .uf-error { background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#c0392b;margin-top:10px;display:none; }
+    #upload-card .uf-primary-btn { width:100%;background:var(--dark);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;transition:background .15s;font-family:inherit; }
+    #upload-card .uf-primary-btn:hover { background:var(--red); }
+    #upload-card .uf-primary-btn:disabled { background:#ccc;cursor:not-allowed; }
 
     /* Step 2.5 Mapper */
-    #content-upload #step-mapper { padding:8px 0 32px;display:none; }
-    #content-upload .mapper-card { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px; }
-    #content-upload .mapper-title { font-size:14px;font-weight:600;margin-bottom:4px; }
-    #content-upload .mapper-sub   { font-size:12px;color:var(--light);margin-bottom:18px; }
-    #content-upload .mapper-row   { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
-    #content-upload .mapper-row:last-child { margin-bottom:0; }
-    #content-upload .mapper-label { font-size:13px;font-weight:500;width:120px;flex-shrink:0; }
-    #content-upload .mapper-label small { display:block;font-size:11px;color:var(--light);font-weight:400; }
-    #content-upload .col-select { flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--dark);background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;transition:border .15s; }
-    #content-upload .col-select:focus { border-color:var(--red); }
-    #content-upload .col-preview { background:#fff;border:1px solid var(--border);border-radius:var(--radius); }
-    #content-upload .preview-title { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);padding:10px 14px;border-bottom:1px solid var(--border); }
-    #content-upload .preview-table { width:100%;border-collapse:collapse;font-size:12px; }
-    #content-upload .preview-table th { padding:8px 12px;text-align:left;background:var(--bg);font-weight:600;font-size:11px;border-bottom:1px solid var(--border); }
-    #content-upload .preview-table td { padding:7px 12px;border-bottom:1px solid var(--border);color:#555;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    #content-upload .preview-table tr:last-child td { border-bottom:none; }
-    #content-upload .preview-table th.highlight,
-    #content-upload .preview-table td.highlight-target  { background:var(--red-pale);color:var(--red);font-weight:600; }
-    #content-upload .preview-table td.highlight-content { background:#f0f7ff;color:#2b5797; }
-    #content-upload .preview-table th.highlight-content-th { background:#f0f7ff;color:#2b5797; }
-    #content-upload .row-count-note { font-size:12px;color:var(--light);margin-top:10px;text-align:right;padding:0 14px 10px; }
+    #upload-card #step-mapper { padding:8px 0 32px;display:none; }
+    #upload-card .mapper-card { background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px; }
+    #upload-card .mapper-title { font-size:14px;font-weight:600;margin-bottom:4px; }
+    #upload-card .mapper-sub   { font-size:12px;color:var(--light);margin-bottom:18px; }
+    #upload-card .mapper-row   { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
+    #upload-card .mapper-row:last-child { margin-bottom:0; }
+    #upload-card .mapper-label { font-size:13px;font-weight:500;width:120px;flex-shrink:0; }
+    #upload-card .mapper-label small { display:block;font-size:11px;color:var(--light);font-weight:400; }
+    #upload-card .col-select { flex:1;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;color:var(--dark);background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px;transition:border .15s; }
+    #upload-card .col-select:focus { border-color:var(--red); }
+    #upload-card .col-preview { background:#fff;border:1px solid var(--border);border-radius:var(--radius); }
+    #upload-card .preview-title { font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);padding:10px 14px;border-bottom:1px solid var(--border); }
+    #upload-card .preview-table { width:100%;border-collapse:collapse;font-size:12px; }
+    #upload-card .preview-table th { padding:8px 12px;text-align:left;background:var(--bg);font-weight:600;font-size:11px;border-bottom:1px solid var(--border); }
+    #upload-card .preview-table td { padding:7px 12px;border-bottom:1px solid var(--border);color:#555;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #upload-card .preview-table tr:last-child td { border-bottom:none; }
+    #upload-card .preview-table th.highlight,
+    #upload-card .preview-table td.highlight-target  { background:var(--red-pale);color:var(--red);font-weight:600; }
+    #upload-card .preview-table td.highlight-content { background:#f0f7ff;color:#2b5797; }
+    #upload-card .preview-table th.highlight-content-th { background:#f0f7ff;color:#2b5797; }
+    #upload-card .row-count-note { font-size:12px;color:var(--light);margin-top:10px;text-align:right;padding:0 14px 10px; }
 
     /* Step 3 */
-    #content-upload #step-3 { padding:8px 0 40px;display:none; }
-    #content-upload .uf-table-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
-    #content-upload .uf-table-title  { font-size:15px;font-weight:600; }
-    #content-upload .uf-count-badge  { border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;background:var(--red);color:#fff; }
-    #content-upload .uf-count-badge.under-limit { background:#e8e8e8;color:#555; }
-    #content-upload .uf-action-row { display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap; }
-    #content-upload .uf-action-btn { padding:7px 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;transition:background .1s;font-family:inherit; }
-    #content-upload .uf-action-btn:hover { background:var(--bg); }
-    #content-upload .uf-action-btn:disabled { opacity:.4;cursor:not-allowed; }
-    #content-upload .quota-bar { display:none;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px; }
-    #content-upload .quota-bar.visible { display:flex; }
-    #content-upload .quota-label { color:var(--light); }
-    #content-upload .quota-used  { font-weight:600; }
-    #content-upload .quota-used.full { color:var(--red); }
-    #content-upload .quota-track { width:120px;height:5px;background:#e5e5e5;border-radius:3px;overflow:hidden; }
-    #content-upload .quota-fill  { height:100%;background:var(--red);border-radius:3px;transition:width .2s; }
-    #content-upload .limit-warn { background:#fff8e1;border:1px solid #ffe082;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#8a6200;margin-bottom:14px;display:none; }
-    #content-upload .uf-table-wrap { border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto; }
-    #content-upload table.result-table { width:100%;border-collapse:collapse;min-width:500px; }
-    #content-upload table.result-table thead tr { background:var(--bg); }
-    #content-upload table.result-table th { padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);border-bottom:1px solid var(--border); }
-    #content-upload table.result-table td { padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top; }
-    #content-upload table.result-table tr:last-child td { border-bottom:none; }
-    #content-upload table.result-table tr:hover td { background:var(--bg); }
-    #content-upload .target-pill  { display:inline-block;background:var(--red-pale);color:var(--red);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    #content-upload .url-pill     { display:inline-block;background:#f0f4ff;color:#3a5bd9;border-radius:6px;padding:3px 8px;font-size:11px;font-family:monospace;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-    #content-upload .content-preview { color:#333;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden; }
-    #content-upload .row-num { color:var(--light);font-size:11px;background:var(--bg);border-radius:4px;padding:2px 6px;font-weight:600; }
-    #content-upload .del-btn { background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:0 4px; }
-    #content-upload .del-btn:hover { color:var(--red); }
-    #content-upload .uf-submit-bar { border-top:1px solid var(--border);padding:16px 0 0;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; }
-    #content-upload .uf-submit-total { font-size:13px;color:var(--light); }
-    #content-upload .uf-submit-total strong { color:var(--dark); }
-    #content-upload .uf-submit-btn { background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit; }
-    #content-upload .uf-submit-btn:hover { background:#C4282F; }
-    #content-upload .uf-confirm-note { font-size:13px;color:var(--red);font-weight:500;margin-top:10px;width:100%; }
+    #upload-card #step-3 { padding:8px 0 40px;display:none; }
+    #upload-card .uf-table-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:14px; }
+    #upload-card .uf-table-title  { font-size:15px;font-weight:600; }
+    #upload-card .uf-count-badge  { border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;background:var(--red);color:#fff; }
+    #upload-card .uf-count-badge.under-limit { background:#e8e8e8;color:#555; }
+    #upload-card .uf-action-row { display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap; }
+    #upload-card .uf-action-btn { padding:7px 14px;border-radius:var(--radius);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;transition:background .1s;font-family:inherit; }
+    #upload-card .uf-action-btn:hover { background:var(--bg); }
+    #upload-card .uf-action-btn:disabled { opacity:.4;cursor:not-allowed; }
+    #upload-card .quota-bar { display:none;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px; }
+    #upload-card .quota-bar.visible { display:flex; }
+    #upload-card .quota-label { color:var(--light); }
+    #upload-card .quota-used  { font-weight:600; }
+    #upload-card .quota-used.full { color:var(--red); }
+    #upload-card .quota-track { width:120px;height:5px;background:#e5e5e5;border-radius:3px;overflow:hidden; }
+    #upload-card .quota-fill  { height:100%;background:var(--red);border-radius:3px;transition:width .2s; }
+    #upload-card .limit-warn { background:#fff8e1;border:1px solid #ffe082;border-radius:var(--radius);padding:10px 14px;font-size:13px;color:#8a6200;margin-bottom:14px;display:none; }
+    #upload-card .uf-table-wrap { border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;overflow-x:auto; }
+    #upload-card table.result-table { width:100%;border-collapse:collapse;min-width:500px; }
+    #upload-card table.result-table thead tr { background:var(--bg); }
+    #upload-card table.result-table th { padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--light);border-bottom:1px solid var(--border); }
+    #upload-card table.result-table td { padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top; }
+    #upload-card table.result-table tr:last-child td { border-bottom:none; }
+    #upload-card table.result-table tr:hover td { background:var(--bg); }
+    #upload-card .target-pill  { display:inline-block;background:var(--red-pale);color:var(--red);border-radius:6px;padding:3px 8px;font-size:12px;font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #upload-card .url-pill     { display:inline-block;background:#f0f4ff;color:#3a5bd9;border-radius:6px;padding:3px 8px;font-size:11px;font-family:monospace;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    #upload-card .content-preview { color:#333;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden; }
+    #upload-card .row-num { color:var(--light);font-size:11px;background:var(--bg);border-radius:4px;padding:2px 6px;font-weight:600; }
+    #upload-card .del-btn { background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;padding:0 4px; }
+    #upload-card .del-btn:hover { color:var(--red); }
+    #upload-card .uf-submit-bar { border-top:1px solid var(--border);padding:16px 0 0;margin-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px; }
+    #upload-card .uf-submit-total { font-size:13px;color:var(--light); }
+    #upload-card .uf-submit-total strong { color:var(--dark); }
+    #upload-card .uf-submit-btn { background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit; }
+    #upload-card .uf-submit-btn:hover { background:#C4282F; }
+    #upload-card .uf-confirm-note { font-size:13px;color:var(--red);font-weight:500;margin-top:10px;width:100%; }
   </style>
 </head>
 <body>
@@ -616,172 +616,169 @@
   </div>
 </section>
 
-<!-- ORDER FORM -->
-<!-- CONTENT UPLOAD -->
-<section id="content-upload">
-  <div class="section-inner">
-    <p class="section-label">Content Upload</p>
-    <h2 class="section-title">Prepare your content</h2>
-    <p class="section-sub">Choose content type, paste or upload your file, then place your order</p>
-
-    <div class="uf-wrap">
-
-      <!-- ═══ STEP 1: TYPE ═══ -->
-      <div id="step-1">
-        <div class="uf-title">Select content type</div>
-        <p class="uf-sub">Choose the type of content you want to publish</p>
-        <div class="type-grid">
-          <div class="type-card" onclick="selectType('post')">
-            <div class="tc-label">Posts</div>
-            <div class="tc-desc">Original posts published to a specified subreddit</div>
-          </div>
-          <div class="type-card" onclick="selectType('comment')">
-            <div class="tc-label">Comments</div>
-            <div class="tc-desc">Replies to a specific post link</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ═══ STEP 2: INPUT ═══ -->
-      <div id="step-2">
-        <button class="back-btn" onclick="goTo(1)">← Back</button>
-        <div class="type-badge" id="type-badge">Posts</div>
-        <div style="margin-bottom:20px">
-          <div class="uf-title" id="step2-title">Upload post content</div>
-          <p style="font-size:14px;color:var(--light);margin-top:4px">Paste text or upload a file, review in the next step</p>
-        </div>
-
-        <div class="input-tabs">
-          <button class="input-tab active" onclick="ufSwitchTab('paste')">Paste text</button>
-          <button class="input-tab" onclick="ufSwitchTab('upload')">Upload file</button>
-        </div>
-
-        <div class="uf-hint" id="hint-text">
-          Lines starting with <code>r/subreddit</code> or <code>https://</code> are auto-detected as targets; everything else is body text. Label lines like "Reply type: …" are skipped automatically.<br/>
-          Copy and paste from Feishu / Notion tables — columns are detected automatically, you'll map them in the next step.
-        </div>
-
-        <div id="paste-area">
-          <textarea id="text-input" rows="10" placeholder="" oninput="onTextInput()"></textarea>
-        </div>
-
-        <div id="upload-area" class="upload-zone"
-          onclick="document.getElementById('file-input').click()"
-          ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="handleDrop(event)">
-          <div class="upload-label">Click or drag a file here</div>
-          <div class="upload-sub">Columns detected automatically — map them in the next step</div>
-          <div class="filetypes">
-            <span class="ft xl">xlsx</span><span class="ft xl">xls</span><span class="ft xl">ods</span>
-            <span class="ft csv">csv</span><span class="ft csv">tsv</span>
-            <span class="ft word">docx</span>
-            <span class="ft">txt</span><span class="ft">md</span>
-          </div>
-        </div>
-        <input type="file" id="file-input" accept=".txt,.md,.csv,.tsv,.xlsx,.xls,.ods,.docx" onchange="handleFileSelect(event)"/>
-
-        <div class="uf-spinner-row" id="spinner">
-          <div class="uf-spinner"></div> Reading file…
-        </div>
-        <div class="uf-error" id="parse-error"></div>
-        <button class="uf-primary-btn" id="parse-btn" onclick="parseText()" disabled>Next: review content →</button>
-      </div>
-
-      <!-- ═══ STEP 2.5: COLUMN MAPPER ═══ -->
-      <div id="step-mapper">
-        <button class="back-btn" onclick="goTo(2)">← Back</button>
-        <div class="type-badge" id="mapper-badge">Posts</div>
-        <div style="margin-bottom:20px">
-          <div class="uf-title">Map columns</div>
-          <p style="font-size:14px;color:var(--light);margin-top:4px">Select which column is the subreddit and which is the content</p>
-        </div>
-
-        <div class="mapper-card">
-          <div class="mapper-title">Column mapping</div>
-          <div class="mapper-sub" id="mapper-sub">Select the column for each field from the dropdowns</div>
-          <div class="mapper-row">
-            <div class="mapper-label" id="target-label">
-              Subreddit
-              <small id="target-label-small">e.g. r/SaaS, r/entrepreneur</small>
-            </div>
-            <select class="col-select" id="target-col-select" onchange="updatePreview()">
-              <option value="">— Select column —</option>
-            </select>
-          </div>
-          <div class="mapper-row">
-            <div class="mapper-label">
-              Content
-              <small>Comment / Post body</small>
-            </div>
-            <select class="col-select" id="content-col-select" onchange="updatePreview()">
-              <option value="">— Select column —</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="col-preview" id="preview-card" style="display:none">
-          <div class="preview-title">Data preview (first 5 rows)</div>
-          <div style="overflow-x:auto">
-            <table class="preview-table" id="preview-table"></table>
-          </div>
-          <div class="row-count-note" id="row-count-note"></div>
-        </div>
-
-        <div class="uf-error" id="mapper-error" style="margin-top:14px"></div>
-        <button class="uf-primary-btn" id="mapper-btn" onclick="applyMapping()" style="margin-top:16px" disabled>Confirm mapping →</button>
-      </div>
-
-      <!-- ═══ STEP 3: TABLE ═══ -->
-      <div id="step-3">
-        <div class="uf-table-header">
-          <span class="uf-table-title" id="table-title">Posts</span>
-          <span class="uf-count-badge" id="count-badge">0 items</span>
-        </div>
-
-        <div class="quota-bar" id="quota-bar">
-          <span class="quota-label">Uploaded <span class="quota-used" id="quota-used">0</span> / <span id="quota-max">0</span> items</span>
-          <div class="quota-track"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
-        </div>
-        <div class="limit-warn" id="limit-warn"></div>
-
-        <div class="uf-action-row">
-          <button class="uf-action-btn" onclick="goTo(2)">← Re-upload</button>
-          <button class="uf-action-btn" id="add-btn" onclick="addRow()">+ Add row</button>
-        </div>
-
-        <div class="uf-table-wrap">
-          <table class="result-table">
-            <thead>
-              <tr>
-                <th style="width:5%">#</th>
-                <th style="width:35%" id="col-target-head">Subreddit</th>
-                <th style="width:52%">Content</th>
-                <th style="width:8%"></th>
-              </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-          </table>
-          <div style="text-align:center;padding:36px;color:var(--light);font-size:14px;display:none" id="empty-state">No content yet</div>
-        </div>
-
-        <div class="uf-submit-bar" id="uf-submit-bar">
-          <span class="uf-submit-total"><strong id="submit-count">0</strong> items</span>
-          <button class="uf-submit-btn" onclick="submitContent()">Confirm &amp; place order →</button>
-        </div>
-      </div>
-
-    </div><!-- /.uf-wrap -->
-  </div><!-- /.section-inner -->
-</section>
 
 <section id="order">
   <div class="section-inner">
     <p class="section-label">Get Started</p>
     <h2 class="section-title">Place your order</h2>
-    <p class="section-sub">One-time upfront. Setup within 48h. First results in week 1.</p>
+    <p class="section-sub">Upload your content, fill in your details, and pay — we'll handle the rest.</p>
 
+    <!-- ── CONTENT UPLOAD CARD ── -->
+    <div class="order-card" id="upload-card" style="margin-bottom:24px;">
+      <h3>Step 1 — Upload your content</h3>
+      <p class="order-sub" style="margin-bottom:24px;">Choose type, paste or upload your file, then fill in your details below.</p>
+      <div class="uf-wrap">
+      
+            <!-- ═══ STEP 1: TYPE ═══ -->
+            <div id="step-1">
+              <div class="uf-title">Select content type</div>
+              <p class="uf-sub">Choose the type of content you want to publish</p>
+              <div class="type-grid">
+                <div class="type-card" onclick="selectType('post')">
+                  <div class="tc-label">Posts</div>
+                  <div class="tc-desc">Original posts published to a specified subreddit</div>
+                </div>
+                <div class="type-card" onclick="selectType('comment')">
+                  <div class="tc-label">Comments</div>
+                  <div class="tc-desc">Replies to a specific post link</div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- ═══ STEP 2: INPUT ═══ -->
+            <div id="step-2">
+              <button class="back-btn" onclick="goTo(1)">← Back</button>
+              <div class="type-badge" id="type-badge">Posts</div>
+              <div style="margin-bottom:20px">
+                <div class="uf-title" id="step2-title">Upload post content</div>
+                <p style="font-size:14px;color:var(--light);margin-top:4px">Paste text or upload a file, review in the next step</p>
+              </div>
+      
+              <div class="input-tabs">
+                <button class="input-tab active" onclick="ufSwitchTab('paste')">Paste text</button>
+                <button class="input-tab" onclick="ufSwitchTab('upload')">Upload file</button>
+              </div>
+      
+              <div class="uf-hint" id="hint-text">
+                Lines starting with <code>r/subreddit</code> or <code>https://</code> are auto-detected as targets; everything else is body text. Label lines like "Reply type: …" are skipped automatically.<br/>
+                Copy and paste from Feishu / Notion tables — columns are detected automatically, you'll map them in the next step.
+              </div>
+      
+              <div id="paste-area">
+                <textarea id="text-input" rows="10" placeholder="" oninput="onTextInput()"></textarea>
+              </div>
+      
+              <div id="upload-area" class="upload-zone"
+                onclick="document.getElementById('file-input').click()"
+                ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="handleDrop(event)">
+                <div class="upload-label">Click or drag a file here</div>
+                <div class="upload-sub">Columns detected automatically — map them in the next step</div>
+                <div class="filetypes">
+                  <span class="ft xl">xlsx</span><span class="ft xl">xls</span><span class="ft xl">ods</span>
+                  <span class="ft csv">csv</span><span class="ft csv">tsv</span>
+                  <span class="ft word">docx</span>
+                  <span class="ft">txt</span><span class="ft">md</span>
+                </div>
+              </div>
+              <input type="file" id="file-input" accept=".txt,.md,.csv,.tsv,.xlsx,.xls,.ods,.docx" onchange="handleFileSelect(event)"/>
+      
+              <div class="uf-spinner-row" id="spinner">
+                <div class="uf-spinner"></div> Reading file…
+              </div>
+              <div class="uf-error" id="parse-error"></div>
+              <button class="uf-primary-btn" id="parse-btn" onclick="parseText()" disabled>Next: review content →</button>
+            </div>
+      
+            <!-- ═══ STEP 2.5: COLUMN MAPPER ═══ -->
+            <div id="step-mapper">
+              <button class="back-btn" onclick="goTo(2)">← Back</button>
+              <div class="type-badge" id="mapper-badge">Posts</div>
+              <div style="margin-bottom:20px">
+                <div class="uf-title">Map columns</div>
+                <p style="font-size:14px;color:var(--light);margin-top:4px">Select which column is the subreddit and which is the content</p>
+              </div>
+      
+              <div class="mapper-card">
+                <div class="mapper-title">Column mapping</div>
+                <div class="mapper-sub" id="mapper-sub">Select the column for each field from the dropdowns</div>
+                <div class="mapper-row">
+                  <div class="mapper-label" id="target-label">
+                    Subreddit
+                    <small id="target-label-small">e.g. r/SaaS, r/entrepreneur</small>
+                  </div>
+                  <select class="col-select" id="target-col-select" onchange="updatePreview()">
+                    <option value="">— Select column —</option>
+                  </select>
+                </div>
+                <div class="mapper-row">
+                  <div class="mapper-label">
+                    Content
+                    <small>Comment / Post body</small>
+                  </div>
+                  <select class="col-select" id="content-col-select" onchange="updatePreview()">
+                    <option value="">— Select column —</option>
+                  </select>
+                </div>
+              </div>
+      
+              <div class="col-preview" id="preview-card" style="display:none">
+                <div class="preview-title">Data preview (first 5 rows)</div>
+                <div style="overflow-x:auto">
+                  <table class="preview-table" id="preview-table"></table>
+                </div>
+                <div class="row-count-note" id="row-count-note"></div>
+              </div>
+      
+              <div class="uf-error" id="mapper-error" style="margin-top:14px"></div>
+              <button class="uf-primary-btn" id="mapper-btn" onclick="applyMapping()" style="margin-top:16px" disabled>Confirm mapping →</button>
+            </div>
+      
+            <!-- ═══ STEP 3: TABLE ═══ -->
+            <div id="step-3">
+              <div class="uf-table-header">
+                <span class="uf-table-title" id="table-title">Posts</span>
+                <span class="uf-count-badge" id="count-badge">0 items</span>
+              </div>
+      
+              <div class="quota-bar" id="quota-bar">
+                <span class="quota-label">Uploaded <span class="quota-used" id="quota-used">0</span> / <span id="quota-max">0</span> items</span>
+                <div class="quota-track"><div class="quota-fill" id="quota-fill" style="width:0%"></div></div>
+              </div>
+              <div class="limit-warn" id="limit-warn"></div>
+      
+              <div class="uf-action-row">
+                <button class="uf-action-btn" onclick="goTo(2)">← Re-upload</button>
+                <button class="uf-action-btn" id="add-btn" onclick="addRow()">+ Add row</button>
+              </div>
+      
+              <div class="uf-table-wrap">
+                <table class="result-table">
+                  <thead>
+                    <tr>
+                      <th style="width:5%">#</th>
+                      <th style="width:35%" id="col-target-head">Subreddit</th>
+                      <th style="width:52%">Content</th>
+                      <th style="width:8%"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-body"></tbody>
+                </table>
+                <div style="text-align:center;padding:36px;color:var(--light);font-size:14px;display:none" id="empty-state">No content yet</div>
+              </div>
+      
+              <div class="uf-submit-bar" id="uf-submit-bar">
+                <span class="uf-submit-total"><strong id="submit-count">0</strong> items</span>
+                <button class="uf-submit-btn" onclick="submitContent()">Confirm &amp; place order →</button>
+              </div>
+            </div>
+      
+          </div>
+    </div>
+
+    <!-- ── ORDER FORM CARD ── -->
     <div class="order-card">
-      <h3>Start your Reddit presence</h3>
-      <p class="order-sub">Fill in your details and content brief — we'll handle everything else.</p>
+      <h3>Step 2 — Your details</h3>
+      <p class="order-sub">Fill in your contact info to place the order.</p>
 
       <div id="order-form-wrap">
         <form id="order-form" onsubmit="handleSubmit(event)">
@@ -1161,7 +1158,7 @@
   }
 
   function ufSwitchTab(tab) {
-    document.querySelectorAll('#content-upload .input-tab').forEach((b,i) =>
+    document.querySelectorAll('#upload-card .input-tab').forEach((b,i) =>
       b.classList.toggle('active', (i===0&&tab==='paste')||(i===1&&tab==='upload')));
     document.getElementById('paste-area').style.display  = tab==='paste' ? 'block' : 'none';
     document.getElementById('upload-area').style.display = tab==='upload'? 'block' : 'none';
@@ -1403,10 +1400,9 @@
   function submitContent() {
     if (!rows.length) return;
     try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
-    // Scroll to order section
-    const orderSection = document.getElementById('order');
-    if (orderSection) orderSection.scrollIntoView({ behavior: 'smooth' });
-    // Show confirmation note under the submit bar
+    // Show confirmation note + scroll order form into view
+    const orderFormCard = document.querySelector('#order .order-card:last-of-type');
+    if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const bar = document.getElementById('uf-submit-bar');
     const existing = bar.querySelector('.uf-confirm-note');
     if (existing) existing.remove();
