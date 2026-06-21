@@ -480,7 +480,7 @@
     #upload-card .uf-submit-total { font-size:13px;color:var(--light); }
     #upload-card .uf-submit-total strong { color:var(--dark); }
     #upload-card .uf-submit-btn { background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s;font-family:inherit; }
-    #upload-card .uf-submit-btn:hover { background:#C4282F; }
+    #upload-card .uf-submit-btn:disabled { background:#ccc; cursor:not-allowed; }
     #upload-card .uf-confirm-note { font-size:13px;color:var(--red);font-weight:500;margin-top:10px;width:100%; }
   </style>
 </head>
@@ -523,70 +523,13 @@
   </div>
 </div>
 
-<!-- PRICING CALCULATOR -->
+<!-- PRICING REFERENCE -->
 <section id="pricing">
   <div class="section-inner">
     <p class="section-label">Pricing</p>
-    <h2 class="section-title">Pick your package</h2>
-    <p class="section-sub">Fixed weekly volume. Monthly billing. Cancel anytime.</p>
+    <h2 class="section-title">Volume-based pricing</h2>
+    <p class="section-sub">Price is calculated automatically from how many items you upload. The more you order, the lower the unit price. Minimum order: 10 posts or 40 comments.</p>
 
-    <!-- Package tabs -->
-    <div class="pkg-tabs">
-      <button class="pkg-tab active" onclick="setTab('combined')">Posts + Comments</button>
-      <button class="pkg-tab" onclick="setTab('posts')">Posts Only</button>
-      <button class="pkg-tab" onclick="setTab('comments')">Comments Only</button>
-    </div>
-
-    <!-- Calculator panels -->
-    <div class="calc-grid">
-
-      <!-- Posts panel -->
-      <div class="calc-panel" id="posts-panel">
-        <h4>📝 Posts</h4>
-        <p class="panel-sub">Original Reddit posts in relevant subreddits</p>
-        <div class="qty-grid" id="posts-btns">
-          <button class="qty-btn" onclick="selectPosts(5)">5</button>
-          <button class="qty-btn" onclick="selectPosts(10)">10</button>
-          <button class="qty-btn" onclick="selectPosts(15)">15</button>
-          <button class="qty-btn" onclick="selectPosts(20)">20</button>
-          <button class="qty-btn" onclick="selectPosts(25)">25</button>
-          <button class="qty-btn" onclick="selectPosts(30)">30</button>
-          <button class="qty-btn" onclick="selectPosts(40)">40</button>
-          <button class="qty-btn" onclick="selectPosts(50)">50</button>
-        </div>
-        <div id="posts-tier" class="tier-badge" style="display:none"></div>
-      </div>
-
-      <!-- Comments panel -->
-      <div class="calc-panel" id="comments-panel">
-        <h4>💬 Comments</h4>
-        <p class="panel-sub">Targeted replies in high-traffic threads</p>
-        <div class="qty-grid" id="comments-btns">
-          <button class="qty-btn" onclick="selectComments(40)">40</button>
-          <button class="qty-btn" onclick="selectComments(80)">80</button>
-          <button class="qty-btn" onclick="selectComments(120)">120</button>
-          <button class="qty-btn" onclick="selectComments(160)">160</button>
-          <button class="qty-btn" onclick="selectComments(200)">200</button>
-          <button class="qty-btn" onclick="selectComments(250)">250</button>
-          <button class="qty-btn" onclick="selectComments(300)">300</button>
-        </div>
-        <div id="comments-tier" class="tier-badge" style="display:none"></div>
-      </div>
-    </div>
-
-    <!-- Price display -->
-    <div class="price-box" id="price-box">
-      <div class="price-left">
-        <div class="price-label">Monthly total</div>
-        <div class="price-main" id="price-monthly">¥ —<span>/mo</span></div>
-      </div>
-      <div class="price-right">
-        <div class="price-weekly" id="price-weekly">Select a package above</div>
-      </div>
-    </div>
-    <div class="price-error" id="price-error"></div>
-
-    <!-- Tier table -->
     <table class="tier-table">
       <thead>
         <tr>
@@ -597,26 +540,26 @@
           <th>¥ / comment</th>
         </tr>
       </thead>
-      <tbody id="tier-tbody">
-        <tr data-post-tier="starter" data-comment-tier="starter">
+      <tbody>
+        <tr>
           <td><span class="tier-badge-sm">Starter</span></td>
-          <td>5 – 10</td><td>¥80</td>
-          <td>40</td><td>¥20</td>
+          <td>10 – 20</td><td>¥80</td>
+          <td>40 – 80</td><td>¥20</td>
         </tr>
-        <tr data-post-tier="growth" data-comment-tier="growth">
+        <tr>
           <td><span class="tier-badge-sm">Growth</span></td>
-          <td>15 – 20</td><td>¥70</td>
-          <td>80</td><td>¥17</td>
+          <td>21 – 30</td><td>¥70</td>
+          <td>81 – 120</td><td>¥17</td>
         </tr>
-        <tr data-post-tier="scale" data-comment-tier="scale">
+        <tr>
           <td><span class="tier-badge-sm">Scale</span></td>
-          <td>25 – 30</td><td>¥60</td>
-          <td>120</td><td>¥14</td>
+          <td>31 – 50</td><td>¥60</td>
+          <td>121 – 160</td><td>¥14</td>
         </tr>
-        <tr data-post-tier="pro" data-comment-tier="pro">
+        <tr>
           <td><span class="tier-badge-sm">Pro</span></td>
-          <td>40+</td><td>¥50</td>
-          <td>160+</td><td>¥11</td>
+          <td>51+</td><td>¥50</td>
+          <td>161+</td><td>¥11</td>
         </tr>
       </tbody>
     </table>
@@ -789,7 +732,7 @@
                   <span class="upload-price-calc" id="upload-price-calc">—</span>
                   <span class="upload-price-total" id="upload-price-total"></span>
                 </div>
-                <button class="uf-submit-btn" onclick="submitContent()">Confirm &amp; place order →</button>
+                <button class="uf-submit-btn" id="uf-submit-btn" disabled onclick="submitContent()">Confirm &amp; place order →</button>
               </div>
             </div>
       
@@ -941,27 +884,27 @@
 
   // ── Pricing logic ──
   function postPrice(p) {
-    if (p <= 10) return 80;
-    if (p <= 20) return 70;
-    if (p <= 30) return 60;
+    if (p <= 20) return 80;
+    if (p <= 30) return 70;
+    if (p <= 50) return 60;
     return 50;
   }
   function commentPrice(c) {
-    if (c <= 40) return 20;
-    if (c <= 80) return 17;
-    if (c <= 120) return 14;
+    if (c <= 80) return 20;
+    if (c <= 120) return 17;
+    if (c <= 160) return 14;
     return 11;
   }
   function postTierName(p) {
-    if (p <= 10) return 'Starter';
-    if (p <= 20) return 'Growth';
-    if (p <= 30) return 'Scale';
+    if (p <= 20) return 'Starter';
+    if (p <= 30) return 'Growth';
+    if (p <= 50) return 'Scale';
     return 'Pro';
   }
   function commentTierName(c) {
-    if (c <= 40) return 'Starter';
-    if (c <= 80) return 'Growth';
-    if (c <= 120) return 'Scale';
+    if (c <= 80) return 'Starter';
+    if (c <= 120) return 'Growth';
+    if (c <= 160) return 'Scale';
     return 'Pro';
   }
 
@@ -1432,6 +1375,7 @@
     const summaryPrice = document.getElementById('summary-price');
     const btnAmount = document.getElementById('btn-amount');
     const submitBtn = document.getElementById('submit-btn');
+    const ufSubmitBtn = document.getElementById('uf-submit-btn');
     const fmt = v => v.toLocaleString('en-GB');
     if (!n) {
       if (pricebar) pricebar.classList.remove('visible');
@@ -1439,22 +1383,30 @@
       summaryPrice.textContent = '—';
       btnAmount.textContent = '';
       submitBtn.disabled = true;
+      if (ufSubmitBtn) ufSubmitBtn.disabled = true;
       return;
     }
     const isPost = currentType !== 'comment';
+    const minQty = isPost ? 10 : 40;
     const unitPrice = isPost ? postPrice(n) : commentPrice(n);
     const total = n * unitPrice;
     const lbl = isPost ? 'post' : 'comment';
     const lblPlural = isPost ? 'posts' : 'comments';
     if (pricebar) {
       pricebar.classList.add('visible');
-      calcEl.innerHTML = '<strong>' + n + '</strong> ' + (n === 1 ? lbl : lblPlural) + ' × <strong>¥' + unitPrice + '/' + lbl + '</strong>';
-      totalEl.textContent = '¥' + fmt(total);
+      if (n < minQty) {
+        calcEl.innerHTML = '<strong>' + (minQty - n) + '</strong> more ' + (n === 1 ? lbl : lblPlural) + ' needed to reach the minimum (' + minQty + ')';
+        totalEl.textContent = '';
+      } else {
+        calcEl.innerHTML = '<strong>' + n + '</strong> ' + (n === 1 ? lbl : lblPlural) + ' × <strong>¥' + unitPrice + '/' + lbl + '</strong>';
+        totalEl.textContent = '¥' + fmt(total);
+      }
     }
     summaryPkg.textContent = n + ' ' + (n === 1 ? lbl : lblPlural);
-    summaryPrice.textContent = '¥' + fmt(total);
-    btnAmount.textContent = '¥' + fmt(total);
-    submitBtn.disabled = false;
+    summaryPrice.textContent = n >= minQty ? '¥' + fmt(total) : '—';
+    btnAmount.textContent = n >= minQty ? '¥' + fmt(total) : '';
+    submitBtn.disabled = true;
+    if (ufSubmitBtn) ufSubmitBtn.disabled = (n < minQty);
   }
 
   function addRow() {
@@ -1469,14 +1421,19 @@
 
   function submitContent() {
     if (!rows.length) return;
+    const isPost = currentType !== 'comment';
+    const n = rows.length;
+    const minQty = isPost ? 10 : 40;
+    if (n < minQty) {
+      showLimitWarn('Minimum order is ' + minQty + ' ' + (isPost ? 'posts' : 'comments') + '. You currently have ' + n + ' — please add more.');
+      return;
+    }
     try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
     const orderFormCard = document.querySelector('#order .order-card:last-of-type');
     if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const bar = document.getElementById('uf-submit-bar');
     const existing = bar.querySelector('.uf-confirm-note');
     if (existing) existing.remove();
-    const isPost = currentType !== 'comment';
-    const n = rows.length;
     const unitPrice = isPost ? postPrice(n) : commentPrice(n);
     const total = n * unitPrice;
     const lbl = isPost ? (n === 1 ? 'post' : 'posts') : (n === 1 ? 'comment' : 'comments');
@@ -1485,6 +1442,12 @@
     note.className = 'uf-confirm-note';
     note.innerHTML = '✓ ' + n + ' ' + lbl + ' confirmed &emsp;— total <strong style="color:var(--red)">¥' + fmt(total) + '</strong> &nbsp;Fill in the form below to pay';
     bar.appendChild(note);
+    const payBtn = document.getElementById('submit-btn');
+    const btnAmount = document.getElementById('btn-amount');
+    if (payBtn) {
+      payBtn.disabled = false;
+      if (btnAmount) btnAmount.textContent = '¥' + fmt(total);
+    }
   }
 
   function showUfError(msg) { const el=document.getElementById('parse-error'); el.textContent=msg; el.style.display=msg?'block':'none'; }
