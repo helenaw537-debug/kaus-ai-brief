@@ -100,7 +100,7 @@ export default async function handler(req, res) {
         pending_content_id: pendingContentId || '',  // link content to order after payment
         content_row_count: String(rows?.length || 0),
       },
-      success_url: `${SITE_URL}/success.html?session={CHECKOUT_SESSION_ID}`,
+      success_url: `${SITE_URL}/success.html?session={CHECKOUT_SESSION_ID}&lang=${lang || 'zh'}`,
       cancel_url: lang === 'en' ? `${SITE_URL}/en.html` : `${SITE_URL}/`,
       locale: lang === 'en' ? 'en' : 'zh',
     });
