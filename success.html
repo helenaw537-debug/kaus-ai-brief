@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>订单已提交 — Kaus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red: #E8323C;
+      --dark: #1A1A1A;
+      --mid: #555;
+      --light: #888;
+      --border: #E8E8E8;
+      --white: #fff;
+    }
+    body {
+      font-family: 'Inter', -apple-system, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo { font-weight: 800; font-size: 1.15rem; color: var(--red); letter-spacing: -0.5px; text-decoration: none; }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+    }
+    .card {
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      padding: 56px 48px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+    .check-circle {
+      width: 72px; height: 72px;
+      background: #F0FFF4;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      font-size: 2rem;
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
+    .sub {
+      color: var(--mid);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .detail-box {
+      background: #F8F8F8;
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: left;
+      margin-bottom: 32px;
+      font-size: 0.875rem;
+      color: var(--mid);
+      line-height: 1.8;
+    }
+    .detail-box strong { color: var(--dark); }
+    .back-btn {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 32px;
+      font-size: 0.925rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .back-btn:hover { background: #C4282F; }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: var(--light);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: inherit; }
+
+    /* EN overrides applied by JS */
+    [data-lang="en"] .zh { display: none; }
+    [data-lang="zh"] .en { display: none; }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">Kaus</a>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="check-circle">✅</div>
+
+    <h1>
+      <span class="zh">订单已提交</span>
+      <span class="en">Order Received</span>
+    </h1>
+
+    <p class="sub">
+      <span class="zh">付款成功！我们已收到你的订单。<br>请留意邮箱，我们会在 <strong>24 小时内</strong>与你确认细节并开始执行。</span>
+      <span class="en">Payment confirmed! Your order is in.<br>We'll reach out within <strong>24 hours</strong> to confirm details and kick things off.</span>
+    </p>
+
+    <div class="detail-box">
+      <span class="zh">
+        📬 <strong>下一步：</strong><br>
+        · 确认邮件已发送至你的邮箱<br>
+        · 我们会联系你审核内容<br>
+        · 所有帖子发布后，你将收到带链接的交付确认邮件
+      </span>
+      <span class="en">
+        📬 <strong>What happens next:</strong><br>
+        · A confirmation email has been sent to you<br>
+        · We'll reach out to review your content<br>
+        · Once all posts are live, you'll receive a delivery email with links
+      </span>
+    </div>
+
+    <a class="back-btn" href="/" id="home-link">
+      <span class="zh">返回首页</span>
+      <span class="en">Back to Home</span>
+    </a>
+  </div>
+</main>
+
+<footer>
+  © 2026 Kaus · <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a>
+</footer>
+
+<script>
+  // Detect language from query param or referrer
+  const params = new URLSearchParams(window.location.search);
+  const lang = params.get('lang') || (document.referrer.includes('en.html') ? 'en' : 'zh');
+  document.body.setAttribute('data-lang', lang);
+  if (lang === 'en') {
+    document.title = 'Order Received — Kaus';
+    document.querySelector('html').setAttribute('lang', 'en');
+    document.getElementById('home-link').href = '/en.html';
+  }
+</script>
+</body>
+</html>
