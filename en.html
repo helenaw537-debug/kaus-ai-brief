@@ -452,6 +452,11 @@
     #upload-card .uf-action-btn:disabled { opacity:.4;cursor:not-allowed; }
     #upload-card .quota-bar { display:none;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px; }
     #upload-card .quota-bar.visible { display:flex; }
+    #upload-card .upload-price-bar { display:none;align-items:center;justify-content:space-between;background:#fff8f0;border:1px solid #f5d5a0;border-radius:var(--radius);padding:10px 16px;margin-top:14px;font-size:13px;flex-wrap:wrap;gap:6px; }
+    #upload-card .upload-price-bar.visible { display:flex; }
+    #upload-card .upload-price-calc { display:flex;align-items:center;gap:6px;color:var(--mid); }
+    #upload-card .upload-price-calc strong { color:var(--dark); }
+    #upload-card .upload-price-total { font-size:1.15rem;font-weight:800;color:var(--red); }
     #upload-card .quota-label { color:var(--light); }
     #upload-card .quota-used  { font-weight:600; }
     #upload-card .quota-used.full { color:var(--red); }
@@ -780,6 +785,10 @@
       
               <div class="uf-submit-bar" id="uf-submit-bar">
                 <span class="uf-submit-total"><strong id="submit-count">0</strong> items</span>
+                <div class="upload-price-bar" id="upload-price-bar">
+                  <span class="upload-price-calc" id="upload-price-calc">—</span>
+                  <span class="upload-price-total" id="upload-price-total"></span>
+                </div>
                 <button class="uf-submit-btn" onclick="submitContent()">Confirm &amp; place order →</button>
               </div>
             </div>
@@ -826,7 +835,7 @@
           </div>
 
           <div class="order-summary-bar">
-            <span class="summary-pkg" id="summary-pkg">No package selected</span>
+            <span class="summary-pkg" id="summary-pkg">Calculated from your upload</span>
             <span class="summary-price" id="summary-price">—</span>
           </div>
 
@@ -1075,18 +1084,16 @@
   // ── Form submit ──
   function handleSubmit(e) {
     e.preventDefault();
-    const needsPosts = currentTab === 'combined' || currentTab === 'posts';
-    const needsComments = currentTab === 'combined' || currentTab === 'comments';
-    const p = needsPosts ? selectedPosts : 0;
-    const c = needsComments ? selectedComments : 0;
-    const total = p * postPrice(p) + c * commentPrice(c);
-
-    // Include upload form content rows
     const uploadRows = rows && rows.length > 0 ? rows : [];
     if (!uploadRows.length) {
       alert('Please upload your content in Step 1 before placing your order.');
       return;
     }
+
+    const n = uploadRows.length;
+    const isPost = currentType !== 'comment';
+    const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+    const total = n * unitPrice;
 
     const data = {
       name: document.getElementById('fname').value,
@@ -1094,9 +1101,9 @@
       company: document.getElementById('fcompany').value,
       wechat: document.getElementById('fwechat').value,
       content_brief: document.getElementById('fbrief').value,
-      package_type: (p > 0 && c > 0) ? 'combined' : (p > 0 ? 'posts' : 'comments'),
-      posts_qty: p,
-      comments_qty: c,
+      package_type: isPost ? 'posts' : 'comments',
+      posts_qty: isPost ? n : 0,
+      comments_qty: isPost ? 0 : n,
       order_price: total,
       rows: uploadRows,
       content_type: currentType,
@@ -1411,9 +1418,44 @@
       tr.innerHTML = '<td><span class="row-num">'+(i+1)+'</span></td><td>'+targetCell+'</td><td><div class="content-preview">'+ufEsc(row.title||'—')+'</div></td><td><div class="content-preview">'+ufEsc(row.content)+'</div></td><td><button class="del-btn" onclick="deleteRow('+i+')">×</button></td>';
       tbody.appendChild(tr);
     });
+    updateUploadPrice();
   }
 
   function deleteRow(i) { rows.splice(i,1); renderTable(); hideLimitWarn(); }
+
+  function updateUploadPrice() {
+    const n = rows.length;
+    const pricebar = document.getElementById('upload-price-bar');
+    const calcEl = document.getElementById('upload-price-calc');
+    const totalEl = document.getElementById('upload-price-total');
+    const summaryPkg = document.getElementById('summary-pkg');
+    const summaryPrice = document.getElementById('summary-price');
+    const btnAmount = document.getElementById('btn-amount');
+    const submitBtn = document.getElementById('submit-btn');
+    const fmt = v => v.toLocaleString('en-GB');
+    if (!n) {
+      if (pricebar) pricebar.classList.remove('visible');
+      summaryPkg.textContent = 'Calculated from your upload';
+      summaryPrice.textContent = '—';
+      btnAmount.textContent = '';
+      submitBtn.disabled = true;
+      return;
+    }
+    const isPost = currentType !== 'comment';
+    const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+    const total = n * unitPrice;
+    const lbl = isPost ? 'post' : 'comment';
+    const lblPlural = isPost ? 'posts' : 'comments';
+    if (pricebar) {
+      pricebar.classList.add('visible');
+      calcEl.innerHTML = '<strong>' + n + '</strong> ' + (n === 1 ? lbl : lblPlural) + ' × <strong>¥' + unitPrice + '/' + lbl + '</strong>';
+      totalEl.textContent = '¥' + fmt(total);
+    }
+    summaryPkg.textContent = n + ' ' + (n === 1 ? lbl : lblPlural);
+    summaryPrice.textContent = '¥' + fmt(total);
+    btnAmount.textContent = '¥' + fmt(total);
+    submitBtn.disabled = false;
+  }
 
   function addRow() {
     if (maxRows && rows.length >= maxRows) return;
@@ -1428,15 +1470,20 @@
   function submitContent() {
     if (!rows.length) return;
     try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
-    // Show confirmation note + scroll order form into view
     const orderFormCard = document.querySelector('#order .order-card:last-of-type');
     if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const bar = document.getElementById('uf-submit-bar');
     const existing = bar.querySelector('.uf-confirm-note');
     if (existing) existing.remove();
+    const isPost = currentType !== 'comment';
+    const n = rows.length;
+    const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+    const total = n * unitPrice;
+    const lbl = isPost ? (n === 1 ? 'post' : 'posts') : (n === 1 ? 'comment' : 'comments');
+    const fmt = v => v.toLocaleString('en-GB');
     const note = document.createElement('p');
     note.className = 'uf-confirm-note';
-    note.textContent = '✓ ' + rows.length + ' ' + (currentType==='post'?'post':'comment') + ' items confirmed — fill in the order form below';
+    note.innerHTML = '✓ ' + n + ' ' + lbl + ' confirmed &emsp;— total <strong style="color:var(--red)">¥' + fmt(total) + '</strong> &nbsp;Fill in the form below to pay';
     bar.appendChild(note);
   }
 
