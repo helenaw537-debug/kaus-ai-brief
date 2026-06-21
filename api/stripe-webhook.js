@@ -92,6 +92,17 @@ function contentTableHtml(rows, type) {
   `;
 }
 
+// ── Raw body reader (required for Stripe signature verification) ─────────────
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
 // ── Webhook handler ──────────────────────────────────────────────────────────
 
 export default async function handler(req, res) {
@@ -100,7 +111,8 @@ export default async function handler(req, res) {
   const sig = req.headers['stripe-signature'];
   let event;
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    const rawBody = await readRawBody(req);
+    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('Webhook signature error:', err.message);
     return res.status(400).send(`Webhook error: ${err.message}`);
@@ -249,5 +261,3 @@ export default async function handler(req, res) {
   console.log('Order processed:', token, session.customer_email, `${contentRows?.length || 0} rows`);
   res.json({ received: true });
 }
-
-export const config = { api: { bodyParser: false } };
