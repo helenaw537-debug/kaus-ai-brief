@@ -574,8 +574,54 @@
     <p class="section-sub">Upload your content, fill in your details, and pay — we'll handle the rest.</p>
 
     <!-- ── CONTENT UPLOAD CARD ── -->
+    <div class="order-card">
+      <h3>Step 1 — Your details</h3>
+      <p class="order-sub">Fill in your contact info, then upload your content.</p>
+
+      <div id="order-form-wrap">
+        <form id="order-form" onsubmit="handleSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fname">Full name *</label>
+              <input type="text" id="fname" name="name" required placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="femail">Email *</label>
+              <input type="email" id="femail" name="email" required placeholder="you@company.com">
+            </div>
+            <div class="form-group">
+              <label for="fcompany">Company / Brand *</label>
+              <input type="text" id="fcompany" name="company" required placeholder="Acme Inc.">
+            </div>
+            <div class="form-group">
+              <label for="fwechat">WeChat ID</label>
+              <input type="text" id="fwechat" name="wechat" placeholder="Optional — for onboarding">
+            </div>
+
+            <div class="form-group full">
+              <label for="fbrief">Content brief *</label>
+              <textarea id="fbrief" name="content_brief" required
+                placeholder="Tell us about your brand:
+• What does your product do?
+• Who is your target audience?
+• Any specific subreddits you want to target?
+• Key messages, URLs, or talking points to include
+• Anything to avoid?"></textarea>
+              <span class="form-hint">This will be included in your confirmation email and used to set up your campaign.</span>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="success-screen" id="success-screen">
+        <div class="check">✓</div>
+        <h3>Order received!</h3>
+        <p>Check your email for a confirmation with your content brief.<br>We'll be in touch within 24 hours to kick things off.</p>
+      </div>
+    </div>
     <div class="order-card" id="upload-card" style="margin-bottom:24px;">
-      <h3>Step 1 — Upload your content</h3>
+      <h3>Step 2 — Upload your content</h3>
       <p class="order-sub" style="margin-bottom:24px;">Choose type, paste or upload your file, then fill in your details below.</p>
       <div class="uf-wrap">
       
@@ -733,69 +779,23 @@
                   <span class="upload-price-total" id="upload-price-total"></span>
                 </div>
                 <button class="uf-submit-btn" id="uf-submit-btn" disabled onclick="submitContent()">Confirm &amp; place order →</button>
+              </div><!-- uf-submit-bar end -->
+
+              <!-- Pay summary + button (revealed after Confirm) -->
+              <div class="order-summary-bar" id="order-summary-bar" style="margin-top:16px;display:none;">
+                <span class="summary-pkg" id="summary-pkg">Calculated from your upload</span>
+                <span class="summary-price" id="summary-price">—</span>
               </div>
+              <button type="button" class="submit-btn" id="submit-btn" onclick="handleSubmit(event)" disabled style="margin-top:12px;display:none;width:100%;">
+                <span>Proceed to Payment</span>
+                <span class="btn-amount" id="btn-amount"></span>
+              </button>
+              <p class="form-note" id="form-note" style="display:none;">🔒 Secure checkout via Stripe · WeChat Pay coming soon · One-time payment</p>
+
             </div>
-      
-          </div>
     </div>
 
     <!-- ── ORDER FORM CARD ── -->
-    <div class="order-card">
-      <h3>Step 2 — Your details</h3>
-      <p class="order-sub">Fill in your contact info to place the order.</p>
-
-      <div id="order-form-wrap">
-        <form id="order-form" onsubmit="handleSubmit(event)">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="fname">Full name *</label>
-              <input type="text" id="fname" name="name" required placeholder="Your name">
-            </div>
-            <div class="form-group">
-              <label for="femail">Email *</label>
-              <input type="email" id="femail" name="email" required placeholder="you@company.com">
-            </div>
-            <div class="form-group">
-              <label for="fcompany">Company / Brand *</label>
-              <input type="text" id="fcompany" name="company" required placeholder="Acme Inc.">
-            </div>
-            <div class="form-group">
-              <label for="fwechat">WeChat ID</label>
-              <input type="text" id="fwechat" name="wechat" placeholder="Optional — for onboarding">
-            </div>
-
-            <div class="form-group full">
-              <label for="fbrief">Content brief *</label>
-              <textarea id="fbrief" name="content_brief" required
-                placeholder="Tell us about your brand:
-• What does your product do?
-• Who is your target audience?
-• Any specific subreddits you want to target?
-• Key messages, URLs, or talking points to include
-• Anything to avoid?"></textarea>
-              <span class="form-hint">This will be included in your confirmation email and used to set up your campaign.</span>
-            </div>
-          </div>
-
-          <div class="order-summary-bar">
-            <span class="summary-pkg" id="summary-pkg">Calculated from your upload</span>
-            <span class="summary-price" id="summary-price">—</span>
-          </div>
-
-          <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            <span>Proceed to Payment</span>
-            <span class="btn-amount" id="btn-amount"></span>
-          </button>
-          <p class="form-note">🔒 Secure checkout via Stripe · WeChat Pay coming soon · One-time payment</p>
-        </form>
-      </div>
-
-      <div class="success-screen" id="success-screen">
-        <div class="check">✓</div>
-        <h3>Order received!</h3>
-        <p>Check your email for a confirmation with your content brief.<br>We'll be in touch within 24 hours to kick things off.</p>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1384,6 +1384,12 @@
       btnAmount.textContent = '';
       submitBtn.disabled = true;
       if (ufSubmitBtn) ufSubmitBtn.disabled = true;
+      const payBtnEl = document.getElementById('submit-btn');
+      const summaryEl = document.getElementById('order-summary-bar');
+      const noteEl = document.getElementById('form-note');
+      if (payBtnEl) { payBtnEl.disabled = true; payBtnEl.style.display = 'none'; }
+      if (summaryEl) summaryEl.style.display = 'none';
+      if (noteEl) noteEl.style.display = 'none';
       return;
     }
     const isPost = currentType !== 'comment';
@@ -1429,8 +1435,6 @@
       return;
     }
     try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
-    const orderFormCard = document.querySelector('#order .order-card:last-of-type');
-    if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     const bar = document.getElementById('uf-submit-bar');
     const existing = bar.querySelector('.uf-confirm-note');
     if (existing) existing.remove();
@@ -1443,11 +1447,20 @@
     note.innerHTML = '✓ ' + n + ' ' + lbl + ' confirmed &emsp;— total <strong style="color:var(--red)">¥' + fmt(total) + '</strong> &nbsp;Fill in the form below to pay';
     bar.appendChild(note);
     const payBtn = document.getElementById('submit-btn');
-    const btnAmount = document.getElementById('btn-amount');
+    const summaryBarEl2 = document.getElementById('order-summary-bar');
+    const formNoteEl2 = document.getElementById('form-note');
     if (payBtn) {
       payBtn.disabled = false;
+      payBtn.style.display = '';
       if (btnAmount) btnAmount.textContent = '¥' + fmt(total);
     }
+    if (summaryBarEl2) {
+      summaryBarEl2.style.display = '';
+      document.getElementById('summary-pkg').textContent = n + ' ' + lbl;
+      document.getElementById('summary-price').textContent = '¥' + fmt(total);
+    }
+    if (formNoteEl2) formNoteEl2.style.display = '';
+    if (payBtn) payBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   function showUfError(msg) { const el=document.getElementById('parse-error'); el.textContent=msg; el.style.display=msg?'block':'none'; }
