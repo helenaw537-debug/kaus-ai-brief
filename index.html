@@ -398,6 +398,11 @@
         #upload-card .uf-action-btn:disabled { opacity:.4;cursor:not-allowed; }
         #upload-card .quota-bar { display:none;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:14px;font-size:13px; }
         #upload-card .quota-bar.visible { display:flex; }
+        #upload-card .upload-price-bar { display:none;align-items:center;justify-content:space-between;background:#fff8f0;border:1px solid #f5d5a0;border-radius:var(--radius);padding:10px 16px;margin-top:14px;font-size:13px;flex-wrap:wrap;gap:6px; }
+        #upload-card .upload-price-bar.visible { display:flex; }
+        #upload-card .upload-price-calc { display:flex;align-items:center;gap:6px;color:var(--mid); }
+        #upload-card .upload-price-calc strong { color:var(--dark); }
+        #upload-card .upload-price-total { font-size:1.15rem;font-weight:800;color:var(--red); }
         #upload-card .quota-label { color:var(--light); }
         #upload-card .quota-used  { font-weight:600; }
         #upload-card .quota-used.full { color:var(--red); }
@@ -712,6 +717,10 @@
           </div>
           <div class="uf-submit-bar" id="uf-submit-bar">
             <span class="uf-submit-total">共 <strong id="submit-count">0</strong> 条内容</span>
+            <div class="upload-price-bar" id="upload-price-bar">
+              <span class="upload-price-calc" id="upload-price-calc">—</span>
+              <span class="upload-price-total" id="upload-price-total"></span>
+            </div>
             <button class="uf-submit-btn" onclick="submitContent()">确认，前往下单 →</button>
           </div>
         </div>
@@ -758,7 +767,7 @@
           </div>
 
           <div class="order-summary-bar">
-            <span class="summary-pkg" id="summary-pkg">未选择套餐</span>
+            <span class="summary-pkg" id="summary-pkg">上传内容后自动计算</span>
             <span class="summary-price" id="summary-price">—</span>
           </div>
 
@@ -921,16 +930,16 @@
 
   function handleSubmit(e) {
     e.preventDefault();
-    const p = selectedPosts;
-    const c = selectedComments;
-    const total = p * postPrice(p) + c * commentPrice(c);
-
-    // Include upload form content rows
     const uploadRows = rows && rows.length > 0 ? rows : [];
     if (!uploadRows.length) {
       alert('请先在"第一步"上传发帖内容后再提交订单。');
       return;
     }
+
+    const n = uploadRows.length;
+    const isPost = currentType !== 'comment';
+    const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+    const total = n * unitPrice;
 
     const data = {
       name: document.getElementById('fname').value,
@@ -938,9 +947,9 @@
       company: document.getElementById('fcompany').value,
       wechat: document.getElementById('fwechat').value,
       content_brief: document.getElementById('fbrief').value,
-      package_type: (p > 0 && c > 0) ? 'combined' : (p > 0 ? 'posts' : 'comments'),
-      posts_qty: p,
-      comments_qty: c,
+      package_type: isPost ? 'posts' : 'comments',
+      posts_qty: isPost ? n : 0,
+      comments_qty: isPost ? 0 : n,
       order_price: total,
       rows: uploadRows,
       content_type: currentType,
@@ -1243,9 +1252,44 @@
         tr.innerHTML = '<td><span class="row-num">'+(i+1)+'</span></td><td>'+targetCell+'</td><td><div class="content-preview">'+ufEsc(row.title||'—')+'</div></td><td><div class="content-preview">'+ufEsc(row.content)+'</div></td><td><button class="del-btn" onclick="deleteRow('+i+')">×</button></td>';
         tbody.appendChild(tr);
       });
+      updateUploadPrice();
     }
   
     function deleteRow(i) { rows.splice(i,1); renderTable(); hideLimitWarn(); }
+
+    function updateUploadPrice() {
+      const n = rows.length;
+      const pricebar = document.getElementById('upload-price-bar');
+      const calcEl = document.getElementById('upload-price-calc');
+      const totalEl = document.getElementById('upload-price-total');
+      const summaryPkg = document.getElementById('summary-pkg');
+      const summaryPrice = document.getElementById('summary-price');
+      const btnAmount = document.getElementById('btn-amount');
+      const submitBtn = document.getElementById('submit-btn');
+      const fmt = v => v.toLocaleString('zh-CN');
+      if (!n) {
+        if (pricebar) pricebar.classList.remove('visible');
+        summaryPkg.textContent = '上传内容后自动计算';
+        summaryPrice.textContent = '—';
+        btnAmount.textContent = '';
+        submitBtn.disabled = true;
+        return;
+      }
+      const isPost = currentType !== 'comment';
+      const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+      const total = n * unitPrice;
+      const lbl = isPost ? '篇' : '条';
+      const typeName = isPost ? '帖子' : '评论';
+      if (pricebar) {
+        pricebar.classList.add('visible');
+        calcEl.innerHTML = '<strong>' + n + '</strong> ' + lbl + ' × <strong>¥' + unitPrice + '/' + lbl + '</strong>';
+        totalEl.textContent = '¥' + fmt(total);
+      }
+      summaryPkg.textContent = n + ' ' + lbl + typeName;
+      summaryPrice.textContent = '¥' + fmt(total);
+      btnAmount.textContent = '¥' + fmt(total);
+      submitBtn.disabled = false;
+    }
   
     function addRow() {
       if (maxRows && rows.length >= maxRows) return;
@@ -1260,15 +1304,20 @@
     function submitContent() {
       if (!rows.length) return;
       try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
-      // Show confirmation note + scroll order form into view
       const orderFormCard = document.querySelector('#order .order-card:last-of-type');
       if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       const bar = document.getElementById('uf-submit-bar');
       const existing = bar.querySelector('.uf-confirm-note');
       if (existing) existing.remove();
+      const isPost = currentType !== 'comment';
+      const n = rows.length;
+      const unitPrice = isPost ? postPrice(n) : commentPrice(n);
+      const total = n * unitPrice;
+      const lbl = isPost ? '篇' : '条';
+      const fmt = v => v.toLocaleString('zh-CN');
       const note = document.createElement('p');
       note.className = 'uf-confirm-note';
-      note.textContent = '✓ 已确认 ' + rows.length + ' 条' + (currentType==='post'?'帖子':'评论') + '内容，请填写下方信息完成下单';
+      note.innerHTML = '✓ 已确认 ' + n + ' ' + lbl + (isPost ? '帖子' : '评论') + '内容&emsp;— 共计 <strong style="color:var(--red)">¥' + fmt(total) + '</strong>，请填写下方信息完成支付';
       bar.appendChild(note);
     }
   
