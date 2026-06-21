@@ -133,6 +133,13 @@ export default async function handler(req, res) {
   const lang = m.lang || 'zh';
   const isZh = lang !== 'en';
 
+  // Idempotency guard — Stripe retries on non-2xx; silently skip already-processed tokens
+  const existing = await sbGet('orders', { token });
+  if (existing.length > 0) {
+    console.log('Duplicate webhook, already processed:', token);
+    return res.status(200).json({ received: true });
+  }
+
   // 1. Save order to Supabase
   let order;
   try {
