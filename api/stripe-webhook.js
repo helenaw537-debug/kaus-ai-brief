@@ -5,6 +5,7 @@
 //   SUPABASE_SERVICE_KEY, ZOHO_EMAIL, ZOHO_PASSWORD, SITE_URL
 
 import Stripe from 'stripe';
+import nodemailer from 'nodemailer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -50,27 +51,24 @@ async function sbPatch(table, filter, data) {
   if (!res.ok) throw new Error(`Supabase patch ${table}: ${await res.text()}`);
 }
 
-// ── Email (Resend — no SMTP, no IP blocking) ─────────────────────────────────
+// ── Email (Zoho SMTP) ─────────────────────────────────────────────────────────
 
 async function sendEmail({ to, subject, html }) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.zoho.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.ZOHO_EMAIL,
+      pass: process.env.ZOHO_PASSWORD,
     },
-    body: JSON.stringify({
-      from: `Kaus <orders@kaus-ai.com>`,
-      to: Array.isArray(to) ? to : [to],
-      subject,
-      html,
-    }),
   });
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Resend ${res.status}: ${body}`);
-  }
-  return res.json();
+  await transporter.sendMail({
+    from: `Kaus <${process.env.ZOHO_EMAIL}>`,
+    to,
+    subject,
+    html,
+  });
 }
 
 function contentTableHtml(rows, type) {
