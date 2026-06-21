@@ -528,12 +528,60 @@
   <div class="section-inner">
     <p class="section-label">提交需求</p>
     <h2 class="section-title">下单</h2>
-    <p class="section-sub">上传内容，填写信息，一键下单。</p>
+    <p class="section-sub">填写信息，上传内容，一键支付。</p>
 
-    <!-- ── 内容上传 ── -->
+    <!-- ── 下单表单 ── -->
+    <div class="order-card">
+      <h3>第一步 — 填写信息</h3>
+      <p class="order-sub">填写你的联系方式，然后上传内容。</p>
+
+      <div id="order-form-wrap">
+        <form id="order-form" onsubmit="handleSubmit(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fname">姓名 *</label>
+              <input type="text" id="fname" name="name" required placeholder="你的姓名">
+            </div>
+            <div class="form-group">
+              <label for="femail">邮箱 *</label>
+              <input type="email" id="femail" name="email" required placeholder="you@company.com">
+            </div>
+            <div class="form-group">
+              <label for="fcompany">公司 / 品牌 *</label>
+              <input type="text" id="fcompany" name="company" required placeholder="品牌名称">
+            </div>
+            <div class="form-group">
+              <label for="fwechat">微信号</label>
+              <input type="text" id="fwechat" name="wechat" placeholder="选填，用于后续对接">
+            </div>
+
+            <div class="form-group full">
+              <label for="fbrief">内容简介 *</label>
+              <textarea id="fbrief" name="content_brief" required
+                placeholder="告诉我们关于你的品牌：
+• 产品/服务是什么？
+• 目标受众是谁？
+• 想覆盖哪些 Reddit 版块？
+• 核心卖点、网站链接、关键词
+• 有什么需要避免提及的？"></textarea>
+              <span class="form-hint">提交后，我们会发送内容确认表格，正式开始前你可以审核所有内容。</span>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
+      <div class="success-screen" id="success-screen">
+        <div class="check">✓</div>
+        <h3>已收到</h3>
+        <p>24小时内联系你确认细节，<br>请留意邮箱及微信。</p>
+      </div>
+    </div>
+  </div>
+<!-- ── 内容上传 ── -->
     <div class="order-card" id="upload-card" style="margin-bottom:24px;">
-      <h3>第一步 — 上传内容</h3>
-      <p class="order-sub" style="margin-bottom:24px;">选择类型，粘贴或上传文件，然后填写下方信息。</p>
+      <h3>第二步 — 上传内容</h3>
+      <p class="order-sub" style="margin-bottom:24px;">选择类型，粘贴或上传文件，确认后完成支付。</p>
       <div class="uf-wrap">
 
         <!-- STEP 1: TYPE -->
@@ -678,71 +726,25 @@
               <span class="upload-price-total" id="upload-price-total"></span>
             </div>
             <button class="uf-submit-btn" id="uf-submit-btn" disabled onclick="submitContent()">确认，前往下单 →</button>
+          </div><!-- uf-submit-bar end -->
+
+          <!-- Pay summary + button (revealed after Confirm) -->
+          <div class="order-summary-bar" id="order-summary-bar" style="margin-top:16px;display:none;">
+            <span class="summary-pkg" id="summary-pkg">上传内容后自动计算</span>
+            <span class="summary-price" id="summary-price">—</span>
           </div>
+          <button type="button" class="submit-btn" id="submit-btn" onclick="handleSubmit(event)" disabled style="margin-top:12px;display:none;width:100%;">
+            <span>提交订单 — 跳转支付</span>
+            <span class="btn-amount" id="btn-amount"></span>
+          </button>
+          <p class="form-note" id="form-note" style="display:none;">任务完成后自动发送确认邮件</p>
+
         </div>
 
       </div><!-- /.uf-wrap -->
     </div>
 
-    <!-- ── 下单表单 ── -->
-    <div class="order-card">
-      <h3>第二步 — 你的信息</h3>
-      <p class="order-sub">填写联系方式后，点击支付完成下单。</p>
-
-      <div id="order-form-wrap">
-        <form id="order-form" onsubmit="handleSubmit(event)">
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="fname">姓名 *</label>
-              <input type="text" id="fname" name="name" required placeholder="你的姓名">
-            </div>
-            <div class="form-group">
-              <label for="femail">邮箱 *</label>
-              <input type="email" id="femail" name="email" required placeholder="you@company.com">
-            </div>
-            <div class="form-group">
-              <label for="fcompany">公司 / 品牌 *</label>
-              <input type="text" id="fcompany" name="company" required placeholder="品牌名称">
-            </div>
-            <div class="form-group">
-              <label for="fwechat">微信号</label>
-              <input type="text" id="fwechat" name="wechat" placeholder="选填，用于后续对接">
-            </div>
-
-            <div class="form-group full">
-              <label for="fbrief">内容简介 *</label>
-              <textarea id="fbrief" name="content_brief" required
-                placeholder="告诉我们关于你的品牌：
-• 产品/服务是什么？
-• 目标受众是谁？
-• 想覆盖哪些 Reddit 版块？
-• 核心卖点、网站链接、关键词
-• 有什么需要避免提及的？"></textarea>
-              <span class="form-hint">提交后，我们会发送内容确认表格，正式开始前你可以审核所有内容。</span>
-            </div>
-          </div>
-
-          <div class="order-summary-bar">
-            <span class="summary-pkg" id="summary-pkg">上传内容后自动计算</span>
-            <span class="summary-price" id="summary-price">—</span>
-          </div>
-
-          <button type="submit" class="submit-btn" id="submit-btn" disabled>
-            <span>提交订单 — 跳转支付</span>
-            <span class="btn-amount" id="btn-amount"></span>
-          </button>
-          <p class="form-note">任务完成后自动发送确认邮件</p>
-        </form>
-      </div>
-
-      <div class="success-screen" id="success-screen">
-        <div class="check">✓</div>
-        <h3>已收到</h3>
-        <p>24小时内联系你确认细节，<br>请留意邮箱及微信。</p>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
 <footer>
   © 2026 Kaus · <a href="mailto:hello@kaus-ai.com" style="color:inherit">hello@kaus-ai.com</a> · <a href="en.html" style="color:inherit">English</a>
@@ -1231,6 +1233,12 @@
         btnAmount.textContent = '';
         submitBtn.disabled = true;
         if (ufSubmitBtn) ufSubmitBtn.disabled = true;
+        // Hide pay button when rows cleared
+        const summaryBarEl = document.getElementById('order-summary-bar');
+        const formNoteEl = document.getElementById('form-note');
+        if (submitBtn) { submitBtn.style.display = 'none'; }
+        if (summaryBarEl) summaryBarEl.style.display = 'none';
+        if (formNoteEl) formNoteEl.style.display = 'none';
         return;
       }
       const isPost = currentType !== 'comment';
@@ -1252,7 +1260,7 @@
       summaryPkg.textContent = n + ' ' + lbl + typeName;
       summaryPrice.textContent = n >= minQty ? '¥' + fmt(total) : '—';
       btnAmount.textContent = n >= minQty ? '¥' + fmt(total) : '';
-      submitBtn.disabled = true; // always disabled; submit is via uf-submit-btn
+      submitBtn.disabled = true; // pay button stays hidden until confirm clicked; managed by submitContent
       if (ufSubmitBtn) ufSubmitBtn.disabled = (n < minQty);
     }
   
@@ -1277,8 +1285,6 @@
         return;
       }
       try { sessionStorage.setItem('uf_rows', JSON.stringify(rows)); sessionStorage.setItem('uf_type', currentType); } catch(e) {}
-      const orderFormCard = document.querySelector('#order .order-card:last-of-type');
-      if (orderFormCard) orderFormCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
       const bar = document.getElementById('uf-submit-bar');
       const existing = bar.querySelector('.uf-confirm-note');
       if (existing) existing.remove();
@@ -1290,12 +1296,23 @@
       note.className = 'uf-confirm-note';
       note.innerHTML = '✓ 已确认 ' + n + ' ' + lbl + (isPost ? '帖子' : '评论') + '内容&emsp;— 共计 <strong style="color:var(--red)">¥' + fmt(total) + '</strong>，请填写下方信息完成支付';
       bar.appendChild(note);
-      // Enable the final pay button now that content is confirmed
+      // Show and enable the pay button
       const payBtn = document.getElementById('submit-btn');
+      const summaryBarEl = document.getElementById('order-summary-bar');
+      const formNoteEl = document.getElementById('form-note');
       if (payBtn) {
         payBtn.disabled = false;
+        payBtn.style.display = '';
         btnAmount.textContent = '¥' + fmt(total);
       }
+      if (summaryBarEl) {
+        summaryBarEl.style.display = '';
+        document.getElementById('summary-pkg').textContent = n + ' ' + lbl + (isPost ? '帖子' : '评论');
+        document.getElementById('summary-price').textContent = '¥' + fmt(total);
+      }
+      if (formNoteEl) formNoteEl.style.display = '';
+      // Scroll to pay button
+      if (payBtn) payBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   
     function showUfError(msg) { const el=document.getElementById('parse-error'); el.textContent=msg; el.style.display=msg?'block':'none'; }
