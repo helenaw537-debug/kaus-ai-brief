@@ -55,7 +55,7 @@ async function sbPatch(table, filter, data) {
 
 async function sendEmail({ to, subject, html }) {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.zoho.com',
+    host: 'smtp.zoho.eu',
     port: 465,
     secure: true,
     auth: {
