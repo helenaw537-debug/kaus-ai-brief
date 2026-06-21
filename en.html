@@ -436,6 +436,8 @@
     #upload-card .preview-table td.highlight-target  { background:var(--red-pale);color:var(--red);font-weight:600; }
     #upload-card .preview-table td.highlight-content { background:#f0f7ff;color:#2b5797; }
     #upload-card .preview-table th.highlight-content-th { background:#f0f7ff;color:#2b5797; }
+    #upload-card .preview-table td.highlight-title { background:#f0fdf4;color:#166534; }
+    #upload-card .preview-table th.highlight-title-th { background:#f0fdf4;color:#166534; }
     #upload-card .row-count-note { font-size:12px;color:var(--light);margin-top:10px;text-align:right;padding:0 14px 10px; }
 
     /* Step 3 */
@@ -712,6 +714,15 @@
                 </div>
                 <div class="mapper-row">
                   <div class="mapper-label">
+                    Post Title
+                    <small>Optional</small>
+                  </div>
+                  <select class="col-select" id="title-col-select" onchange="updatePreview()">
+                    <option value="">— Select column —</option>
+                  </select>
+                </div>
+                <div class="mapper-row">
+                  <div class="mapper-label">
                     Content
                     <small>Comment / Post body</small>
                   </div>
@@ -757,7 +768,8 @@
                     <tr>
                       <th style="width:5%">#</th>
                       <th style="width:35%" id="col-target-head">Subreddit</th>
-                      <th style="width:52%">Content</th>
+                      <th style="width:25%">Post Title</th>
+                      <th style="width:27%">Content</th>
                       <th style="width:8%"></th>
                     </tr>
                   </thead>
@@ -1228,23 +1240,29 @@
 
   function openMapper() {
     const tSel = document.getElementById('target-col-select');
+    const tiSel = document.getElementById('title-col-select');
     const cSel = document.getElementById('content-col-select');
-    tSel.innerHTML = cSel.innerHTML = '<option value="">— Select column —</option>';
+    tSel.innerHTML = tiSel.innerHTML = cSel.innerHTML = '<option value="">— Select column —</option>';
     sheetHeaders.forEach((h, i) => {
       tSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
+      tiSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
       cSel.appendChild(new Option(h + '  (' + previewVal(i,0) + ')', i));
     });
-    let guessTarget = -1, guessContent = -1;
+    let guessTarget = -1, guessTitle = -1, guessContent = -1;
     sheetHeaders.forEach((h, i) => {
       const s = String(sheetData[0]?.[i]||'').trim().toLowerCase();
       if (guessTarget === -1 && (s.startsWith('r/') || s.startsWith('http') || /sub|url|target/.test(h.toLowerCase()))) guessTarget = i;
     });
     sheetHeaders.forEach((h, i) => {
-      if (i === guessTarget) return;
+      if (guessTitle === -1 && /title|标题|headline/.test(h.toLowerCase())) guessTitle = i;
+    });
+    sheetHeaders.forEach((h, i) => {
+      if (i === guessTarget || i === guessTitle) return;
       const s = String(sheetData[0]?.[i]||'');
       if (guessContent === -1 && (s.length > 20 || /content|text/.test(h.toLowerCase()))) guessContent = i;
     });
     if (guessTarget >= 0) tSel.value = guessTarget;
+    if (guessTitle >= 0) tiSel.value = guessTitle;
     if (guessContent >= 0) cSel.value = guessContent;
     updatePreview(); goTo(2.5);
   }
@@ -1256,6 +1274,7 @@
 
   function updatePreview() {
     const tIdx = parseInt(document.getElementById('target-col-select').value);
+    const tiIdx = parseInt(document.getElementById('title-col-select').value);
     const cIdx = parseInt(document.getElementById('content-col-select').value);
     const hasBoth = !isNaN(tIdx) && !isNaN(cIdx) && tIdx !== cIdx;
     document.getElementById('mapper-btn').disabled = !hasBoth;
@@ -1266,14 +1285,14 @@
     const table = document.getElementById('preview-table');
     let html2 = '<thead><tr>';
     sheetHeaders.forEach((h,i) => {
-      const cls = i===tIdx?'highlight':i===cIdx?'highlight-content-th':'';
+      const cls = i===tIdx?'highlight':i===tiIdx?'highlight-title-th':i===cIdx?'highlight-content-th':'';
       html2 += '<th class="'+cls+'">' + ufEsc(h) + '</th>';
     });
     html2 += '</tr></thead><tbody>';
     sheetData.slice(0,5).forEach(row => {
       html2 += '<tr>';
       sheetHeaders.forEach((_,i) => {
-        const cls = i===tIdx?'highlight-target':i===cIdx?'highlight-content':'';
+        const cls = i===tIdx?'highlight-target':i===tiIdx?'highlight-title':i===cIdx?'highlight-content':'';
         const val = String(row[i]||'').trim();
         html2 += '<td class="'+cls+'" title="'+ufEsc(val)+'">'+ufEsc(val.length>40?val.slice(0,40)+'…':val)||'—'+'</td>';
       });
@@ -1286,10 +1305,15 @@
 
   function applyMapping() {
     const tIdx = parseInt(document.getElementById('target-col-select').value);
+    const tiIdx = parseInt(document.getElementById('title-col-select').value);
     const cIdx = parseInt(document.getElementById('content-col-select').value);
     if (isNaN(tIdx) || isNaN(cIdx) || tIdx === cIdx) { showMapperError('Please select two different columns'); return; }
     let mapped = sheetData
-      .map(r => ({ target: String(r[tIdx]||'').trim(), content: String(r[cIdx]||'').trim() }))
+      .map(r => ({
+        target:  String(r[tIdx]||'').trim(),
+        title:   isNaN(tiIdx) ? '' : String(r[tiIdx]||'').trim(),
+        content: String(r[cIdx]||'').trim()
+      }))
       .filter(r => r.target && r.content)
       .map(r => ({ ...r, isUrl: r.target.startsWith('http') }));
     if (!mapped.length) { showMapperError('No valid data in the selected columns'); return; }
@@ -1384,7 +1408,7 @@
         ? '<span class="url-pill" title="'+ufEsc(row.target)+'">'+ufEsc(short.length>42?short.slice(0,42)+'…':short)+'</span>'
         : '<span class="target-pill">'+ufEsc(row.target)+'</span>';
       const tr = document.createElement('tr');
-      tr.innerHTML = '<td><span class="row-num">'+(i+1)+'</span></td><td>'+targetCell+'</td><td><div class="content-preview">'+ufEsc(row.content)+'</div></td><td><button class="del-btn" onclick="deleteRow('+i+')">×</button></td>';
+      tr.innerHTML = '<td><span class="row-num">'+(i+1)+'</span></td><td>'+targetCell+'</td><td><div class="content-preview">'+ufEsc(row.title||'—')+'</div></td><td><div class="content-preview">'+ufEsc(row.content)+'</div></td><td><button class="del-btn" onclick="deleteRow('+i+')">×</button></td>';
       tbody.appendChild(tr);
     });
   }
