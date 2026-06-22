@@ -32,7 +32,7 @@ async function sbPatch(table, filter, data) {
 
 async function sendEmail({ to, subject, html }) {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.zoho.com',
+    host: 'smtp.zoho.eu',
     port: 465,
     secure: true,
     auth: { user: process.env.ZOHO_EMAIL, pass: process.env.ZOHO_PASSWORD },
@@ -43,7 +43,7 @@ async function sendEmail({ to, subject, html }) {
   });
 }
 
-function buildDeliveryEmail({ order, posts, isZh }) {
+function buildDeliveryEmail({ order, posts, isZh, reportUrl }) {
   const pkgSummary = order.package_type === 'combined'
     ? (isZh ? `${order.posts_qty}篇帖子 + ${order.comments_qty}条评论` : `${order.posts_qty} posts + ${order.comments_qty} comments`)
     : order.package_type === 'posts'
@@ -81,6 +81,7 @@ function buildDeliveryEmail({ order, posts, isZh }) {
           <tbody>${linksTable}</tbody>
         </table>
         <p style="margin-top:20px;color:#666;font-size:14px">如有问题，请联系 <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+        ${reportUrl ? `<p style="margin-top:12px"><a href="${reportUrl}" style="background:#D13239;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:500">查看完整报告 →</a></p>` : ''}
       </div>
     `;
   }
@@ -100,6 +101,7 @@ function buildDeliveryEmail({ order, posts, isZh }) {
         <tbody>${linksTable}</tbody>
       </table>
       <p style="margin-top:20px;color:#666;font-size:14px">Questions? <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+      ${reportUrl ? `<p style="margin-top:12px"><a href="${reportUrl}" style="background:#D13239;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:500">View full report →</a></p>` : ''}
     </div>
   `;
 }
@@ -119,7 +121,9 @@ export default async function handler(req, res) {
   const donePosts = posts.filter(p => p.status === 'done');
 
   const isZh = order.lang !== 'en';
-  const html = buildDeliveryEmail({ order, posts: donePosts, isZh });
+  const siteUrl = process.env.SITE_URL || 'https://app.kaus-ai.com';
+  const reportUrl = `${siteUrl}/report.html?token=${order.token}`;
+  const html = buildDeliveryEmail({ order, posts: donePosts, isZh, reportUrl });
 
   try {
     await sendEmail({
