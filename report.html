@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>订单报告 — Kaus</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f7f7f7; color: #111; font-size: 14px; min-height: 100vh; }
+    nav { background: #fff; border-bottom: 1px solid #e5e5e5; padding: 14px 24px; }
+    nav a { text-decoration: none; color: #111; font-weight: 600; font-size: 16px; }
+    .main { max-width: 860px; margin: 0 auto; padding: 32px 16px; }
+    .error-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 48px 32px; text-align: center; }
+    .error-card h2 { font-size: 18px; color: #111; margin-bottom: 8px; }
+    .error-card p { color: #888; font-size: 14px; }
+    .header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .header-left h1 { font-size: 20px; font-weight: 700; }
+    .header-left .sub { color: #888; font-size: 13px; margin-top: 4px; }
+    .status-badge { display: inline-flex; align-items: center; border-radius: 12px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+    .badge-completed { background: #f0fdf4; color: #15803d; }
+    .badge-executing, .badge-queued { background: #eff6ff; color: #1d4ed8; }
+    .badge-pending_content, .badge-ready { background: #fff7ed; color: #c2410c; }
+    .badge-default { background: #f5f5f5; color: #666; }
+    .cards-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .info-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 130px; }
+    .info-card .label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .info-card .value { font-size: 20px; font-weight: 700; }
+    .info-card .value.done { color: #15803d; }
+    .progress-section { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 18px 20px; margin-bottom: 24px; }
+    .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .progress-label span { font-size: 13px; font-weight: 500; }
+    .progress-label .pct { font-size: 13px; color: #888; }
+    .progress-bar { background: #e5e5e5; border-radius: 6px; height: 8px; }
+    .progress-fill { background: #D13239; border-radius: 6px; height: 8px; transition: width 0.4s ease; }
+    .progress-fill.complete { background: #16a34a; }
+    .posts-section { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
+    .posts-section .section-header { padding: 14px 18px; border-bottom: 1px solid #f0f0f0; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: space-between; }
+    .posts-section .section-header .count { font-weight: 400; color: #888; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f9f9f9; padding: 9px 14px; text-align: left; font-size: 11px; font-weight: 600; color: #666; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { padding: 11px 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; font-size: 13px; }
+    tr:last-child td { border-bottom: none; }
+    .post-target { color: #D13239; font-weight: 500; font-size: 12px; }
+    .post-content { color: #555; font-size: 12px; margin-top: 3px; line-height: 1.4; }
+    .post-url a { color: #D13239; text-decoration: none; font-size: 12px; word-break: break-all; }
+    .post-url a:hover { text-decoration: underline; }
+    .post-url .no-url { color: #bbb; font-size: 12px; }
+    .ps { display: inline-flex; align-items: center; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .ps-done, .ps-posted { background: #f0fdf4; color: #15803d; }
+    .ps-queued { background: #fef9c3; color: #854d0e; }
+    .ps-executing, .ps-in_progress { background: #eff6ff; color: #1d4ed8; }
+    .ps-failed { background: #fef2f2; color: #b91c1c; }
+    .ps-default { background: #f5f5f5; color: #666; }
+    .footer { text-align: center; color: #aaa; font-size: 12px; padding-bottom: 32px; }
+    .footer a { color: #aaa; }
+    .loading-state { text-align: center; color: #888; padding: 60px 20px; font-size: 14px; }
+    [data-lang="en"] .zh { display: none; }
+    [data-lang="zh"] .en { display: none; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" id="nav-home">Kaus</a>
+</nav>
+
+<div class="main">
+  <div id="loading-state" class="loading-state">
+    <p class="zh">加载中…</p>
+    <p class="en">Loading…</p>
+  </div>
+
+  <div id="error-state" style="display:none" class="error-card">
+    <h2 class="zh">找不到订单</h2>
+    <h2 class="en">Order not found</h2>
+    <p class="zh">请确认链接是否正确，或联系 <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+    <p class="en">Please check the link or contact <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+  </div>
+
+  <div id="report" style="display:none">
+    <div class="header-row">
+      <div class="header-left">
+        <h1 id="report-title"></h1>
+        <div class="sub" id="report-sub"></div>
+      </div>
+      <span id="order-status-badge" class="status-badge"></span>
+    </div>
+
+    <div class="cards-row">
+      <div class="info-card">
+        <div class="label zh">总计</div>
+        <div class="label en">Total</div>
+        <div class="value" id="stat-total">—</div>
+      </div>
+      <div class="info-card">
+        <div class="label zh">已发布</div>
+        <div class="label en">Live</div>
+        <div class="value done" id="stat-done">—</div>
+      </div>
+      <div class="info-card">
+        <div class="label zh">排队中</div>
+        <div class="label en">Queued</div>
+        <div class="value" id="stat-queued">—</div>
+      </div>
+      <div class="info-card">
+        <div class="label zh">失败</div>
+        <div class="label en">Failed</div>
+        <div class="value" id="stat-failed">—</div>
+      </div>
+    </div>
+
+    <div class="progress-section">
+      <div class="progress-label">
+        <span class="zh">发帖进度</span>
+        <span class="en">Posting progress</span>
+        <span class="pct" id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="posts-section">
+      <div class="section-header">
+        <span class="zh">发帖明细</span>
+        <span class="en">Post details</span>
+        <span class="count" id="posts-count"></span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th class="zh">版块 / 目标</th>
+            <th class="en">Subreddit / Target</th>
+            <th class="zh">内容预览</th>
+            <th class="en">Content preview</th>
+            <th class="zh">Reddit 链接</th>
+            <th class="en">Reddit URL</th>
+            <th class="zh">状态</th>
+            <th class="en">Status</th>
+          </tr>
+        </thead>
+        <tbody id="posts-body">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <p class="zh">如有问题请联系 <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+      <p class="en">Questions? <a href="mailto:hello@kaus-ai.com">hello@kaus-ai.com</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  function setLang(lang) {
+    document.body.setAttribute('data-lang', lang || 'zh');
+    if (lang === 'en') {
+      document.title = 'Order Report — Kaus';
+      document.getElementById('nav-home').href = '/en.html';
+    } else {
+      document.title = '订单报告 — Kaus';
+    }
+  }
+
+  function statusLabel(status, isZh) {
+    const map = {
+      done: isZh ? '已发布' : 'Live',
+      posted: isZh ? '已发布' : 'Live',
+      queued: isZh ? '排队中' : 'Queued',
+      executing: isZh ? '进行中' : 'In progress',
+      in_progress: isZh ? '进行中' : 'In progress',
+      failed: isZh ? '失败' : 'Failed',
+    };
+    return map[status] || status || '—';
+  }
+
+  function postStatusClass(status) {
+    if (status === 'done' || status === 'posted') return 'ps-done';
+    if (status === 'queued') return 'ps-queued';
+    if (status === 'executing' || status === 'in_progress') return 'ps-executing';
+    if (status === 'failed') return 'ps-failed';
+    return 'ps-default';
+  }
+
+  function orderStatusClass(status) {
+    if (status === 'completed') return 'badge-completed';
+    if (status === 'executing' || status === 'queued') return 'badge-executing';
+    if (status === 'ready') return 'badge-pending_content';
+    return 'badge-default';
+  }
+
+  function orderStatusLabel(status, isZh) {
+    const map = {
+      pending_content: isZh ? '等待内容' : 'Pending content',
+      ready: isZh ? '待执行' : 'Ready',
+      queued: isZh ? '已排队' : 'Queued',
+      executing: isZh ? '执行中' : 'Executing',
+      completed: isZh ? '已完成' : 'Completed',
+    };
+    return map[status] || status || '';
+  }
+
+  function pkgLabel(order, isZh) {
+    if (order.package_type === 'combined') return isZh ? `${order.posts_qty}篇帖子 + ${order.comments_qty}条评论` : `${order.posts_qty} posts + ${order.comments_qty} comments`;
+    if (order.package_type === 'posts') return isZh ? `${order.posts_qty}篇帖子` : `${order.posts_qty} posts`;
+    return isZh ? `${order.comments_qty}条评论` : `${order.comments_qty} comments`;
+  }
+
+  async function load() {
+    if (!token) {
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = '';
+      setLang('zh');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/order-report?token=${encodeURIComponent(token)}`);
+      if (!res.ok) throw new Error('not found');
+      const data = await res.json();
+
+      const { order, summary, posts } = data;
+      const isZh = order.lang !== 'en';
+      setLang(order.lang || 'zh');
+
+      // Header
+      document.getElementById('report-title').textContent = isZh ? '发帖报告' : 'Posting Report';
+      document.getElementById('report-sub').textContent = `${order.client_name || ''}${order.company ? ' / ' + order.company : ''} · ${pkgLabel(order, isZh)}`;
+
+      const badge = document.getElementById('order-status-badge');
+      badge.textContent = orderStatusLabel(order.status, isZh);
+      badge.className = `status-badge ${orderStatusClass(order.status)}`;
+
+      // Stats
+      document.getElementById('stat-total').textContent = summary.total;
+      document.getElementById('stat-done').textContent = summary.done;
+      document.getElementById('stat-queued').textContent = summary.queued + summary.in_progress;
+      document.getElementById('stat-failed').textContent = summary.failed;
+
+      // Progress
+      const pct = summary.total > 0 ? Math.round((summary.done / summary.total) * 100) : 0;
+      document.getElementById('progress-pct').textContent = `${pct}%`;
+      const fill = document.getElementById('progress-fill');
+      fill.style.width = `${pct}%`;
+      if (pct === 100) fill.classList.add('complete');
+
+      // Posts count
+      document.getElementById('posts-count').textContent = posts.length > 0 ? `${posts.length}` : '';
+
+      // Posts table
+      const tbody = document.getElementById('posts-body');
+      if (!posts.length) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#aaa;padding:32px">${isZh ? '暂无数据' : 'No data yet'}</td></tr>`;
+      } else {
+        tbody.innerHTML = posts.map(p => `
+          <tr>
+            <td style="color:#aaa">${p.row_index + 1}</td>
+            <td>
+              <div class="post-target">${p.target || '—'}</div>
+            </td>
+            <td>
+              <div class="post-content">${p.content_preview || '—'}</div>
+            </td>
+            <td class="post-url">
+              ${p.post_url
+                ? `<a href="${p.post_url}" target="_blank" rel="noopener">${p.post_url}</a>`
+                : `<span class="no-url">${isZh ? '待发布' : 'Pending'}</span>`}
+            </td>
+            <td>
+              <span class="ps ${postStatusClass(p.status)}">${statusLabel(p.status, isZh)}</span>
+              ${p.error_msg ? `<div style="color:#b91c1c;font-size:11px;margin-top:3px">${p.error_msg}</div>` : ''}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('report').style.display = '';
+
+    } catch (e) {
+      setLang('zh');
+      document.getElementById('loading-state').style.display = 'none';
+      document.getElementById('error-state').style.display = '';
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>
