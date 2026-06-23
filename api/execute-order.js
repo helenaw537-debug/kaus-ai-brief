@@ -72,16 +72,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No content rows found for this order' });
   }
   const rows = content[0].rows;
+  const orderImageUrl = content[0].image_url || null;  // global image for all posts
 
   // Create order_posts if they don't already exist
   const existingPosts = await sbGet('order_posts', { order_id });
   if (!existingPosts.length) {
     for (let i = 0; i < rows.length; i++) {
+      const rowImageUrl = rows[i].image_url || orderImageUrl || null;
       await sbInsert('order_posts', {
         order_id: order.id,
         row_index: i,
         target: rows[i].target || '',
         content: rows[i].content || '',
+        post_type: rowImageUrl ? 'image' : 'text',
+        image_url: rowImageUrl,
         status: 'queued',
       });
     }
