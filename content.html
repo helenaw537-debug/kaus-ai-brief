@@ -311,6 +311,31 @@
       </div>
 
       <div class="submit-area">
+        <!-- IMAGE UPLOAD SECTION (for post orders) -->
+        <div id="image-upload-section" style="display:none;background:#f9f9f9;border:1px solid #e5e5e5;border-radius:10px;padding:16px 18px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:6px">🖼 配图 <span style="font-weight:400;color:#999">（选填）</span></div>
+          <p style="font-size:12px;color:#888;margin-bottom:12px">上传一张图片，将作为所有帖子的配图发出。支持 JPG / PNG / GIF，≤ 8 MB。</p>
+
+          <div id="img-dropzone" onclick="document.getElementById('img-file-input').click()"
+            style="border:1.5px dashed #ccc;border-radius:8px;padding:20px;text-align:center;cursor:pointer;background:#fff;transition:border-color .15s"
+            ondragover="event.preventDefault();this.style.borderColor='#D13239'"
+            ondragleave="this.style.borderColor='#ccc'"
+            ondrop="handleImgDrop(event)">
+            <div id="img-preview-wrap" style="display:none;margin-bottom:8px">
+              <img id="img-preview" style="max-height:100px;max-width:100%;border-radius:6px;display:block;margin:0 auto" />
+            </div>
+            <div id="img-placeholder" style="color:#aaa;font-size:13px">点击或拖拽上传图片</div>
+            <div id="img-filename" style="font-size:12px;color:#666;margin-top:4px;display:none"></div>
+            <div id="img-upload-progress" style="display:none;margin-top:8px">
+              <div style="background:#e5e5e5;border-radius:4px;height:4px"><div id="img-progress-bar" style="background:#D13239;height:4px;border-radius:4px;width:0%;transition:width .3s"></div></div>
+              <div id="img-upload-status" style="font-size:12px;color:#888;margin-top:4px">上传中…</div>
+            </div>
+          </div>
+          <input type="file" id="img-file-input" accept="image/jpeg,image/png,image/gif,image/webp" style="display:none" onchange="handleImgSelect(this.files[0])">
+          <input type="hidden" id="image_url" name="image_url" value="">
+          <button type="button" id="img-clear-btn" onclick="clearImage()" style="display:none;margin-top:8px;background:none;border:1px solid #ddd;border-radius:6px;padding:4px 12px;font-size:12px;color:#888;cursor:pointer">✕ 移除图片</button>
+        </div>
+
         <button type="submit" class="submit-btn" id="submit-btn">🚀 提交内容，开始发帖</button>
         <p class="submit-note">提交后 24 小时内开始发帖 · 每日邮件报告</p>
       </div>
@@ -453,6 +478,7 @@
     if (needsPosts) document.getElementById('posts-section').style.display = 'block';
     if (needsComments) document.getElementById('comments-section').style.display = 'block';
     if (needsPosts && needsComments) document.getElementById('section-divider').style.display = 'block';
+    if (needsPosts) document.getElementById('image-upload-section').style.display = 'block';
 
     // Show form
     document.getElementById('loading-screen').style.display = 'none';
@@ -505,6 +531,7 @@
       subreddits: needsPosts ? document.getElementById('subreddits').value.trim() : null,
       comment_targets: needsComments ? document.getElementById('comment-targets').value.trim() : null,
       comment_direction: needsComments ? document.getElementById('comment-direction').value.trim() : null,
+      image_url: document.getElementById('image_url').value || null,
     };
 
     try {
@@ -532,6 +559,90 @@
     document.getElementById('error-msg').textContent = msg;
     document.getElementById('error-screen').style.display = 'block';
     document.getElementById('nav-status-text').textContent = '链接无效';
+  }
+
+  // ── Image upload helpers ───────────────────────────────────────────────────
+
+  function handleImgDrop(e) {
+    e.preventDefault();
+    document.getElementById('img-dropzone').style.borderColor = '#ccc';
+    const file = e.dataTransfer.files[0];
+    if (file) handleImgSelect(file);
+  }
+
+  function handleImgSelect(file) {
+    if (!file) return;
+    const MAX = 8 * 1024 * 1024;
+    if (file.size > MAX) { alert('图片不能超过 8 MB'); return; }
+    if (!file.type.startsWith('image/')) { alert('请上传图片文件（JPG / PNG / GIF / WebP）'); return; }
+
+    // Preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('img-preview').src = e.target.result;
+      document.getElementById('img-preview-wrap').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+
+    document.getElementById('img-filename').textContent = file.name;
+    document.getElementById('img-filename').style.display = 'block';
+    document.getElementById('img-placeholder').style.display = 'none';
+
+    uploadImage(file);
+  }
+
+  async function uploadImage(file) {
+    const prog = document.getElementById('img-upload-progress');
+    const bar  = document.getElementById('img-progress-bar');
+    const stat = document.getElementById('img-upload-status');
+    const clearBtn = document.getElementById('img-clear-btn');
+
+    prog.style.display = 'block';
+    bar.style.width = '10%';
+    stat.textContent = '获取上传链接…';
+
+    try {
+      const infoRes = await fetch(
+        `/api/upload-image-url?token=${encodeURIComponent(TOKEN)}&filename=${encodeURIComponent(file.name)}&type=${encodeURIComponent(file.type)}`
+      );
+      if (!infoRes.ok) throw new Error('无法获取上传链接');
+      const info = await infoRes.json();
+
+      bar.style.width = '30%';
+      stat.textContent = '上传中…';
+
+      // Upload directly to Supabase Storage via signed URL
+      const uploadRes = await fetch(info.signed_url, {
+        method: 'PUT',
+        headers: { 'Content-Type': file.type },
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error('上传失败，请重试');
+
+      bar.style.width = '100%';
+      stat.textContent = '✓ 上传成功';
+      stat.style.color = '#16a34a';
+
+      document.getElementById('image_url').value = info.public_url;
+      clearBtn.style.display = 'inline-block';
+
+    } catch (err) {
+      bar.style.width = '0%';
+      stat.textContent = '✗ ' + err.message;
+      stat.style.color = '#D13239';
+    }
+  }
+
+  function clearImage() {
+    document.getElementById('image_url').value = '';
+    document.getElementById('img-preview-wrap').style.display = 'none';
+    document.getElementById('img-preview').src = '';
+    document.getElementById('img-filename').style.display = 'none';
+    document.getElementById('img-placeholder').style.display = 'block';
+    document.getElementById('img-upload-progress').style.display = 'none';
+    document.getElementById('img-clear-btn').style.display = 'none';
+    document.getElementById('img-upload-status').style.color = '#888';
+    document.getElementById('img-file-input').value = '';
   }
 </script>
 </body>
