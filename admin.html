@@ -188,7 +188,7 @@
       const rowsHtml = o.content_rows?.length
         ? o.content_rows.slice(0, 5).map(r => `
             <div class="row-item">
-              <div class="row-target">${r.target || '—'}</div>
+              <div class="row-target">${r.target || '—'}${r.post_type === 'image' ? ' <span style="background:#eff6ff;color:#1d4ed8;border-radius:8px;padding:1px 6px;font-size:10px;font-weight:600;margin-left:4px">📷 image</span>' : ''}</div>
               <div class="row-content">${(r.content || '').slice(0, 120)}</div>
             </div>
           `).join('') + (o.content_rows.length > 5 ? `<div style="color:#888;padding:4px 0">+${o.content_rows.length - 5} more…</div>` : '')
