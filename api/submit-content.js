@@ -57,7 +57,7 @@ async function supabaseGet(table, match, select = '*') {
 
 async function sendEmail({ to, subject, html }) {
   const transporter = nodemailer.createTransport({
-    host: 'smtp.zoho.com',
+    host: 'smtp.zoho.eu',
     port: 465,
     secure: true,
     auth: {
@@ -76,7 +76,7 @@ async function sendEmail({ to, subject, html }) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { token, post_content, subreddits, comment_targets, comment_direction } = req.body;
+  const { token, post_content, subreddits, comment_targets, comment_direction, image_url } = req.body;
   if (!token) return res.status(400).json({ error: 'Missing token' });
 
   // Fetch order
@@ -97,6 +97,7 @@ export default async function handler(req, res) {
       subreddits: subreddits || null,            // newline-separated subreddit names/URLs
       comment_targets: comment_targets || null,  // newline-separated Reddit thread URLs
       comment_direction: comment_direction || null,
+      image_url: image_url || null,              // Supabase Storage public URL for post image
       submitted_at: new Date().toISOString(),
     });
 
