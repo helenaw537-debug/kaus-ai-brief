@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaus AI — 服务手册 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #0a0a0a;
+      color: #e8e8e8;
+      line-height: 1.7;
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px;
+      background: linear-gradient(135deg, #0a0a0a 0%, #111827 50%, #0a0a0a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .logo {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #6366f1;
+      margin-bottom: 40px;
+      font-weight: 600;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 24px;
+      max-width: 800px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #6366f1, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 18px;
+      color: #9ca3af;
+      max-width: 560px;
+      margin-bottom: 48px;
+      line-height: 1.8;
+    }
+    .hero-cta {
+      display: inline-block;
+      padding: 14px 36px;
+      background: #6366f1;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: background 0.2s;
+    }
+    .hero-cta:hover { background: #4f46e5; }
+
+    /* Section container */
+    section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 96px 24px;
+    }
+    .section-label {
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6366f1;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: #9ca3af;
+      max-width: 560px;
+      margin-bottom: 64px;
+      line-height: 1.8;
+    }
+
+    /* Stats strip */
+    .stats-strip {
+      background: #111827;
+      border-top: 1px solid #1f2937;
+      border-bottom: 1px solid #1f2937;
+      padding: 56px 24px;
+    }
+    .stats-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .stat-num span { color: #6366f1; }
+    .stat-label {
+      font-size: 14px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    /* Services */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .service-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 32px;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card:hover {
+      border-color: #6366f1;
+      transform: translateY(-2px);
+    }
+    .service-card.featured {
+      border-color: #6366f1;
+      background: linear-gradient(135deg, #111827, #1a1a3e);
+    }
+    .service-card.featured::before {
+      content: '推荐';
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #6366f1;
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.05em;
+    }
+    .service-icon {
+      font-size: 28px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .service-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .service-desc {
+      font-size: 14px;
+      color: #9ca3af;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .service-features {
+      list-style: none;
+      margin-bottom: 28px;
+    }
+    .service-features li {
+      font-size: 13px;
+      color: #d1d5db;
+      padding: 4px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+    .service-features li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #6366f1;
+      font-size: 12px;
+    }
+    .service-price {
+      font-size: 28px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .service-price span {
+      font-size: 14px;
+      color: #6b7280;
+      font-weight: 400;
+    }
+
+    /* Portfolio */
+    .portfolio-section {
+      background: #0d1117;
+      border-top: 1px solid #1f2937;
+    }
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .portfolio-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 32px;
+      transition: border-color 0.2s;
+    }
+    .portfolio-card:hover { border-color: #374151; }
+    .portfolio-platform {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .platform-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+    .badge-reddit { background: rgba(255,87,0,0.15); color: #ff6314; }
+    .badge-x { background: rgba(255,255,255,0.1); color: #e5e7eb; }
+    .portfolio-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .metric {
+      background: #0d1117;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .metric-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+    .metric-val.green { color: #34d399; }
+    .metric-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    .portfolio-note {
+      font-size: 13px;
+      color: #6b7280;
+      border-top: 1px solid #1f2937;
+      padding-top: 16px;
+      line-height: 1.7;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #111827, #1a1a3e);
+      border-top: 1px solid #1f2937;
+      text-align: center;
+    }
+    .cta-section .section-title { margin-bottom: 16px; }
+    .cta-section .section-sub { margin: 0 auto 40px; }
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 14px 36px;
+      background: #6366f1;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .btn-secondary {
+      display: inline-block;
+      padding: 14px 36px;
+      border: 1px solid #374151;
+      color: #d1d5db;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 13px;
+      color: #4b5563;
+      border-top: 1px solid #1f2937;
+    }
+
+    @media (max-width: 640px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-metrics { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="logo">Kaus AI · 服务手册 2026</div>
+  <h1>帮你的品牌成为<br><span>AI 给出的那个答案</span></h1>
+  <p>我们专注于提升品牌在 ChatGPT、Perplexity、Gemini 等 AI 引擎的引用率，同时覆盖 Reddit、TikTok、X 等核心社交平台——让你的品牌不只出现在搜索结果里，更出现在 AI 的回答里。</p>
+  <a class="hero-cta" href="mailto:hello@kaus-ai.com">预约咨询</a>
+</div>
+
+<!-- Stats -->
+<div class="stats-strip">
+  <div class="stats-grid">
+    <div>
+      <div class="stat-num">1.03<span>B+</span></div>
+      <div class="stat-label">Reddit 帖子累计曝光量</div>
+    </div>
+    <div>
+      <div class="stat-num">2.1<span>M</span></div>
+      <div class="stat-label">单客户 X 平台月度曝光 (↑241%)</div>
+    </div>
+    <div>
+      <div class="stat-num">10.3<span>M+</span></div>
+      <div class="stat-label">Reddit 社区点赞总数</div>
+    </div>
+    <div>
+      <div class="stat-num">100<span>%</span></div>
+      <div class="stat-label">纯自然流量，零刷量</div>
+    </div>
+  </div>
+</div>
+
+<!-- Services -->
+<section>
+  <div class="section-label">我们的服务</div>
+  <h2 class="section-title">六项核心服务<br>全平台覆盖</h2>
+  <p class="section-sub">从 AI 可见度诊断到全平台内容执行，每项服务均可单独购买或组合打包。</p>
+
+  <div class="services-grid">
+
+    <div class="service-card">
+      <span class="service-icon">🔍</span>
+      <div class="service-name">AI 可见度报告</div>
+      <div class="service-desc">检测你的品牌在 ChatGPT、Perplexity、Gemini、Claude 中被引用的频率与排位，找出提升空间。</div>
+      <ul class="service-features">
+        <li>四大 AI 引擎全量查询测试</li>
+        <li>竞品对比分析</li>
+        <li>可引用内容差距报告</li>
+        <li>月度追踪报告</li>
+      </ul>
+      <div class="service-price">$200 <span>/ 月</span></div>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">📢</span>
+      <div class="service-name">Reddit 账号建设</div>
+      <div class="service-desc">在目标细分社区建立真实的品牌存在感——有机讨论、产品提及，AI 引擎最喜欢的内容格式。</div>
+      <ul class="service-features">
+        <li>精准匹配目标 subreddit</li>
+        <li>社区原生内容创作与发布</li>
+        <li>账号 karma 稳健积累</li>
+        <li>品牌提及监控</li>
+      </ul>
+      <div class="service-price">$300 <span>/ 月</span></div>
+    </div>
+
+    <div class="service-card featured">
+      <span class="service-icon">🚀</span>
+      <div class="service-name">SEO 优化</div>
+      <div class="service-desc">传统搜索与 AI 搜索双轨并进。通过技术优化、内容策略与外链建设，提升在 Google 及 AI Overview 的排名。</div>
+      <ul class="service-features">
+        <li>关键词研究与内容规划</li>
+        <li>技术 SEO 审查与修复</li>
+        <li>高质量外链建设</li>
+        <li>GEO 内容优化（AI 引用专项）</li>
+      </ul>
+      <div class="service-price">$1,000 <span>/ 月</span></div>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">🎵</span>
+      <div class="service-name">TikTok 推广</div>
+      <div class="service-desc">通过精准内容策略在 TikTok 建立品牌声量，覆盖目标受众，实现自然增长。</div>
+      <ul class="service-features">
+        <li>账号定位与内容策略</li>
+        <li>短视频脚本与素材建议</li>
+        <li>有机互动增长</li>
+        <li>数据追踪与优化</li>
+      </ul>
+      <div class="service-price">$500 <span>/ 月</span></div>
+    </div>
+
+    <div class="service-card featured">
+      <span class="service-icon">🤖</span>
+      <div class="service-name">ChatGPT 优化</div>
+      <div class="service-desc">让你的品牌成为 ChatGPT 在相关问题中优先推荐的答案。针对 AI 引擎特性定制内容与信号布局。</div>
+      <ul class="service-features">
+        <li>ChatGPT 引用路径分析</li>
+        <li>可引用内容生产与分发</li>
+        <li>权威来源建设策略</li>
+        <li>引用率持续追踪</li>
+      </ul>
+      <div class="service-price">$1,000 <span>/ 月</span></div>
+    </div>
+
+    <div class="service-card">
+      <span class="service-icon">𝕏</span>
+      <div class="service-name">X 账号管理</div>
+      <div class="service-desc">在 X（原 Twitter）建立行业声量——持续发布、互动增长、曝光提升，打造可信品牌形象。</div>
+      <ul class="service-features">
+        <li>内容日历规划与执行</li>
+        <li>行业讨论参与策略</li>
+        <li>粉丝增长与互动管理</li>
+        <li>周数据报告</li>
+      </ul>
+      <div class="service-price">$300 <span>/ 月</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Portfolio -->
+<div class="portfolio-section">
+  <section>
+    <div class="section-label">成功案例</div>
+    <h2 class="section-title">真实数据<br>可验证的结果</h2>
+    <p class="section-sub">以下均为客户实际投放数据，100% 自然流量。</p>
+
+    <div class="portfolio-grid">
+
+      <div class="portfolio-card">
+        <div class="portfolio-platform">
+          <span class="platform-badge badge-reddit">Reddit</span>
+          <span style="color:#6b7280; font-size:13px;">大型社区曝光案例</span>
+        </div>
+        <div class="portfolio-metrics">
+          <div class="metric">
+            <div class="metric-val">1.03B<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">累计总曝光量</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">10.3M<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">社区点赞</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">1.2M<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">真实评论数</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val green">100%</div>
+            <div class="metric-label">自然流量</div>
+          </div>
+        </div>
+        <div class="portfolio-note">
+          代表帖：r/AskReddit 单帖 360 万曝光 · 5,500 点赞 · 1,900 评论；r/AskMen 单帖 99 万曝光 · 488 评论。策略核心：社区原生内容 + 有机讨论引导。
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-platform">
+          <span class="platform-badge badge-reddit">Reddit</span>
+          <span style="color:#6b7280; font-size:13px;">品牌垂直渗透案例</span>
+        </div>
+        <div class="portfolio-metrics">
+          <div class="metric">
+            <div class="metric-val">442K<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">4 帖总曝光量</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">751<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">社区点赞</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">301<span style="font-size:14px;color:#6b7280">+</span></div>
+            <div class="metric-label">深度评论</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val green">4天</div>
+            <div class="metric-label">单帖 17 万曝光</div>
+          </div>
+        </div>
+        <div class="portfolio-note">
+          覆盖 r/Roofing、r/ArtificialIntelligence、r/LifeProTips、r/romanempire 等垂直社区。4 天内单帖最高 17 万曝光，品牌网址直接挂出，平台未封号。
+        </div>
+      </div>
+
+      <div class="portfolio-card">
+        <div class="portfolio-platform">
+          <span class="platform-badge badge-x">X (Twitter)</span>
+          <span style="color:#6b7280; font-size:13px;">账号爆发式增长案例</span>
+        </div>
+        <div class="portfolio-metrics">
+          <div class="metric">
+            <div class="metric-val">2.1M</div>
+            <div class="metric-label">月度曝光量</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val green">+241%</div>
+            <div class="metric-label">曝光增幅</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">74.1K</div>
+            <div class="metric-label">互动量 (↑285%)</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val green">+1000%</div>
+            <div class="metric-label">主页访问增幅</div>
+          </div>
+        </div>
+        <div class="portfolio-note">
+          两周运营窗口：从默默无闻到 2.1M 月曝光。回复率增长 895%，点赞增长 335%，粉丝稳步增加。策略：高互动率回复 + 精准发帖节奏。
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <section>
+    <div class="section-label">开始合作</div>
+    <h2 class="section-title">准备好让<br>AI 主动推荐你的品牌了吗？</h2>
+    <p class="section-sub">告诉我们你的目标，我们会为你设计最合适的组合方案，起步价 $200/月。</p>
+    <div class="cta-buttons">
+      <a class="btn-primary" href="mailto:hello@kaus-ai.com">发送邮件咨询</a>
+      <a class="btn-secondary" href="https://kaus-ai.com" target="_blank">访问官网</a>
+    </div>
+  </section>
+</div>
+
+<footer>
+  © 2026 Kaus AI · London · hello@kaus-ai.com · kaus-ai.com
+</footer>
+
+</body>
+</html>
