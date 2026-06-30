@@ -222,8 +222,8 @@
     .portfolio-section { background: #fafafb; border-top: 1px solid var(--line); }
     .portfolio-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
     }
     .portfolio-card {
       background: #fff;
@@ -232,13 +232,64 @@
       padding: 32px;
       transition: box-shadow 0.2s;
     }
-    .portfolio-card:hover { box-shadow: 0 16px 40px rgba(20,20,26,0.06); }
+    .portfolio-card:hover { box-shadow: 0 16px 40px rgba(20,20,26,0.07); }
     .portfolio-img {
       width: 100%;
-      border-radius: 10px;
+      border-radius: 12px;
       border: 1px solid var(--line);
       display: block;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      object-fit: cover;
+    }
+    .portfolio-stats {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      margin-top: 4px;
+    }
+    .portfolio-stats-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .portfolio-stats ul {
+      list-style: none;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .portfolio-stats ul li {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: 14.5px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .portfolio-stats ul li::before {
+      content: "▸";
+      color: var(--pink);
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .portfolio-stats ul li strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .portfolio-period {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--pink-wash);
+      color: var(--pink);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 16px;
     }
     .portfolio-platform {
       display: flex;
@@ -287,6 +338,57 @@
       line-height: 1.7;
     }
 
+    /* Team */
+    .team-section { background: #fff; }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .team-card {
+      background: var(--pink-wash);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .team-icon {
+      font-size: 36px;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .team-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .team-card-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .team-stat-row {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 52px;
+      flex-wrap: wrap;
+    }
+    .team-stat { text-align: center; }
+    .team-stat-val {
+      font-size: 40px;
+      font-weight: 900;
+      color: var(--pink);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .team-stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
     /* CTA */
     .cta-section {
       background: linear-gradient(135deg, var(--pink) 0%, #c9335a 100%);
@@ -333,6 +435,8 @@
     @media (max-width: 640px) {
       .services-grid { grid-template-columns: 1fr; }
       .portfolio-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr 1fr; }
+      .team-stat-row { gap: 32px; }
     }
   </style>
 </head>
@@ -471,6 +575,7 @@
           <span class="platform-badge badge-reddit">Reddit</span>
           <span style="color:var(--muted); font-size:13px;">大型社区曝光案例</span>
         </div>
+        <span class="portfolio-period">🗓 服务周期：5 个月</span>
         <img class="portfolio-img" src="assets/p7.jpg" alt="Reddit 大型社区曝光案例" loading="lazy" />
         <div class="portfolio-metrics">
           <div class="metric">
@@ -482,8 +587,15 @@
             <div class="metric-label">自然流量</div>
           </div>
         </div>
-        <div class="portfolio-note">
-          代表帖：r/AskReddit 单帖 360 万浏览 · 5,500 点赞 · 1,900 评论；r/AskMen 单帖 99 万浏览 · 488 评论。策略核心：社区原生内容 + 有机讨论引导。
+        <div class="portfolio-stats">
+          <div class="portfolio-stats-label">效果数据</div>
+          <ul>
+            <li><strong>1.03B+</strong> Reddit 累计总曝光量</li>
+            <li><strong>单帖 360 万</strong>浏览量（r/AskReddit）</li>
+            <li><strong>5,500</strong> 点赞 · <strong>1,900</strong> 真实评论</li>
+            <li><strong>r/AskMen</strong> 单帖 99 万浏览 · 488 评论</li>
+            <li><strong>100%</strong> 有机自然流量，零广告投放</li>
+          </ul>
         </div>
       </div>
 
@@ -492,6 +604,7 @@
           <span class="platform-badge badge-reddit">Reddit</span>
           <span style="color:var(--muted); font-size:13px;">品牌垂直渗透案例</span>
         </div>
+        <span class="portfolio-period">🗓 服务周期：3 个月</span>
         <img class="portfolio-img" src="assets/p6.jpg" alt="Reddit 品牌垂直渗透案例" loading="lazy" />
         <div class="portfolio-metrics">
           <div class="metric">
@@ -503,16 +616,24 @@
             <div class="metric-label">社区点赞</div>
           </div>
         </div>
-        <div class="portfolio-note">
-          覆盖 r/Roofing、r/ArtificialIntelligence、r/LifeProTips、r/romanempire 等垂直社区，301+ 深度评论。品牌网址直接挂出，平台未封号。
+        <div class="portfolio-stats">
+          <div class="portfolio-stats-label">效果数据</div>
+          <ul>
+            <li><strong>442K+</strong> 总曝光量，仅用 4 篇帖子实现</li>
+            <li><strong>751+</strong> 社区点赞 · <strong>301+</strong> 深度评论</li>
+            <li>覆盖 r/Roofing、r/AI、r/LifeProTips、r/romanempire 等垂直版块</li>
+            <li>品牌链接直接挂出，<strong>账号零封禁</strong></li>
+            <li><strong>100%</strong> 有机内容，无广告</li>
+          </ul>
         </div>
       </div>
 
       <div class="portfolio-card">
         <div class="portfolio-platform">
           <span class="platform-badge badge-reddit">Reddit</span>
-          <span style="color:var(--muted); font-size:13px;">账号运营案例</span>
+          <span style="color:var(--muted); font-size:13px;">账号建设 &amp; 运营案例</span>
         </div>
+        <span class="portfolio-period">🗓 账号年龄：2 年</span>
         <img class="portfolio-img" src="assets/p3.jpg" alt="Reddit 账号运营案例" loading="lazy" />
         <div class="portfolio-metrics">
           <div class="metric">
@@ -524,8 +645,15 @@
             <div class="metric-label">账号 Karma</div>
           </div>
         </div>
-        <div class="portfolio-note">
-          专属账号稳健运营：r/romanempire 单帖 156K 浏览，r/Home「复合地板值不值」单帖 170K 浏览 · 109 评论。账号 2 年龄、karma 持续积累，长期可用。
+        <div class="portfolio-stats">
+          <div class="portfolio-stats-label">效果数据</div>
+          <ul>
+            <li>r/Home「复合地板」单帖 <strong>170K</strong> 浏览 · 109 评论</li>
+            <li>r/romanempire 单帖 <strong>156K</strong> 浏览 · 95 点赞</li>
+            <li>账号 karma <strong>907</strong>，账号年龄 2 年，长期可用</li>
+            <li>社区信任度高，评论触达率稳定</li>
+            <li><strong>0</strong> 封号记录，账号可持续运营</li>
+          </ul>
         </div>
       </div>
 
@@ -534,6 +662,7 @@
           <span class="platform-badge badge-x">X (Twitter)</span>
           <span style="color:var(--muted); font-size:13px;">账号爆发式增长案例</span>
         </div>
+        <span class="portfolio-period">🗓 服务周期：2 周</span>
         <img class="portfolio-img" src="assets/p4.jpg" alt="X 账号爆发式增长案例" loading="lazy" />
         <div class="portfolio-metrics">
           <div class="metric">
@@ -545,13 +674,71 @@
             <div class="metric-label">互动量 (↑285%)</div>
           </div>
         </div>
-        <div class="portfolio-note">
-          两周运营窗口：月曝光达 2.1M。主页访问 27.6K（↑1000%）、回复增长 895%、点赞 13.9K（↑335%）、粉丝稳步增加。策略：高互动率回复 + 精准发帖节奏。
+        <div class="portfolio-stats">
+          <div class="portfolio-stats-label">效果数据</div>
+          <ul>
+            <li>月度曝光 <strong>2.1M</strong>，增幅 <strong>+241%</strong></li>
+            <li>互动量 <strong>74.1K</strong>，增幅 <strong>+285%</strong></li>
+            <li>主页访问 <strong>27.6K</strong>，增幅 <strong>+1,000%</strong></li>
+            <li>点赞 <strong>13,900+</strong>，增幅 <strong>+335%</strong></li>
+            <li>回复增长 <strong>+895%</strong>，粉丝稳步积累</li>
+          </ul>
         </div>
       </div>
 
     </div>
   </section>
+</div>
+
+<!-- Team -->
+<div class="team-section">
+  <div class="section-inner">
+    <p class="section-label">我们的团队</p>
+    <h2 class="section-title">海外原生团队，<br>深耕品牌推广六年</h2>
+    <p class="section-sub">所有成员均为英语母语者——来自美国、法国、英国等西方国家。我们从第一视角理解海外平台的社区文化、受众心理与算法逻辑。</p>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <span class="team-icon">🌎</span>
+        <div class="team-card-title">海外原生背景</div>
+        <div class="team-card-desc">成员来自美国、法国、英国等国，英语母语，深度理解西方用户习惯与平台文化。</div>
+      </div>
+      <div class="team-card">
+        <span class="team-icon">📈</span>
+        <div class="team-card-title">专注品牌推广 + SEO</div>
+        <div class="team-card-desc">专注海外社媒营销与 SEO 超过六年，经历了从 Google SEO 到 AI 引擎优化的全周期演变。</div>
+      </div>
+      <div class="team-card">
+        <span class="team-icon">🤝</span>
+        <div class="team-card-title">全托管执行</div>
+        <div class="team-card-desc">从内容策略、账号运营到数据追踪，全程托管——你只需要提供目标，其余交给我们。</div>
+      </div>
+      <div class="team-card">
+        <span class="team-icon">🛡️</span>
+        <div class="team-card-title">合规 &amp; 安全运营</div>
+        <div class="team-card-desc">严格遵守各平台规则，内容原生化策略，保障账号安全，零封号记录。</div>
+      </div>
+    </div>
+
+    <div class="team-stat-row">
+      <div class="team-stat">
+        <div class="team-stat-val">6</div>
+        <div class="team-stat-label">年行业经验</div>
+      </div>
+      <div class="team-stat">
+        <div class="team-stat-val">100+</div>
+        <div class="team-stat-label">服务品牌 &amp; 客户</div>
+      </div>
+      <div class="team-stat">
+        <div class="team-stat-val">1B+</div>
+        <div class="team-stat-label">累计内容曝光量</div>
+      </div>
+      <div class="team-stat">
+        <div class="team-stat-val">4</div>
+        <div class="team-stat-label">覆盖核心平台</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- CTA -->
