@@ -389,7 +389,85 @@
       margin-top: 6px;
     }
 
-    /* CTA */
+    /* WeChat contact */
+    .wechat-section {
+      background: var(--pink-wash);
+      text-align: center;
+    }
+    .wechat-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      background: #fff;
+      border: 1.5px solid var(--line);
+      border-radius: 20px;
+      padding: 44px 56px;
+      max-width: 460px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .wechat-icon-wrap {
+      width: 64px; height: 64px;
+      background: #07C160;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .wechat-icon-wrap svg { width: 38px; height: 38px; }
+    .wechat-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+    .wechat-card-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: -4px 0;
+    }
+    .wechat-id-box {
+      background: var(--pink-wash);
+      border: 1.5px dashed var(--pink);
+      border-radius: 12px;
+      padding: 14px 28px;
+      width: 100%;
+      text-align: center;
+    }
+    .wechat-id-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .wechat-id-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--pink);
+      letter-spacing: 0.02em;
+    }
+    .wechat-cta-btn {
+      display: inline-block;
+      background: #07C160;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 36px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      width: 100%;
+      text-align: center;
+    }
+    .wechat-cta-btn:hover { opacity: 0.88; }
+    .wechat-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* CTA (legacy — keep for re-use) */
     .cta-section {
       background: linear-gradient(135deg, var(--pink) 0%, #c9335a 100%);
       text-align: center;
@@ -741,17 +819,26 @@
   </div>
 </div>
 
-<!-- CTA -->
-<div class="cta-section">
-  <section>
-    <div class="section-label">开始合作</div>
-    <h2 class="section-title">准备好让<br>AI 主动推荐你的品牌了吗？</h2>
-    <p class="section-sub">告诉我们你的目标，我们会为你设计最合适的组合方案，起步价 $150/月。</p>
-    <div class="cta-buttons">
-      <a class="btn-primary" href="mailto:hello@kaus-ai.com">发送邮件咨询</a>
-      <a class="btn-secondary" href="https://kaus-ai.com" target="_blank">访问官网</a>
+<!-- WeChat Contact -->
+<div class="wechat-section section-inner" style="padding-top:100px; padding-bottom:100px;">
+  <p class="section-label" style="margin-bottom:16px;">预约咨询</p>
+  <h2 class="section-title" style="margin-bottom:48px;">准备好让你的品牌<br>在海外市场大放异彩了吗？</h2>
+  <div class="wechat-card">
+    <div class="wechat-icon-wrap">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.5 8C9.149 8 4 12.582 4 18.2c0 3.21 1.72 6.074 4.41 7.967L7.5 30l4.47-2.236A13.6 13.6 0 0015.5 28.4c.494 0 .981-.026 1.46-.077A8.9 8.9 0 0116.5 26c0-5.247 5.149-9.5 11.5-9.5.174 0 .347.004.52.011C27.027 11.877 21.828 8 15.5 8z" fill="white"/>
+        <path d="M28 18c-4.97 0-9 3.358-9 7.5S23.03 33 28 33c1.17 0 2.28-.19 3.3-.53L35 34l-.97-3.23C35.24 29.39 36 27.52 36 25.5 36 21.358 32.97 18 28 18z" fill="white"/>
+      </svg>
     </div>
-  </section>
+    <div class="wechat-card-title">微信联系我们</div>
+    <div class="wechat-card-sub">告诉我们你的目标，我们会在 24 小时内<br>为你设计最合适的组合方案</div>
+    <div class="wechat-id-box">
+      <div class="wechat-id-label">微信号</div>
+      <div class="wechat-id-val">Kaus_ai</div>
+    </div>
+    <a class="wechat-cta-btn" href="weixin://dl/chat?Kaus_ai">添加微信，立即咨询</a>
+    <div class="wechat-note">起步价 $150/月 · 按需组合 · 全程托管</div>
+  </div>
 </div>
 
 <footer>
